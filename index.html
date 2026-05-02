@@ -5,8 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#2D1B69">
     <title>Zaachila Moto - Chofer</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    
+    <!-- Leaflet Map -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
     <style>
         :root {
             --primary: #2D1B69;
@@ -15,8 +25,6 @@
             --accent: #00C9A7;
             --dark: #1A1A2E;
             --light: #F8F9FA;
-            --glass: rgba(255, 255, 255, 0.1);
-            --glass-border: rgba(255, 255, 255, 0.2);
             --success: #10B981;
             --warning: #F59E0B;
             --danger: #EF4444;
@@ -30,12 +38,13 @@
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background: linear-gradient(135deg, #0F0C29, #302B63, #24243E);
+            background: #1a1a2e;
             color: #fff;
             min-height: 100vh;
             -webkit-tap-highlight-color: transparent;
         }
 
+        /* Mobile Container */
         .mobile-container {
             max-width: 430px;
             margin: 0 auto;
@@ -63,7 +72,7 @@
         /* Header */
         .app-header {
             background: linear-gradient(135deg, #2D1B69, #4A3A8A);
-            padding: 1rem;
+            padding: 1rem 1.2rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -72,15 +81,22 @@
             z-index: 1000;
         }
 
-        /* Active/Inactive Toggle */
+        .logo-text {
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
         .status-toggle {
-            padding: 0.8rem 1.5rem;
+            padding: 0.6rem 1rem;
             border-radius: 25px;
             border: none;
             font-weight: 700;
+            font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-size: 1rem;
         }
 
         .status-toggle.active {
@@ -96,13 +112,27 @@
 
         @keyframes pulse-green {
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        .profile-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Map */
         .map-wrapper {
-            height: 300px;
+            height: 250px;
             position: relative;
         }
 
@@ -111,21 +141,57 @@
             width: 100%;
         }
 
+        .map-overlay {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .map-btn {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: white;
+            border: none;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         /* Earnings Card */
         .earnings-card {
             background: linear-gradient(135deg, #2D1B69, #4A3A8A);
-            padding: 1.5rem;
-            border-radius: 20px;
+            padding: 1.2rem;
             margin: 1rem;
+            border-radius: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .earnings-label {
+            opacity: 0.8;
+            font-size: 0.9rem;
         }
 
         .earnings-amount {
-            font-size: 2.5rem;
+            font-size: 2rem;
             font-weight: 800;
         }
 
-        /* Incoming Request */
-        .incoming-request {
+        .earnings-icon {
+            font-size: 2.5rem;
+        }
+
+        /* Main Panel */
+        .main-panel {
             background: white;
             border-radius: 25px 25px 0 0;
             padding: 1.5rem;
@@ -134,49 +200,119 @@
             z-index: 2;
             color: #333;
             box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+            min-height: 350px;
+        }
+
+        .panel-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .panel-title h3 {
+            color: #333;
+        }
+
+        /* Stats Mini */
+        .stats-mini {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.8rem;
+            margin-bottom: 1rem;
+        }
+
+        .stat-mini-card {
+            background: #f5f5f5;
+            padding: 0.8rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-mini-value {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #2D1B69;
+        }
+
+        .stat-mini-label {
+            font-size: 0.75rem;
+            color: #666;
+        }
+
+        /* Incoming Request */
+        .incoming-request {
+            background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+            border: 2px solid #FF6B35;
+            border-radius: 20px;
+            padding: 1.5rem;
+            margin: 1rem 0;
             display: none;
+            animation: slideDown 0.4s ease;
         }
 
         .incoming-request.active {
             display: block;
         }
 
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .request-alert {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #FF6B35;
+            margin-bottom: 1rem;
+        }
+
+        .request-details {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+        }
+
+        .request-details div {
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+
         .request-actions {
             display: flex;
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 0.8rem;
         }
 
         .btn-accept {
             flex: 1;
-            padding: 1rem;
+            padding: 0.9rem;
             background: #10B981;
             color: white;
             border: none;
             border-radius: 15px;
             font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
         }
 
         .btn-decline {
             flex: 1;
-            padding: 1rem;
+            padding: 0.9rem;
             background: #EF4444;
             color: white;
             border: none;
             border-radius: 15px;
             font-weight: 700;
+            font-size: 1rem;
             cursor: pointer;
         }
 
-        /* Active Service */
+        /* Active Ride */
         .active-ride {
-            background: white;
-            border-radius: 25px 25px 0 0;
-            padding: 1.5rem;
-            margin-top: -20px;
-            color: #333;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
             display: none;
         }
 
@@ -187,7 +323,7 @@
         .ride-steps {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.8rem;
             margin: 1rem 0;
         }
 
@@ -201,8 +337,8 @@
         }
 
         .step-indicator {
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             border-radius: 50%;
             background: #2D1B69;
             color: white;
@@ -210,13 +346,61 @@
             align-items: center;
             justify-content: center;
             font-weight: 700;
+            font-size: 0.9rem;
+            flex-shrink: 0;
         }
 
         .step-indicator.completed {
             background: #10B981;
         }
 
-        /* Navigation */
+        .step-indicator.current {
+            background: #FF6B35;
+            animation: pulse-icon 1.5s infinite;
+        }
+
+        @keyframes pulse-icon {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(255,107,53,0.7); }
+            50% { box-shadow: 0 0 0 10px rgba(255,107,53,0); }
+        }
+
+        .step-info {
+            flex: 1;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #333;
+        }
+
+        .step-address {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .btn-full {
+            width: 100%;
+            padding: 0.9rem;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .btn-primary-full {
+            background: #2D1B69;
+            color: white;
+        }
+
+        .btn-outline-full {
+            background: transparent;
+            border: 2px solid #2D1B69;
+            color: #2D1B69;
+        }
+
+        /* Bottom Navigation */
         .bottom-nav {
             display: flex;
             justify-content: space-around;
@@ -225,6 +409,7 @@
             border-top: 1px solid #eee;
             position: sticky;
             bottom: 0;
+            z-index: 100;
         }
 
         .nav-item {
@@ -235,6 +420,9 @@
             cursor: pointer;
             color: #999;
             transition: all 0.3s ease;
+            border: none;
+            background: none;
+            font-size: 0.85rem;
         }
 
         .nav-item.active {
@@ -242,44 +430,64 @@
         }
 
         .nav-icon {
-            font-size: 1.5rem;
+            font-size: 1.4rem;
+        }
+
+        /* Screen */
+        .screen {
+            padding: 1rem;
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
         }
 
         /* Finance Cards */
         .finance-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            padding: 1rem;
+            gap: 0.8rem;
+            margin: 1rem 0;
         }
 
         .finance-card {
             background: white;
-            padding: 1.5rem;
+            padding: 1.2rem;
             border-radius: 15px;
             color: #333;
             text-align: center;
         }
 
         .finance-value {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 800;
             color: #2D1B69;
         }
 
-        /* Service History */
+        .finance-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* History */
         .service-item {
             display: flex;
             align-items: center;
             gap: 1rem;
-            padding: 1rem;
+            padding: 0.8rem;
             background: white;
-            border-radius: 15px;
-            margin-bottom: 0.8rem;
+            border-radius: 12px;
+            margin-bottom: 0.6rem;
             color: #333;
         }
 
-        /* Chat */
+        .service-price {
+            font-weight: 700;
+            color: #10B981;
+        }
+
+        /* Chat Modal */
         .chat-modal {
             position: fixed;
             bottom: 0;
@@ -288,7 +496,7 @@
             background: white;
             border-radius: 25px 25px 0 0;
             z-index: 2000;
-            height: 60vh;
+            height: 55vh;
             display: none;
             flex-direction: column;
             box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
@@ -299,51 +507,161 @@
             display: flex;
         }
 
-        .chat-modal-header {
+        .chat-header {
             background: #2D1B69;
             color: white;
             padding: 1rem;
             border-radius: 25px 25px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
 
-        .chat-modal-body {
+        .chat-body {
             flex: 1;
             padding: 1rem;
             overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
         }
 
-        .chat-modal-input {
-            padding: 1rem;
+        .chat-bubble {
+            max-width: 80%;
+            padding: 0.7rem 1rem;
+            border-radius: 18px;
+            font-size: 0.9rem;
+        }
+
+        .chat-bubble.sent {
+            background: #2D1B69;
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 5px;
+        }
+
+        .chat-bubble.received {
+            background: #f0f0f0;
+            color: #333;
+            align-self: flex-start;
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input-area {
+            padding: 0.8rem;
             display: flex;
             gap: 0.5rem;
             border-top: 1px solid #eee;
         }
 
-        .chat-modal-input input {
+        .chat-input {
             flex: 1;
-            padding: 0.8rem;
+            padding: 0.7rem;
             border: 1px solid #ddd;
             border-radius: 25px;
             outline: none;
+            font-size: 0.9rem;
         }
 
-        /* Report */
-        .report-form {
+        .chat-send-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #2D1B69;
+            color: white;
+            border: none;
+            font-size: 1.1rem;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        /* Report Overlay */
+        .report-overlay {
             position: fixed;
-            bottom: 0;
+            top: 0;
             left: 0;
-            right: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 3000;
+            display: none;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        .report-overlay.active {
+            display: flex;
+        }
+
+        .report-form {
             background: white;
             border-radius: 25px 25px 0 0;
-            z-index: 2000;
             padding: 1.5rem;
-            display: none;
+            width: 100%;
+            max-width: 430px;
             color: #333;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+            animation: slideUp 0.3s ease;
         }
 
-        .report-form.active {
-            display: block;
+        @keyframes slideUp {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .report-form textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            resize: vertical;
+            font-family: inherit;
+        }
+
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 1rem 0;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 0.9rem;
+            background: #2D1B69;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            z-index: 5000;
+            font-weight: 600;
+            font-size: 0.9rem;
+            animation: fadeInOut 3s ease;
+            pointer-events: none;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
@@ -351,325 +669,638 @@
     <div class="mobile-container">
         <!-- Header -->
         <header class="app-header">
-            <div class="logo-text" style="font-size:1.2rem;font-weight:800;">
+            <div class="logo-text">
                 🏍️ Zaachila Moto
             </div>
-            <button class="status-toggle active" id="statusToggle" onclick="toggleStatus()">
+            <button class="status-toggle active" id="statusToggle" onclick="toggleEstado()">
                 🟢 Activo
             </button>
-            <div class="profile-avatar" onclick="showProfile()" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;">
-                👤
-            </div>
+            <button class="profile-btn" onclick="showToast('👤 Perfil de chofer')">👤</button>
         </header>
 
-        <!-- Main Screen -->
-        <div id="mainScreen">
-            <!-- Map -->
-            <div class="map-wrapper">
-                <div id="driverMap"></div>
-            </div>
-
-            <!-- Earnings -->
-            <div class="earnings-card">
-                <div style="display:flex;justify-content:space-between;align-items:center;">
-                    <div>
-                        <div style="opacity:0.8;">💰 Ganancias de Hoy</div>
-                        <div class="earnings-amount">$580</div>
-                        <div style="opacity:0.8;">8 servicios completados</div>
-                    </div>
-                    <div style="font-size:3rem;">💵</div>
-                </div>
-            </div>
-
-            <!-- Incoming Request -->
-            <div class="incoming-request" id="incomingRequest">
-                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
-                    <div style="font-size:2rem;">🔔</div>
-                    <h3>¡Nuevo Servicio!</h3>
-                </div>
-                <div style="background:#f5f5f5;padding:1rem;border-radius:12px;margin-bottom:1rem;">
-                    <div><strong>📍 Recoger en:</strong> Calle Principal #123</div>
-                    <div><strong>🏁 Destino:</strong> Mercado Municipal</div>
-                    <div><strong>📏 Distancia:</strong> 1.2 km</div>
-                    <div><strong>💰 Tarifa:</strong> $40 MXN</div>
-                    <div><strong>⭐ Cliente:</strong> 4.8</div>
-                </div>
-                <div class="request-actions">
-                    <button class="btn-accept" onclick="acceptService()">✅ Aceptar</button>
-                    <button class="btn-decline" onclick="declineService()">❌ Rechazar</button>
-                </div>
-            </div>
-
-            <!-- Active Ride -->
-            <div class="active-ride" id="activeRide">
-                <h3 style="margin-bottom:1rem;">🏍️ Servicio en Curso</h3>
-                <div class="ride-steps">
-                    <div class="ride-step">
-                        <div class="step-indicator completed">1</div>
-                        <div>
-                            <div style="font-weight:700;">Recoger al cliente</div>
-                            <div style="font-size:0.9rem;color:#666;">Calle Principal #123</div>
-                        </div>
-                    </div>
-                    <div class="ride-step">
-                        <div class="step-indicator">2</div>
-                        <div>
-                            <div style="font-weight:700;">Llevar a destino</div>
-                            <div style="font-size:0.9rem;color:#666;">Mercado Municipal</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="display:flex;gap:1rem;">
-                    <button class="btn-accept" onclick="completeService()" style="flex:1;">✔️ Finalizar Servicio</button>
-                    <button style="background:#2D1B69;color:white;border:none;padding:1rem;border-radius:15px;cursor:pointer;" onclick="openChatWithClient()">💬</button>
-                </div>
-                <button style="background:#f5f5f5;border:none;padding:1rem;border-radius:15px;width:100%;margin-top:0.5rem;cursor:pointer;color:#333;" onclick="reportFoundItem()">
-                    📦 Reportar Objeto Encontrado
-                </button>
+        <!-- Mapa -->
+        <div class="map-wrapper">
+            <div id="driverMap"></div>
+            <div class="map-overlay">
+                <button class="map-btn" onclick="centrarMapa()" title="Mi ubicación">📍</button>
+                <button class="map-btn" onclick="map.zoomIn()" title="Acercar">➕</button>
+                <button class="map-btn" onclick="map.zoomOut()" title="Alejar">➖</button>
             </div>
         </div>
 
-        <!-- Finance Screen -->
-        <div id="financeScreen" style="display:none;padding:1rem;">
+        <!-- Ganancias -->
+        <div class="earnings-card">
+            <div>
+                <div class="earnings-label">💰 Ganancias de Hoy</div>
+                <div class="earnings-amount" id="gananciasHoy">$0</div>
+                <div class="earnings-label" id="serviciosHoy">0 servicios</div>
+            </div>
+            <div class="earnings-icon">💵</div>
+        </div>
+
+        <!-- Panel Principal -->
+        <div class="main-panel" id="mainPanel">
+            <!-- Sin servicio activo -->
+            <div id="idleState">
+                <div class="panel-title">
+                    <h3>🏍️ Esperando servicios</h3>
+                </div>
+                <div class="stats-mini">
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-value" id="totalServicios">0</div>
+                        <div class="stat-mini-label">Total servicios</div>
+                    </div>
+                    <div class="stat-mini-card">
+                        <div class="stat-mini-value">⭐ <span id="calificacionPromedio">0</span></div>
+                        <div class="stat-mini-label">Calificación</div>
+                    </div>
+                </div>
+                <p style="text-align:center;color:#999;padding:1rem;">Mantente activo para recibir solicitudes cercanas</p>
+            </div>
+
+            <!-- Solicitud entrante -->
+            <div class="incoming-request" id="incomingRequest">
+                <div class="request-alert">
+                    🔔 ¡Nuevo servicio!
+                </div>
+                <div class="request-details">
+                    <div>📍 <strong>Recoger en:</strong> <span id="reqOrigen">---</span></div>
+                    <div>🏁 <strong>Destino:</strong> <span id="reqDestino">---</span></div>
+                    <div>📏 <strong>Distancia al cliente:</strong> <span id="reqDistancia">---</span></div>
+                    <div>💰 <strong>Tarifa:</strong> <span id="reqTarifa">$0</span></div>
+                </div>
+                <div class="request-actions">
+                    <button class="btn-accept" onclick="aceptarServicio()">✅ Aceptar</button>
+                    <button class="btn-decline" onclick="rechazarServicio()">❌ Rechazar</button>
+                </div>
+            </div>
+
+            <!-- Servicio activo -->
+            <div class="active-ride" id="activeRide">
+                <h3 style="margin-bottom:0.5rem;">🚀 Servicio en Curso</h3>
+                <div class="ride-steps">
+                    <div class="ride-step" id="rideStep1">
+                        <div class="step-indicator current">1</div>
+                        <div class="step-info">
+                            <div class="step-title">Recoger al cliente</div>
+                            <div class="step-address" id="step1Address">---</div>
+                        </div>
+                    </div>
+                    <div class="ride-step" id="rideStep2">
+                        <div class="step-indicator">2</div>
+                        <div class="step-info">
+                            <div class="step-title">Llevar a destino</div>
+                            <div class="step-address" id="step2Address">---</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn-full btn-primary-full" id="btnEtapa" onclick="avanzarEtapa()">
+                    🏍️ Iniciar Recogida
+                </button>
+                <div style="display:flex;gap:0.5rem;margin-top:0.5rem;">
+                    <button class="btn-full btn-outline-full" onclick="abrirChat()" style="flex:1;">💬 Chat</button>
+                    <button class="btn-full btn-outline-full" onclick="reportarObjeto()" style="flex:1;">📦 Objeto</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Pantalla Finanzas -->
+        <div id="screen-finanzas" class="screen">
             <h3 style="color:white;margin-bottom:1rem;">💰 Mis Finanzas</h3>
             <div class="finance-grid">
                 <div class="finance-card">
-                    <div>Hoy</div>
-                    <div class="finance-value">$580</div>
-                    <div>8 servicios</div>
+                    <div class="finance-label">Hoy</div>
+                    <div class="finance-value" id="finHoy">$0</div>
+                    <div class="finance-label" id="finHoyServicios">0 servicios</div>
                 </div>
                 <div class="finance-card">
-                    <div>Semana</div>
-                    <div class="finance-value">$3,240</div>
-                    <div>45 servicios</div>
+                    <div class="finance-label">Esta Semana</div>
+                    <div class="finance-value" id="finSemana">$0</div>
+                    <div class="finance-label" id="finSemanaServicios">0 servicios</div>
                 </div>
                 <div class="finance-card">
-                    <div>Mes</div>
-                    <div class="finance-value">$12,800</div>
-                    <div>180 servicios</div>
+                    <div class="finance-label">Este Mes</div>
+                    <div class="finance-value" id="finMes">$0</div>
+                    <div class="finance-label" id="finMesServicios">0 servicios</div>
                 </div>
                 <div class="finance-card">
-                    <div>Comisión</div>
-                    <div class="finance-value" style="color:#EF4444;">-$1,280</div>
-                    <div>10% admin</div>
+                    <div class="finance-label">Comisión (10%)</div>
+                    <div class="finance-value" style="color:#EF4444;" id="finComision">$0</div>
+                    <div class="finance-label">Para administración</div>
                 </div>
             </div>
         </div>
 
-        <!-- History Screen -->
-        <div id="historyScreen" style="display:none;padding:1rem;">
+        <!-- Pantalla Historial -->
+        <div id="screen-historial" class="screen">
             <h3 style="color:white;margin-bottom:1rem;">📋 Historial de Servicios</h3>
-            <div class="service-item">
-                <div>🏍️</div>
-                <div style="flex:1;">
-                    <div style="font-weight:700;">Centro → Mercado</div>
-                    <div style="font-size:0.9rem;color:#666;">15 Mar 2024 - $35</div>
-                </div>
-                <div>⭐ 5</div>
-            </div>
-            <div class="service-item">
-                <div>🏍️</div>
-                <div style="flex:1;">
-                    <div style="font-weight:700;">Parque → Iglesia</div>
-                    <div style="font-size:0.9rem;color:#666;">14 Mar 2024 - $40</div>
-                </div>
-                <div>⭐ 4</div>
+            <div id="historyList">
+                <div style="text-align:center;color:#999;padding:2rem;">Cargando historial...</div>
             </div>
         </div>
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <div class="nav-item active" onclick="switchScreen('main')">
+            <button class="nav-item active" onclick="switchScreen('main', this)">
                 <span class="nav-icon">🏠</span>
                 <small>Inicio</small>
-            </div>
-            <div class="nav-item" onclick="switchScreen('finance')">
+            </button>
+            <button class="nav-item" onclick="switchScreen('finanzas', this)">
                 <span class="nav-icon">💰</span>
                 <small>Finanzas</small>
-            </div>
-            <div class="nav-item" onclick="switchScreen('history')">
+            </button>
+            <button class="nav-item" onclick="switchScreen('historial', this)">
                 <span class="nav-icon">📋</span>
                 <small>Historial</small>
-            </div>
-            <div class="nav-item" onclick="showProfile()">
-                <span class="nav-icon">👤</span>
-                <small>Perfil</small>
-            </div>
+            </button>
         </div>
 
         <!-- Chat Modal -->
         <div class="chat-modal" id="chatModal">
-            <div class="chat-modal-header">
-                <span>💬 Chat con Cliente</span>
-                <button onclick="closeChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;">✕</button>
+            <div class="chat-header">
+                <span>💬 Chat con el cliente</span>
+                <button onclick="cerrarChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;">✕</button>
             </div>
-            <div class="chat-modal-body" id="chatBody">
-                <div style="margin-bottom:1rem;">
-                    <div style="background:#f0f0f0;padding:0.8rem;border-radius:15px;display:inline-block;max-width:80%;">
-                        ¿Cuánto tardas en llegar?
-                    </div>
-                </div>
+            <div class="chat-body" id="chatBody">
+                <div style="text-align:center;color:#999;padding:2rem;">Inicia una conversación</div>
             </div>
-            <div class="chat-modal-input">
-                <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
-                <button onclick="sendDriverMessage()" style="background:#2D1B69;color:white;border:none;padding:0.8rem 1.2rem;border-radius:25px;cursor:pointer;">Enviar</button>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatMessageInput" placeholder="Escribe un mensaje..." onkeypress="if(event.key==='Enter')enviarMensaje()">
+                <button class="chat-send-btn" onclick="enviarMensaje()">➤</button>
             </div>
         </div>
 
-        <!-- Report Form -->
-        <div class="report-form" id="reportForm">
-            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-                <h3>📦 Reportar Objeto Encontrado</h3>
-                <button onclick="closeReport()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">✕</button>
+        <!-- Reporte Overlay -->
+        <div class="report-overlay" id="reportOverlay">
+            <div class="report-form">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                    <h3>📦 Reportar Objeto Encontrado</h3>
+                    <button onclick="cerrarReporte()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">✕</button>
+                </div>
+                <textarea rows="3" id="reportDescription" placeholder="Describe el objeto encontrado..."></textarea>
+                <div class="upload-area" onclick="showToast('📸 Función de foto (simulación)')">
+                    📸 Toca para subir fotos del objeto
+                </div>
+                <button class="btn-submit" onclick="enviarReporte()">📤 Enviar Reporte</button>
             </div>
-            <textarea style="width:100%;padding:0.8rem;border:1px solid #ddd;border-radius:10px;margin-bottom:1rem;" rows="3" placeholder="Describe el objeto encontrado..."></textarea>
-            <div style="border:2px dashed #ddd;border-radius:15px;padding:2rem;text-align:center;margin-bottom:1rem;cursor:pointer;" onclick="alert('📸 Subir fotos (simulación)')">
-                📸 Toca para subir fotos
-            </div>
-            <button class="btn-accept" onclick="submitReport()" style="width:100%;">Enviar Reporte</button>
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <!-- Toast -->
+    <div id="toastContainer"></div>
+
     <script>
-        // Initialize Map
-        const driverMap = L.map('driverMap').setView([16.9516, -96.7491], 15);
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap'
-        }).addTo(driverMap);
+        // ========== CONFIGURACIÓN FIREBASE ==========
+        const firebaseConfig = {
+            apiKey: "AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",
+            authDomain: "zaachilamoto.firebaseapp.com",
+            databaseURL: "https://zaachilamoto-default-rtdb.firebaseio.com",
+            projectId: "zaachilamoto",
+            storageBucket: "zaachilamoto.firebasestorage.app",
+            messagingSenderId: "559788509526",
+            appId: "1:559788509526:web:c751d8d22068f09041aef7"
+        };
 
-        // Driver marker
-        const driverMarker = L.marker([16.9516, -96.7491], {
-            icon: L.divIcon({
-                className: 'driver-marker',
-                html: '<div style="background:#2D1B69;color:white;padding:5px 10px;border-radius:20px;font-weight:700;">🏍️ Tú</div>',
-                iconSize: [60, 30]
-            })
-        }).addTo(driverMap);
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const database = firebase.database();
 
-        // Status toggle
+        // ========== VARIABLES GLOBALES ==========
+        let map;
+        let driverMarker;
         let isActive = true;
+        let choferId = 'chofer001'; // ID de prueba
+        let currentServiceId = null;
+        let servicioActual = null;
+        let etapaActual = 1; // 1: recoger, 2: destino
+        let watchId = null;
+        let userLocation = { lat: 16.9520, lng: -96.7485 };
 
-        function toggleStatus() {
-            isActive = !isActive;
-            const btn = document.getElementById('statusToggle');
-            if (isActive) {
-                btn.className = 'status-toggle active';
-                btn.innerHTML = '🟢 Activo';
-                driverMap.setView([16.9516, -96.7491], 15);
-            } else {
-                btn.className = 'status-toggle inactive';
-                btn.innerHTML = '🔴 Inactivo';
+        const VILLA_ZAACHILA = [16.9516, -96.7491];
+
+        // ========== INICIALIZACIÓN ==========
+        function init() {
+            // Login con email de prueba o anónimo
+            const email = localStorage.getItem('chofer_email') || 'juan@email.com';
+            const password = localStorage.getItem('chofer_password') || '123456';
+
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    choferId = userCredential.user.uid;
+                    console.log('✅ Chofer autenticado:', choferId);
+                    inicializarApp();
+                })
+                .catch(() => {
+                    // Si falla, usar anónimo
+                    auth.signInAnonymously().then((userCredential) => {
+                        choferId = userCredential.user.uid;
+                        console.log('✅ Chofer anónimo:', choferId);
+                        inicializarApp();
+                    });
+                });
+        }
+
+        function inicializarApp() {
+            initMap();
+            iniciarGeolocalizacion();
+            cargarDatosChofer();
+            escucharServiciosPendientes();
+            cargarHistorial();
+            cargarFinanzas();
+        }
+
+        function initMap() {
+            map = L.map('driverMap').setView(VILLA_ZAACHILA, 15);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
+
+            driverMarker = L.marker(VILLA_ZAACHILA, {
+                icon: L.divIcon({
+                    className: 'driver-marker',
+                    html: '<div style="background:#2D1B69;color:white;padding:5px 12px;border-radius:20px;font-weight:700;font-size:13px;">🏍️ Tú</div>',
+                    iconSize: [65, 28]
+                })
+            }).addTo(map);
+        }
+
+        // ========== GEOLOCALIZACIÓN ==========
+        function iniciarGeolocalizacion() {
+            if (navigator.geolocation) {
+                watchId = navigator.geolocation.watchPosition(
+                    (position) => {
+                        userLocation = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude
+                        };
+                        driverMarker.setLatLng([userLocation.lat, userLocation.lng]);
+                        
+                        // Actualizar ubicación en Firebase
+                        if (choferId) {
+                            database.ref(`choferes/${choferId}/ubicacion`).set({
+                                lat: userLocation.lat,
+                                lng: userLocation.lng,
+                                timestamp: firebase.database.ServerValue.TIMESTAMP
+                            });
+                        }
+                    },
+                    (error) => {
+                        console.log('Usando ubicación predeterminada');
+                    },
+                    { enableHighAccuracy: true, maximumAge: 10000 }
+                );
+            }
+        }
+
+        // ========== DATOS DEL CHOFER ==========
+        function cargarDatosChofer() {
+            database.ref(`choferes/${choferId}`).on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    document.getElementById('totalServicios').textContent = data.total_servicios || '0';
+                    document.getElementById('calificacionPromedio').textContent = data.calificacion || '0';
+                    
+                    const ganancias = data.ganancias || {};
+                    const hoy = new Date().toISOString().split('T')[0];
+                    document.getElementById('gananciasHoy').textContent = '$' + (ganancias[hoy] || 0);
+                    document.getElementById('serviciosHoy').textContent = (data.servicios_hoy || 0) + ' servicios';
+                }
+            });
+        }
+
+        // ========== ESCUCHAR SERVICIOS ==========
+        function escucharServiciosPendientes() {
+            // Escuchar servicios en estado "buscando"
+            database.ref('servicios').orderByChild('estado').equalTo('buscando')
+                .on('child_added', (snapshot) => {
+                    if (isActive && !currentServiceId) {
+                        mostrarSolicitudEntrante(snapshot.key, snapshot.val());
+                    }
+                });
+        }
+
+        function mostrarSolicitudEntrante(serviceId, servicio) {
+            currentServiceId = serviceId;
+            servicioActual = servicio;
+
+            document.getElementById('idleState').style.display = 'none';
+            document.getElementById('incomingRequest').classList.add('active');
+            document.getElementById('activeRide').classList.remove('active');
+
+            document.getElementById('reqOrigen').textContent = servicio.origen?.direccion || 'Ubicación del cliente';
+            document.getElementById('reqDestino').textContent = servicio.destino?.direccion || 'No especificado';
+            
+            const distancia = calcularDistancia(
+                userLocation.lat, userLocation.lng,
+                servicio.origen?.lat || VILLA_ZAACHILA[0],
+                servicio.origen?.lng || VILLA_ZAACHILA[1]
+            );
+            document.getElementById('reqDistancia').textContent = distancia.toFixed(1) + ' km';
+            document.getElementById('reqTarifa').textContent = '$' + (servicio.tarifa_estimada || '40');
+
+            // Vibrar
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+        }
+
+        // ========== ACEPTAR / RECHAZAR ==========
+        function aceptarServicio() {
+            if (!currentServiceId) return;
+
+            database.ref(`servicios/${currentServiceId}`).update({
+                choferId: choferId,
+                estado: 'aceptado',
+                choferNombre: 'Juan Pérez',
+                choferPlaca: 'XYZ-123',
+                choferRating: '4.8'
+            }).then(() => {
                 document.getElementById('incomingRequest').classList.remove('active');
-            }
+                document.getElementById('activeRide').classList.add('active');
+                
+                document.getElementById('step1Address').textContent = servicioActual?.origen?.direccion || 'Cliente';
+                document.getElementById('step2Address').textContent = servicioActual?.destino?.direccion || 'Destino';
+                document.getElementById('btnEtapa').textContent = '🏍️ Iniciar Recogida';
+                
+                etapaActual = 1;
+                updateEtapasUI();
+                showToast('✅ Servicio aceptado');
+            });
         }
 
-        // Simulate incoming request
-        function simulateIncoming() {
-            if (isActive) {
-                document.getElementById('incomingRequest').classList.add('active');
-                // Vibrate on mobile
-                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-            }
-        }
-
-        // Accept service
-        function acceptService() {
+        function rechazarServicio() {
             document.getElementById('incomingRequest').classList.remove('active');
-            document.getElementById('activeRide').classList.add('active');
-            alert('✅ Servicio aceptado. Dirígete a recoger al cliente.');
+            document.getElementById('idleState').style.display = 'block';
+            showToast('❌ Servicio rechazado');
+            currentServiceId = null;
+            servicioActual = null;
         }
 
-        // Decline service
-        function declineService() {
-            document.getElementById('incomingRequest').classList.remove('active');
-            alert('❌ Servicio rechazado');
-        }
-
-        // Complete service
-        function completeService() {
-            if (confirm('¿Confirmas finalizar el servicio? Cobro: $40 MXN en efectivo')) {
-                document.getElementById('activeRide').classList.remove('active');
-                alert('✅ Servicio completado. Ganancias actualizadas.');
+        // ========== ETAPAS DEL SERVICIO ==========
+        function avanzarEtapa() {
+            if (etapaActual === 1) {
+                // Iniciar recogida
+                database.ref(`servicios/${currentServiceId}`).update({
+                    estado: 'en_camino'
+                });
+                etapaActual = 2;
+                document.getElementById('btnEtapa').textContent = '📍 Llegué al Cliente';
+                updateEtapasUI();
+                showToast('📍 Dirígete al cliente');
+            } else if (etapaActual === 2) {
+                // Llegó al cliente - Iniciar viaje
+                database.ref(`servicios/${currentServiceId}`).update({
+                    estado: 'en_servicio'
+                });
+                etapaActual = 3;
+                document.getElementById('btnEtapa').textContent = '🏁 Finalizar Viaje';
+                updateEtapasUI();
+                showToast('🚀 Iniciando viaje al destino');
+            } else if (etapaActual === 3) {
+                // Finalizar viaje
+                finalizarServicio();
             }
         }
 
-        // Chat
-        function openChatWithClient() {
+        function updateEtapasUI() {
+            const step1 = document.getElementById('rideStep1').querySelector('.step-indicator');
+            const step2 = document.getElementById('rideStep2').querySelector('.step-indicator');
+            
+            step1.className = 'step-indicator';
+            step2.className = 'step-indicator';
+            
+            if (etapaActual === 1) {
+                step1.classList.add('current');
+            } else if (etapaActual === 2) {
+                step1.classList.add('completed');
+                step2.classList.add('current');
+            } else if (etapaActual >= 3) {
+                step1.classList.add('completed');
+                step2.classList.add('current');
+            }
+        }
+
+        function finalizarServicio() {
+            const cobro = servicioActual?.tarifa_estimada || 40;
+            
+            if (confirm(`💰 ¿Cobrar $${cobro} en efectivo y finalizar el servicio?`)) {
+                const hoy = new Date().toISOString().split('T')[0];
+                
+                database.ref(`servicios/${currentServiceId}`).update({
+                    estado: 'completado',
+                    cobro: cobro,
+                    fecha: hoy,
+                    timestamp_fin: firebase.database.ServerValue.TIMESTAMP
+                }).then(() => {
+                    // Actualizar ganancias
+                    database.ref(`choferes/${choferId}/ganancias/${hoy}`)
+                        .transaction((ganancia) => (ganancia || 0) + cobro);
+                    
+                    // Registrar comisión
+                    database.ref('admin/comisiones').push({
+                        servicioId: currentServiceId,
+                        choferId: choferId,
+                        monto_servicio: cobro,
+                        comision: cobro * 0.10,
+                        fecha: hoy
+                    });
+
+                    showToast('✅ Servicio completado - $' + cobro);
+                    resetearServicio();
+                });
+            }
+        }
+
+        function resetearServicio() {
+            currentServiceId = null;
+            servicioActual = null;
+            etapaActual = 1;
+            
+            document.getElementById('activeRide').classList.remove('active');
+            document.getElementById('idleState').style.display = 'block';
+            
+            cargarDatosChofer();
+            cargarHistorial();
+            cargarFinanzas();
+        }
+
+        // ========== CHAT ==========
+        function abrirChat() {
             document.getElementById('chatModal').classList.add('active');
+            if (currentServiceId) {
+                database.ref(`chats/${currentServiceId}`).on('child_added', (snapshot) => {
+                    const msg = snapshot.val();
+                    const chatBody = document.getElementById('chatBody');
+                    const bubble = document.createElement('div');
+                    bubble.className = 'chat-bubble ' + (msg.remitente === 'chofer' ? 'sent' : 'received');
+                    bubble.textContent = msg.mensaje;
+                    chatBody.appendChild(bubble);
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                });
+            }
         }
 
-        function closeChat() {
+        function cerrarChat() {
             document.getElementById('chatModal').classList.remove('active');
         }
 
-        function sendDriverMessage() {
-            const input = document.getElementById('chatInput');
-            const message = input.value.trim();
-            if (message) {
-                const chatBody = document.getElementById('chatBody');
-                chatBody.innerHTML += `
-                    <div style="margin-bottom:1rem;text-align:right;">
-                        <div style="background:#2D1B69;color:white;padding:0.8rem;border-radius:15px;display:inline-block;max-width:80%;">
-                            ${message}
-                        </div>
-                    </div>
-                `;
-                input.value = '';
-                chatBody.scrollTop = chatBody.scrollHeight;
-            }
-        }
-
-        // Report found item
-        function reportFoundItem() {
-            document.getElementById('reportForm').classList.add('active');
-        }
-
-        function closeReport() {
-            document.getElementById('reportForm').classList.remove('active');
-        }
-
-        function submitReport() {
-            alert('✅ Reporte enviado al administrador y cliente');
-            closeReport();
-        }
-
-        // Switch screens
-        function switchScreen(screen) {
-            document.getElementById('mainScreen').style.display = screen === 'main' ? 'block' : 'none';
-            document.getElementById('financeScreen').style.display = screen === 'finance' ? 'block' : 'none';
-            document.getElementById('historyScreen').style.display = screen === 'history' ? 'block' : 'none';
+        function enviarMensaje() {
+            const input = document.getElementById('chatMessageInput');
+            const mensaje = input.value.trim();
             
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            event.target.closest('.nav-item').classList.add('active');
-        }
-
-        // Profile
-        function showProfile() {
-            alert('👤 Mi Perfil\n\nNombre: Juan Pérez\nMoto: XYZ-123\nCalificación: ⭐ 4.9\nTotal servicios: 256');
-        }
-
-        // Simulate incoming requests
-        setInterval(() => {
-            if (isActive && Math.random() > 0.7) {
-                simulateIncoming();
+            if (mensaje && currentServiceId) {
+                database.ref(`chats/${currentServiceId}`).push({
+                    remitente: 'chofer',
+                    userId: choferId,
+                    mensaje: mensaje,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+                input.value = '';
             }
-        }, 15000);
-
-        // Update location periodically
-        if (navigator.geolocation) {
-            setInterval(() => {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        const { latitude, longitude } = position.coords;
-                        driverMarker.setLatLng([latitude, longitude]);
-                    },
-                    () => {}
-                );
-            }, 10000);
         }
 
-        console.log('🏍️ Zaachila Moto - Chofer App Ready');
+        // ========== REPORTAR OBJETO ==========
+        function reportarObjeto() {
+            document.getElementById('reportOverlay').classList.add('active');
+        }
+
+        function cerrarReporte() {
+            document.getElementById('reportOverlay').classList.remove('active');
+        }
+
+        function enviarReporte() {
+            const descripcion = document.getElementById('reportDescription').value.trim();
+            if (!descripcion) {
+                showToast('⚠️ Describe el objeto encontrado');
+                return;
+            }
+
+            if (currentServiceId) {
+                database.ref('reportes/objetos_encontrados').push({
+                    servicioId: currentServiceId,
+                    choferId: choferId,
+                    descripcion: descripcion,
+                    estado: 'pendiente',
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                }).then(() => {
+                    showToast('✅ Reporte enviado al administrador');
+                    cerrarReporte();
+                    document.getElementById('reportDescription').value = '';
+                });
+            }
+        }
+
+        // ========== ESTADO ACTIVO/INACTIVO ==========
+        function toggleEstado() {
+            isActive = !isActive;
+            const btn = document.getElementById('statusToggle');
+            
+            if (isActive) {
+                btn.className = 'status-toggle active';
+                btn.textContent = '🟢 Activo';
+                iniciarGeolocalizacion();
+                database.ref(`choferes/${choferId}`).update({ estado: 'activo' });
+                showToast('✅ Estás disponible para servicios');
+            } else {
+                btn.className = 'status-toggle inactive';
+                btn.textContent = '🔴 Inactivo';
+                if (watchId) navigator.geolocation.clearWatch(watchId);
+                database.ref(`choferes/${choferId}`).update({ estado: 'inactivo' });
+                showToast('🔴 Has pausado los servicios');
+            }
+        }
+
+        // ========== FINANZAS ==========
+        function cargarFinanzas() {
+            database.ref(`choferes/${choferId}/ganancias`).once('value', (snapshot) => {
+                const ganancias = snapshot.val() || {};
+                const hoy = new Date().toISOString().split('T')[0];
+                
+                document.getElementById('finHoy').textContent = '$' + (ganancias[hoy] || 0);
+                document.getElementById('finHoyServicios').textContent = '~ servicios';
+                
+                // Simular semana y mes
+                const total = Object.values(ganancias).reduce((sum, val) => sum + val, 0);
+                document.getElementById('finSemana').textContent = '$' + Math.round(total * 0.7);
+                document.getElementById('finMes').textContent = '$' + total;
+                document.getElementById('finComision').textContent = '$' + Math.round(total * 0.10);
+            });
+        }
+
+        // ========== HISTORIAL ==========
+        function cargarHistorial() {
+            database.ref('servicios')
+                .orderByChild('choferId')
+                .equalTo(choferId)
+                .limitToLast(10)
+                .once('value', (snapshot) => {
+                    const servicios = snapshot.val();
+                    const container = document.getElementById('historyList');
+                    
+                    if (!servicios) {
+                        container.innerHTML = '<div style="text-align:center;color:#999;padding:2rem;">Sin servicios aún</div>';
+                        return;
+                    }
+
+                    let html = '';
+                    Object.entries(servicios).reverse().forEach(([id, servicio]) => {
+                        html += `
+                            <div class="service-item">
+                                <div>🏍️</div>
+                                <div style="flex:1;">
+                                    <div><strong>${servicio.origen?.direccion || 'Origen'} → ${servicio.destino?.direccion || 'Destino'}</strong></div>
+                                    <div style="font-size:0.8rem;color:#666;">${servicio.fecha || 'Fecha'} - ${servicio.estado}</div>
+                                </div>
+                                <div class="service-price">$${servicio.cobro || servicio.tarifa_estimada || '0'}</div>
+                            </div>
+                        `;
+                    });
+                    
+                    container.innerHTML = html;
+                });
+        }
+
+        // ========== UTILIDADES ==========
+        function calcularDistancia(lat1, lon1, lat2, lon2) {
+            const R = 6371;
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) ** 2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        function centrarMapa() {
+            map.setView([userLocation.lat, userLocation.lng], 16);
+        }
+
+        function switchScreen(screenName, element) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            
+            if (screenName === 'main') {
+                document.getElementById('mainPanel').style.display = 'block';
+            } else {
+                document.getElementById('mainPanel').style.display = 'none';
+            }
+            
+            const screen = document.getElementById('screen-' + screenName);
+            if (screen) screen.classList.add('active');
+            if (element) element.classList.add('active');
+            
+            if (screenName === 'finanzas') cargarFinanzas();
+            if (screenName === 'historial') cargarHistorial();
+        }
+
+        function showToast(mensaje) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = mensaje;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // ========== INICIAR ==========
+        window.addEventListener('DOMContentLoaded', init);
+        console.log('🏍️ Zaachila Moto - Chofer App Listo');
     </script>
 </body>
 </html>
