@@ -9,6 +9,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
@@ -29,8 +30,9 @@
         .login-screen h1 span{color:var(--acc)}
         .inp{width:100%;max-width:300px;padding:.7rem;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);color:var(--txt);margin-bottom:.5rem;outline:0;font-size:.85rem}
         .inp:focus{border-color:var(--acc)}
-        .btn{width:100%;max-width:300px;padding:.7rem;border-radius:var(--r);font-weight:700;cursor:pointer;border:0;font-size:.85rem}
+        .btn{width:100%;max-width:300px;padding:.7rem;border-radius:var(--r);font-weight:700;cursor:pointer;border:0;font-size:.85rem;transition:.2s}
         .btn-acc{background:var(--acc);color:#fff}
+        .btn-acc:hover{opacity:.9}
         .login-err{background:rgba(255,71,87,.1);border:1px solid var(--red);padding:.5rem;border-radius:var(--r);margin-bottom:.5rem;font-size:.75rem;display:none;max-width:300px}
 
         /* DASHBOARD */
@@ -40,7 +42,7 @@
         .topbar{background:var(--bg2);padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
         .topbar h2{font-size:.9rem;display:flex;align-items:center;gap:.3rem}
         .topbar-right{display:flex;gap:.4rem;align-items:center}
-        .toggle{padding:.3rem .6rem;border-radius:15px;font-size:.65rem;font-weight:700;cursor:pointer;border:0}
+        .toggle{padding:.3rem .6rem;border-radius:15px;font-size:.65rem;font-weight:700;cursor:pointer;border:0;transition:.2s}
         .toggle.on{background:var(--green);color:#000}
         .toggle.off{background:var(--red);color:#fff}
         .btn-sm{padding:.3rem .6rem;border-radius:8px;font-size:.65rem;background:var(--card);border:1px solid var(--bd);color:var(--txt2);cursor:pointer}
@@ -55,7 +57,7 @@
         .tab.on{color:var(--acc);border-bottom-color:var(--acc)}
 
         /* Content */
-        .content{flex-shrink:0;max-height:40vh;overflow-y:auto;padding:.6rem}
+        .content{flex-shrink:0;max-height:42vh;overflow-y:auto;padding:.6rem}
         .content::-webkit-scrollbar{width:3px}
         .content::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
 
@@ -81,9 +83,10 @@
         .ride-step .info{flex:1;font-size:.7rem}
         .ride-step .addr{font-size:.6rem;color:var(--txt3)}
 
-        .btn-full{width:100%;padding:.6rem;border-radius:var(--r);font-weight:700;font-size:.75rem;cursor:pointer;border:0;margin-top:.3rem}
+        .btn-full{width:100%;padding:.6rem;border-radius:var(--r);font-weight:700;font-size:.75rem;cursor:pointer;border:0;margin-top:.3rem;transition:.2s}
         .btn-purple{background:var(--acc);color:#fff}
         .btn-outline{background:transparent;border:1px solid var(--bd);color:var(--txt2)}
+        .btn-red{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3)}
 
         /* Chat Modal */
         .chat-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:999;display:flex;flex-direction:column}
@@ -101,6 +104,9 @@
 
         .empty{text-align:center;color:var(--txt3);padding:1.5rem;font-size:.75rem}
         .badge-new{background:var(--red);color:#fff;padding:2px 6px;border-radius:10px;font-size:.55rem;font-weight:700;animation:pulse 1.5s infinite}
+        
+        .stars{display:flex;gap:.2rem}
+        .stars span{color:var(--warn);font-size:.7rem}
     </style>
 </head>
 <body>
@@ -128,19 +134,17 @@
 
         <div class="map-wrap"><div id="driverMap"></div></div>
 
-        <!-- Tabs -->
         <div class="tabs">
             <div class="tab on" onclick="switchTab('home',this)">🏠 Inicio</div>
             <div class="tab" onclick="switchTab('earnings',this)">💰 Ganancias</div>
             <div class="tab" onclick="switchTab('history',this)">📋 Historial</div>
         </div>
 
-        <!-- Contenido -->
         <div class="content" id="tabContent">
             <!-- HOME -->
             <div id="tab-home">
                 <div id="idleView">
-                    <div class="card"><div class="card-row"><div><div class="card-lbl">SERVICIOS HOY</div><div class="card-val" id="hoyCount">0</div></div><div style="font-size:2rem;">📋</div></div></div>
+                    <div class="card"><div class="card-row"><div><div class="card-lbl">SERVICIOS HOY</div><div class="card-val" id="hoyCount">0</div></div><div style="font-size:2rem">📋</div></div></div>
                     <div class="empty">🟢 Disponible para recibir solicitudes</div>
                 </div>
                 <div id="incomingView" style="display:none"></div>
@@ -150,10 +154,10 @@
             <div id="tab-earnings" style="display:none">
                 <div class="card"><div class="card-lbl">GANANCIAS HOY</div><div class="card-val" id="earnToday">$0</div></div>
                 <div class="card"><div class="card-lbl">SERVICIOS HOY</div><div class="card-val" id="earnServices">0</div></div>
-                <div class="card"><div class="card-lbl">GANANCIAS SEMANA</div><div class="card-val" id="earnWeek">$0</div></div>
-                <div class="card"><div class="card-lbl">GANANCIAS MES</div><div class="card-val" id="earnMonth">$0</div></div>
+                <div class="card"><div class="card-lbl">SEMANA</div><div class="card-val" id="earnWeek">$0</div></div>
+                <div class="card"><div class="card-lbl">MES</div><div class="card-val" id="earnMonth">$0</div></div>
                 <div class="card"><div class="card-lbl">COMISIÓN (10%)</div><div class="card-val" style="color:var(--red)" id="earnComm">$0</div></div>
-                <div class="card"><div class="card-lbl">⭐ CALIFICACIÓN</div><div class="card-val" id="earnRating">0</div></div>
+                <div class="card"><div class="card-row"><div><div class="card-lbl">⭐ CALIFICACIÓN</div><div class="card-val" id="earnRating">0</div></div><div class="stars" id="starsDisplay"></div></div></div>
             </div>
             <!-- HISTORY -->
             <div id="tab-history" style="display:none">
@@ -166,9 +170,8 @@
 <script>
 const fb={apiKey:"AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",authDomain:"zaachilamoto.firebaseapp.com",databaseURL:"https://zaachilamoto-default-rtdb.firebaseio.com",projectId:"zaachilamoto",storageBucket:"zaachilamoto.firebasestorage.app",messagingSenderId:"559788509526",appId:"1:559788509526:web:c751d8d22068f09041aef7"};
 firebase.initializeApp(fb);
-const auth=firebase.auth(),db=firebase.database();
-
-let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false;
+const auth=firebase.auth(),db=firebase.database(),storage=firebase.storage();
+let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calificacion=0;
 const ZA=[16.9516,-96.7491];
 
 // ========== LOGIN ==========
@@ -178,7 +181,7 @@ function login(){
     if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}
     btn.disabled=true;btn.textContent='...';err.style.display='none';
     auth.signInWithEmailAndPassword(e,p).then(u=>{uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);showDash()})
-    .catch(er=>{err.textContent=er.code==='auth/wrong-password'?'Contraseña incorrecta':'Error';err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})
+    .catch(er=>{let m='Error';if(er.code==='auth/wrong-password')m='Contraseña incorrecta';else if(er.code==='auth/user-not-found')m='Chofer no registrado';err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})
 }
 
 function showDash(){
@@ -202,7 +205,7 @@ function initMap(){
 }
 
 function getPos(){
-    if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP})},{},{enableHighAccuracy:true});
+    if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP})},()=>{},{enableHighAccuracy:true});
 }
 
 // ========== DATOS ==========
@@ -219,7 +222,9 @@ function loadData(){
         document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);
         document.getElementById('earnMonth').textContent='$'+Math.round((g[hoy]||0)*22);
         document.getElementById('earnComm').textContent='$'+Math.round((g[hoy]||0)*0.1);
-        document.getElementById('earnRating').textContent='⭐ '+(d.calificacion||'0');
+        calificacion=d.calificacion||0;
+        document.getElementById('earnRating').textContent='⭐ '+calificacion;
+        document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calificacion)?'★':'☆'}</span>`).join('');
     });
 }
 
@@ -230,11 +235,9 @@ function toggleStatus(){
     else{btn.className='toggle off';btn.textContent='INACTIVO';db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';toast('Pausado')}
 }
 
-// ========== ESCUCHAR SERVICIOS ==========
+// ========== SERVICIOS ==========
 function listenServices(){
-    db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{
-        if(active&&!sid)showIncoming(s.key,s.val());
-    });
+    db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{if(active&&!sid)showIncoming(s.key,s.val())});
 }
 
 function showIncoming(id,data){
@@ -242,19 +245,13 @@ function showIncoming(id,data){
     document.getElementById('idleView').style.display='none';
     document.getElementById('incomingView').style.display='block';
     document.getElementById('incomingView').innerHTML=`
-        <div class="incoming">
-            <div class="inc-header">🔔 Nueva solicitud</div>
-            <div class="inc-row"><span>Origen</span><b>${data.origen?.direccion||'Cliente'}</b></div>
-            <div class="inc-row"><span>Destino</span><b>${data.destino?.direccion||'---'}</b></div>
-            <div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,data.origen?.lat||ZA[0],data.origen?.lng||ZA[1]).toFixed(1)} km</b></div>
-            <div class="inc-row"><span>Tarifa sugerida</span><b>$${data.tarifa_estimada||40}</b></div>
-            <div class="inc-btns">
-                <button class="btn-accept" onclick="accept()">Aceptar</button>
-                <button class="btn-deny" onclick="deny()">Rechazar</button>
-            </div>
-        </div>`;
-    if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);
-    playSound('incoming');
+        <div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div>
+        <div class="inc-row"><span>Origen</span><b>${data.origen?.direccion||'Cliente'}</b></div>
+        <div class="inc-row"><span>Destino</span><b>${data.destino?.direccion||'---'}</b></div>
+        <div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,data.origen?.lat||ZA[0],data.origen?.lng||ZA[1]).toFixed(1)} km</b></div>
+        <div class="inc-row"><span>Tarifa sugerida</span><b>$${data.tarifa_estimada||40}</b></div>
+        <div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`;
+    if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);playSound('incoming');
 }
 
 function accept(){
@@ -262,11 +259,9 @@ function accept(){
     const price=prompt('💰 Tarifa a cobrar ($):',base);
     if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}
     const fare=parseInt(price);
-    db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:document.getElementById('choferName').textContent,choferPlaca:'---',choferRating:'4.5',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
-        document.getElementById('incomingView').style.display='none';
-        document.getElementById('idleView').style.display='block';
-        toast('Tarifa enviada: $'+fare);
-        listenConfirm(sid);
+    db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:document.getElementById('choferName').textContent,choferPlaca:'---',choferRating:String(calificacion),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
+        document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';
+        toast('Tarifa enviada: $'+fare);listenConfirm(sid);
     });
 }
 
@@ -281,25 +276,23 @@ function listenConfirm(id){
 function deny(){
     if(!sid)return;
     db.ref(`servicios/${sid}`).update({estado:'rechazado',choferId:uid,ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
-        document.getElementById('incomingView').style.display='none';
-        document.getElementById('idleView').style.display='block';sid=null;sdata=null;toast('Rechazado');
+        document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';sid=null;sdata=null;toast('Rechazado');
     });
 }
 
 function showActive(){
-    document.getElementById('idleView').style.display='none';
-    document.getElementById('incomingView').style.display='none';
-    document.getElementById('activeView').style.display='block';
-    step=1;updateActiveUI();
+    document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='none';
+    document.getElementById('activeView').style.display='block';step=1;updateActiveUI();
 }
 
 function updateActiveUI(){
     document.getElementById('activeView').innerHTML=`
         <div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger al cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div>
         <div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div>
-        <button class="btn-full btn-purple" onclick="nextStep()">${step===1?'Iniciar Recogida':step===2?'Llegué al Cliente':'Finalizar Viaje'}</button>
-        <button class="btn-full btn-outline" onclick="openChat()" style="margin-top:.3rem">💬 Chat <span id="chatBadge" style="display:none" class="badge-new">Nuevo</span></button>
-        <button class="btn-full" style="background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3);margin-top:.3rem" onclick="finishNow()">🏁 Finalizar ahora</button>`;
+        <button class="btn-full btn-purple" onclick="nextStep()">${step===1?'🏍️ Iniciar Recogida':step===2?'📍 Llegué al Cliente':'🏁 Finalizar Viaje'}</button>
+        <button class="btn-full btn-outline" onclick="openChat()">💬 Chat <span id="chatBadge" class="badge-new" style="display:none">Nuevo</span></button>
+        <button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto encontrado</button>
+        <button class="btn-full btn-red" onclick="finishNow()">🏁 Finalizar ahora</button>`;
 }
 
 function nextStep(){
@@ -315,83 +308,81 @@ function finishRide(){
         db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});
         db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);
         db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);
+        db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);
         db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});
-        resetRide();toast('✅ Completado: $'+fare);loadData();
+        resetRide();toast('✅ Completado: $'+fare);loadData();loadHistory();
     }
 }
 
 function finishNow(){if(confirm('¿Finalizar viaje?')){step=3;finishRide()}}
 
-function resetRide(){
-    sid=null;sdata=null;step=1;
-    document.getElementById('activeView').style.display='none';
-    document.getElementById('idleView').style.display='block';
-    loadData();loadHistory();
+function resetRide(){sid=null;sdata=null;step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';loadData();loadHistory()}
+
+// ========== REPORTAR OBJETO ENCONTRADO ==========
+function reportFound(){
+    if(!sid)return;
+    const desc=prompt('📦 Describe el objeto encontrado:');
+    if(!desc)return;
+    
+    if(confirm('¿Deseas subir una foto del objeto?')){
+        const input=document.createElement('input');input.type='file';input.accept='image/*';
+        input.onchange=function(){
+            const file=input.files[0];
+            if(file){
+                const ref=storage.ref(`objetos/${sid}_${Date.now()}`);
+                ref.put(file).then(()=>ref.getDownloadURL()).then(url=>{
+                    db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:desc,foto:url,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>toast('✅ Reporte enviado con foto'))
+                }).catch(()=>{saveReportNoFoto(desc)});
+            }
+        };
+        input.click();
+    }else{saveReportNoFoto(desc)}
+}
+
+function saveReportNoFoto(desc){
+    db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:desc,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>toast('✅ Reporte enviado'))
 }
 
 // ========== CHAT ==========
 function listenChats(){
     db.ref('chats').on('child_added',snap=>{
-        const msgs=snap.val();
-        if(snap.key===sid){
-            Object.values(msgs).forEach(m=>{
-                if(m.remitente==='cliente'&&!chatOpen){
-                    document.getElementById('chatBadge').style.display='inline-block';
-                    playSound('message');
-                    if(navigator.vibrate)navigator.vibrate(100);
-                }
-            });
+        if(snap.key===sid&&!chatOpen){
+            const msgs=snap.val();if(!msgs)return;
+            const last=Object.values(msgs).pop();
+            if(last&&last.remitente==='cliente'){document.getElementById('chatBadge')?.style?.display='inline-block';playSound('msg');if(navigator.vibrate)navigator.vibrate(100)}
         }
     });
 }
 
 function openChat(){
     if(!sid)return;
-    chatOpen=true;
-    document.getElementById('chatBadge').style.display='none';
-    
-    const div=document.createElement('div');div.className='chat-modal';
-    div.innerHTML=`<div class="chat-header"><span>💬 Chat</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;
-    document.body.appendChild(div);
-    
-    db.ref(`chats/${sid}`).on('child_added',snap=>{
-        const m=snap.val();
-        const el=document.getElementById('chatMsgs');
-        if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}
-    });
+    chatOpen=true;const badge=document.getElementById('chatBadge');if(badge)badge.style.display='none';
+    const d=document.createElement('div');d.className='chat-modal';
+    d.innerHTML=`<div class="chat-header"><span>💬 Chat con el cliente</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;
+    document.body.appendChild(d);
+    db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}});
 }
 
 function closeChat(btn){btn.closest('.chat-modal').remove();chatOpen=false}
 
-window.sendMsg=function(){
-    const input=document.getElementById('chatInput');
-    const msg=input?.value.trim();
-    if(msg&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:msg,ts:firebase.database.ServerValue.TIMESTAMP});input.value=''}
-}
+window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 
 // ========== HISTORIAL ==========
 function loadHistory(){
     if(!uid)return;
-    db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(15).once('value',s=>{
+    db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value',s=>{
         const d=s.val();let h='';
         if(!d){document.getElementById('historyList').innerHTML='<div class="empty">Sin servicios</div>';return}
         Object.entries(d).reverse().forEach(([id,v])=>{
-            h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`;
+            h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`
         });
-        document.getElementById('historyList').innerHTML=h;
+        document.getElementById('historyList').innerHTML=h
     });
 }
 
 // ========== SONIDOS ==========
 function playSound(type){
-    try{
-        const ctx=new(window.AudioContext||window.webkitAudioContext)();
-        const osc=ctx.createOscillator();const gain=ctx.createGain();
-        osc.connect(gain);gain.connect(ctx.destination);
-        if(type==='incoming'){osc.frequency.value=800;gain.gain.value=.3;osc.start();osc.stop(ctx.currentTime+.3)}
-        else if(type==='accept'){osc.frequency.value=600;gain.gain.value=.2;osc.start();osc.stop(ctx.currentTime+.2)}
-        else if(type==='message'){osc.frequency.value=1000;gain.gain.value=.15;osc.start();osc.stop(ctx.currentTime+.1)}
-    }catch(e){}
+    try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(type==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(type==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(type==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}
 }
 
 // ========== TABS ==========
@@ -399,12 +390,12 @@ function switchTab(name,el){
     document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');
     document.getElementById('tab-'+name).style.display='block';
     document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');
-    if(name==='earnings')loadData();
-    if(name==='history')loadHistory();
+    if(name==='earnings')loadData();if(name==='history')loadHistory();
 }
 
 function calcDist(lat1,lon1,lat2,lon2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
 function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2500)}
+
 document.addEventListener('keypress',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')login()});
 window.addEventListener('resize',()=>{if(map)setTimeout(()=>map.invalidateSize(),100)});
 </script>
