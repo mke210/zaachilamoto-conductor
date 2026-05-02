@@ -1,82 +1,511 @@
-// ========== REEMPLAZAR FUNCIÓN aceptarServicio ==========
-function aceptarServicio() {
-    if (!currentServiceId || !servicioActual) return;
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#0F0D15">
+    <title>Zaachila Moto - Chofer</title>
     
-    // El chofer propone una tarifa
-    const tarifaBase = servicioActual.tarifa_estimada || 40;
-    const tarifaPropuesta = prompt(
-        '💰 Propón la tarifa al cliente:\n\n' +
-        'Tarifa sugerida: $' + tarifaBase + '\n\n' +
-        'Ingresa el monto a cobrar:',
-        tarifaBase
-    );
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
     
-    if (!tarifaPropuesta || isNaN(tarifaPropuesta) || parseInt(tarifaPropuesta) <= 0) {
-        showToast('⚠️ Debes ingresar una tarifa válida');
-        return;
-    }
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
     
-    const tarifaFinal = parseInt(tarifaPropuesta);
-    
-    database.ref(`servicios/${currentServiceId}`).update({
-        choferId: choferId,
-        estado: 'tarifa_propuesta',
-        tarifa_propuesta: tarifaFinal,
-        choferNombre: document.getElementById('choferNameDisplay').textContent,
-        choferPlaca: 'XYZ-123',
-        choferRating: document.getElementById('calificacionPromedio').textContent,
-        timestamp_propuesta: firebase.database.ServerValue.TIMESTAMP
-    }).then(() => {
-        document.getElementById('incomingRequest').classList.remove('active');
-        document.getElementById('idleState').style.display = 'block';
-        showToast('💰 Tarifa enviada: $' + tarifaFinal + ' - Esperando confirmación');
-        
-        // Escuchar si el cliente acepta
-        escucharConfirmacionCliente(currentServiceId);
-    });
-}
-
-// ========== AGREGAR FUNCIÓN escucharConfirmacionCliente ==========
-function escucharConfirmacionCliente(serviceId) {
-    database.ref(`servicios/${serviceId}/estado`).on('value', (snap) => {
-        const estado = snap.val();
-        
-        if (estado === 'aceptado') {
-            // Cliente aceptó - mostrar servicio activo
-            document.getElementById('idleState').style.display = 'none';
-            document.getElementById('activeRide').classList.add('active');
-            document.getElementById('step1Address').textContent = servicioActual?.origen?.direccion || 'Cliente';
-            document.getElementById('step2Address').textContent = servicioActual?.destino?.direccion || 'Destino';
-            document.getElementById('btnEtapa').textContent = '🏍️ Iniciar Recogida';
-            etapaActual = 1;
-            updateEtapasUI();
-            showToast('✅ Cliente aceptó - Dirígete a recogerlo');
-        } else if (estado === 'cancelado') {
-            // Cliente rechazó o canceló
-            document.getElementById('activeRide').classList.remove('active');
-            document.getElementById('idleState').style.display = 'block';
-            showToast('❌ Cliente rechazó la tarifa');
-            currentServiceId = null;
-            servicioActual = null;
+    <style>
+        :root {
+            --bg: #0F0D15;
+            --bg2: #1A1721;
+            --card: #211D2A;
+            --acc: #6C5CE7;
+            --acc2: #00C897;
+            --red: #FF4757;
+            --warn: #FFA502;
+            --txt: #FFF;
+            --txt2: #B0B0B0;
+            --txt3: #707070;
+            --bd: #2D2938;
+            --r: 14px;
+            --r2: 22px;
         }
-    });
-}
 
-// ========== REEMPLAZAR FUNCIÓN rechazarServicio ==========
-function rechazarServicio() {
-    if (!currentServiceId) return;
-    
-    if (confirm('¿Rechazar este servicio?')) {
-        database.ref(`servicios/${currentServiceId}`).update({
-            estado: 'rechazado',
-            choferId: choferId,
-            timestamp_rechazo: firebase.database.ServerValue.TIMESTAMP
-        }).then(() => {
-            document.getElementById('incomingRequest').classList.remove('active');
-            document.getElementById('idleState').style.display = 'block';
-            showToast('❌ Servicio rechazado');
-            currentServiceId = null;
-            servicioActual = null;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #0a0a0f;
+            color: var(--txt);
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .app {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: var(--bg);
+            position: relative;
+        }
+
+        @media (min-width: 431px) {
+            body { display: flex; justify-content: center; align-items: center; padding: 20px; }
+            .app { border-radius: 30px; min-height: 90vh; max-height: 95vh; overflow-y: auto; box-shadow: 0 0 50px rgba(108,92,231,0.12); }
+        }
+
+        /* LOGIN */
+        .login-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            min-height: 100vh; padding: 2rem; text-align: center;
+        }
+
+        .login-logo { font-size: 4.5rem; margin-bottom: 0.5rem; }
+        .login-title { font-size: 1.6rem; font-weight: 800; margin-bottom: 2rem; }
+        .login-title span { color: var(--acc); }
+
+        .inp {
+            width: 100%; max-width: 320px; padding: 0.9rem; background: var(--card);
+            border: 1px solid var(--bd); border-radius: var(--r); color: var(--txt);
+            font-size: 0.9rem; margin-bottom: 0.8rem; outline: none;
+        }
+
+        .inp:focus { border-color: var(--acc); }
+
+        .btn {
+            width: 100%; max-width: 320px; padding: 0.9rem; border-radius: var(--r);
+            font-weight: 700; font-size: 0.9rem; cursor: pointer; border: none; transition: all 0.2s;
+        }
+
+        .btn-acc { background: var(--acc); color: #fff; }
+        .btn-acc:hover { opacity: 0.9; }
+        .btn-acc:disabled { opacity: 0.4; cursor: not-allowed; }
+
+        .login-err {
+            background: rgba(255,71,87,0.12); border: 1px solid var(--red); padding: 0.7rem;
+            border-radius: var(--r); margin-bottom: 1rem; font-size: 0.8rem; display: none; max-width: 320px;
+        }
+
+        .login-info { margin-top: 1.5rem; font-size: 0.75rem; color: var(--txt3); }
+
+        /* DASHBOARD */
+        .dashboard { display: none; }
+        .dashboard.active { display: block; }
+
+        .topbar {
+            background: var(--bg2); padding: 0.8rem 1rem; display: flex; align-items: center;
+            justify-content: space-between; border-bottom: 1px solid var(--bd); position: sticky; top: 0; z-index: 10;
+        }
+
+        .topbar-left { display: flex; align-items: center; gap: 0.5rem; }
+        .topbar-logo { width: 34px; height: 34px; background: var(--acc); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+        .topbar-name { font-weight: 700; font-size: 0.9rem; }
+
+        .topbar-right { display: flex; gap: 0.5rem; align-items: center; }
+
+        .toggle {
+            padding: 0.4rem 0.8rem; border-radius: 20px; border: none; font-weight: 700;
+            font-size: 0.7rem; cursor: pointer; transition: all 0.2s;
+        }
+
+        .toggle.on { background: var(--acc2); color: #000; }
+        .toggle.off { background: var(--red); color: #fff; }
+
+        .btn-sm {
+            background: rgba(255,255,255,0.08); border: 1px solid var(--bd); color: var(--txt2);
+            padding: 0.4rem 0.7rem; border-radius: 8px; font-size: 0.7rem; cursor: pointer;
+        }
+
+        .map-wrap { height: 200px; position: relative; }
+        #map { height: 100%; width: 100%; }
+
+        /* CARDS */
+        .card {
+            background: var(--card); border: 1px solid var(--bd); border-radius: var(--r2); padding: 1rem; margin: 0.8rem;
+        }
+
+        .earn-row { display: flex; justify-content: space-between; align-items: center; }
+        .earn-val { font-size: 1.8rem; font-weight: 800; }
+        .earn-sub { font-size: 0.7rem; color: var(--txt3); }
+
+        /* Bottom Panel */
+        .panel {
+            background: var(--bg2); border-radius: var(--r2) var(--r2) 0 0;
+            padding: 1rem; margin-top: -18px; position: relative; z-index: 5;
+            border: 1px solid var(--bd); border-bottom: none; min-height: 200px;
+        }
+
+        .panel-title { font-size: 0.7rem; color: var(--txt3); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.8rem; }
+
+        /* Incoming */
+        .incoming {
+            background: linear-gradient(135deg, #1a1a2e, #211D2A); border: 2px solid var(--acc);
+            border-radius: var(--r2); padding: 1rem; display: none; animation: pop 0.3s ease;
+        }
+
+        .incoming.show { display: block; }
+
+        @keyframes pop {
+            from { transform: scale(0.95); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .inc-header { font-size: 1rem; font-weight: 700; color: var(--acc); margin-bottom: 0.8rem; }
+        .inc-row { display: flex; justify-content: space-between; font-size: 0.8rem; padding: 0.3rem 0; color: var(--txt2); }
+        .inc-row b { color: var(--txt); }
+        .inc-btns { display: flex; gap: 0.6rem; margin-top: 0.8rem; }
+
+        .btn-accept { flex: 1; padding: 0.7rem; background: var(--acc2); color: #000; border: none; border-radius: var(--r); font-weight: 700; cursor: pointer; }
+        .btn-deny { flex: 1; padding: 0.7rem; background: transparent; border: 1px solid var(--red); color: var(--red); border-radius: var(--r); font-weight: 700; cursor: pointer; }
+
+        /* Active */
+        .active-ride { display: none; }
+        .active-ride.show { display: block; }
+
+        .steps { display: flex; gap: 0.5rem; margin: 0.8rem 0; }
+        .step {
+            flex: 1; text-align: center; padding: 0.6rem; background: var(--card);
+            border-radius: var(--r); font-size: 0.7rem; border: 1px solid var(--bd);
+        }
+        .step.done { border-color: var(--acc2); }
+        .step.now { border-color: var(--acc); background: rgba(108,92,231,0.1); }
+        .step-num { font-size: 1.1rem; font-weight: 700; }
+        .step-label { color: var(--txt3); font-size: 0.65rem; }
+
+        .btn-full {
+            width: 100%; padding: 0.7rem; border-radius: var(--r); font-weight: 700;
+            font-size: 0.8rem; cursor: pointer; border: none; margin-top: 0.4rem;
+        }
+
+        .btn-purple { background: var(--acc); color: #fff; }
+        .btn-outline { background: transparent; border: 1px solid var(--bd); color: var(--txt2); }
+        .btn-red { background: rgba(255,71,87,0.12); color: var(--red); border: 1px solid rgba(255,71,87,0.3); }
+
+        /* Toast */
+        .toast {
+            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+            background: var(--card); border: 1px solid var(--bd); color: var(--txt);
+            padding: 0.7rem 1.2rem; border-radius: var(--r); z-index: 999;
+            font-size: 0.8rem; font-weight: 600; animation: toastIn 2.5s ease forwards;
+            pointer-events: none;
+        }
+
+        @keyframes toastIn {
+            0% { opacity: 0; transform: translateX(-50%) translateY(-15px); }
+            10% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            80% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <!-- LOGIN -->
+        <div id="loginScreen" class="login-screen">
+            <div class="login-logo">🏍️</div>
+            <div class="login-title">Zaachila <span>Moto</span></div>
+            <div id="loginError" class="login-err"></div>
+            <input type="email" id="loginEmail" class="inp" placeholder="Correo electrónico">
+            <input type="password" id="loginPassword" class="inp" placeholder="Contraseña">
+            <button class="btn btn-acc" id="btnLogin" onclick="login()">Iniciar Sesión</button>
+            <div class="login-info">¿Olvidaste tu contraseña?<br>Contacta al administrador</div>
+        </div>
+
+        <!-- DASHBOARD -->
+        <div id="dashboard" class="dashboard">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <div class="topbar-logo">🏍️</div>
+                    <span class="topbar-name" id="choferName">Chofer</span>
+                </div>
+                <div class="topbar-right">
+                    <button class="toggle on" id="statusToggle" onclick="toggleStatus()">ACTIVO</button>
+                    <button class="btn-sm" onclick="logout()">Salir</button>
+                </div>
+            </header>
+
+            <div class="map-wrap"><div id="map"></div></div>
+
+            <div class="card">
+                <div class="earn-row">
+                    <div>
+                        <div class="earn-sub">GANANCIAS HOY</div>
+                        <div class="earn-val" id="earnToday">$0</div>
+                        <div class="earn-sub" id="earnServices">0 servicios</div>
+                    </div>
+                    <div style="font-size:2.5rem;">💵</div>
+                </div>
+            </div>
+
+            <div class="panel">
+                <!-- IDLE -->
+                <div id="idleView">
+                    <div class="panel-title">ESPERANDO SERVICIOS</div>
+                    <div style="text-align:center;color:var(--txt3);padding:2rem 0;">
+                        <div style="font-size:3rem;margin-bottom:0.5rem;">🟢</div>
+                        <div style="font-size:0.85rem;">Disponible para recibir solicitudes</div>
+                    </div>
+                </div>
+
+                <!-- INCOMING -->
+                <div class="incoming" id="incomingView">
+                    <div class="inc-header">🔔 Nueva solicitud</div>
+                    <div class="inc-row"><span>Origen</span><b id="incOrigin">---</b></div>
+                    <div class="inc-row"><span>Destino</span><b id="incDestiny">---</b></div>
+                    <div class="inc-row"><span>Distancia</span><b id="incDist">---</b></div>
+                    <div class="inc-row"><span>Tarifa sugerida</span><b id="incFare">$0</b></div>
+                    <div class="inc-btns">
+                        <button class="btn-accept" onclick="accept()">Aceptar</button>
+                        <button class="btn-deny" onclick="deny()">Rechazar</button>
+                    </div>
+                </div>
+
+                <!-- ACTIVE RIDE -->
+                <div class="active-ride" id="activeView">
+                    <div class="panel-title">SERVICIO EN CURSO</div>
+                    <div class="steps">
+                        <div class="step now" id="st1"><div class="step-num">1</div><div class="step-label">Recoger</div></div>
+                        <div class="step" id="st2"><div class="step-num">2</div><div class="step-label">Destino</div></div>
+                    </div>
+                    <div style="font-size:0.75rem;color:var(--txt3);" id="stepAddr">---</div>
+                    <button class="btn-full btn-purple" id="btnStep" onclick="nextStep()">Iniciar Recogida</button>
+                    <button class="btn-full btn-outline" onclick="chat()">💬 Chat</button>
+                    <button class="btn-full btn-red" onclick="finishRide()">Finalizar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const fb = {
+            apiKey: "AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",
+            authDomain: "zaachilamoto.firebaseapp.com",
+            databaseURL: "https://zaachilamoto-default-rtdb.firebaseio.com",
+            projectId: "zaachilamoto",
+            storageBucket: "zaachilamoto.firebasestorage.app",
+            messagingSenderId: "559788509526",
+            appId: "1:559788509526:web:c751d8d22068f09041aef7"
+        };
+
+        firebase.initializeApp(fb);
+        const auth = firebase.auth();
+        const db = firebase.database();
+
+        let map, marker, uid, sid, sdata, step = 1, active = true, pos = { lat: 16.9516, lng: -96.7491 };
+        const ZA = [16.9516, -96.7491];
+
+        // LOGIN
+        function login() {
+            const e = document.getElementById('loginEmail').value.trim();
+            const p = document.getElementById('loginPassword').value;
+            const err = document.getElementById('loginError');
+            const btn = document.getElementById('btnLogin');
+
+            if (!e || !p) { err.textContent = 'Completa todos los campos'; err.style.display = 'block'; return; }
+
+            btn.disabled = true; btn.textContent = 'Cargando...'; err.style.display = 'none';
+
+            auth.signInWithEmailAndPassword(e, p)
+                .then(u => { uid = u.user.uid; localStorage.setItem('ce', e); localStorage.setItem('cp', p); showDash(); })
+                .catch(er => {
+                    let m = 'Error';
+                    if (er.code === 'auth/user-not-found') m = 'Chofer no registrado';
+                    else if (er.code === 'auth/wrong-password') m = 'Contraseña incorrecta';
+                    err.textContent = m; err.style.display = 'block'; btn.disabled = false; btn.textContent = 'Iniciar Sesión';
+                });
+        }
+
+        function showDash() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('dashboard').classList.add('active');
+            initMap();
+            loadData();
+            listenServices();
+            getPos();
+        }
+
+        function logout() {
+            if (confirm('¿Cerrar sesión?')) {
+                if (uid) db.ref(`choferes/${uid}`).update({ estado: 'inactivo' });
+                auth.signOut(); localStorage.clear(); location.reload();
+            }
+        }
+
+        auth.onAuthStateChanged(u => {
+            if (u) { uid = u.uid; showDash(); }
         });
-    }
-}
+
+        // MAPA
+        function initMap() {
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView(ZA, 15);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', { attribution: '© CartoDB' }).addTo(map);
+            marker = L.marker(ZA, {
+                icon: L.divIcon({
+                    html: '<div style="background:#6C5CE7;width:12px;height:12px;border-radius:50%;border:2px solid #fff;box-shadow:0 0 12px rgba(108,92,231,0.6);"></div>',
+                    iconSize: [16, 16], iconAnchor: [8, 8]
+                })
+            }).addTo(map);
+        }
+
+        function getPos() {
+            if (navigator.geolocation) {
+                navigator.geolocation.watchPosition(
+                    p => { pos = { lat: p.coords.latitude, lng: p.coords.longitude }; marker.setLatLng([pos.lat, pos.lng]); if (uid && active) db.ref(`choferes/${uid}/ubicacion`).set({ lat: pos.lat, lng: pos.lng, ts: firebase.database.ServerValue.TIMESTAMP }); },
+                    () => {}, { enableHighAccuracy: true }
+                );
+            }
+        }
+
+        function loadData() {
+            db.ref(`choferes/${uid}`).on('value', s => {
+                const d = s.val() || {};
+                document.getElementById('choferName').textContent = d.nombre || 'Chofer';
+                const hoy = new Date().toISOString().split('T')[0];
+                document.getElementById('earnToday').textContent = '$' + ((d.ganancias || {})[hoy] || 0);
+                document.getElementById('earnServices').textContent = (d.servicios_hoy || 0) + ' servicios';
+            });
+        }
+
+        // ESTADO
+        function toggleStatus() {
+            active = !active;
+            const btn = document.getElementById('statusToggle');
+            if (active) { btn.className = 'toggle on'; btn.textContent = 'ACTIVO'; db.ref(`choferes/${uid}`).update({ estado: 'activo' }); toast('✅ Disponible'); }
+            else { btn.className = 'toggle off'; btn.textContent = 'INACTIVO'; db.ref(`choferes/${uid}`).update({ estado: 'inactivo' }); document.getElementById('incomingView').classList.remove('show'); toast('🔴 Pausado'); }
+        }
+
+        // SERVICIOS
+        function listenServices() {
+            db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added', s => {
+                if (active && !sid) showIncoming(s.key, s.val());
+            });
+        }
+
+        function showIncoming(id, data) {
+            sid = id; sdata = data;
+            document.getElementById('idleView').style.display = 'none';
+            document.getElementById('incomingView').classList.add('show');
+            document.getElementById('activeView').classList.remove('show');
+            document.getElementById('incOrigin').textContent = data.origen?.direccion || 'Cliente';
+            document.getElementById('incDestiny').textContent = data.destino?.direccion || '---';
+            document.getElementById('incDist').textContent = dist(pos.lat, pos.lng, data.origen?.lat || ZA[0], data.origen?.lng || ZA[1]).toFixed(1) + ' km';
+            document.getElementById('incFare').textContent = '$' + (data.tarifa_estimada || 40);
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        }
+
+        function accept() {
+            if (!sid) return;
+            const base = sdata?.tarifa_estimada || 40;
+            const price = prompt('💰 Tarifa a cobrar ($):', base);
+            if (!price || isNaN(price) || parseInt(price) <= 0) { toast('⚠️ Ingresa una tarifa válida'); return; }
+            const fare = parseInt(price);
+
+            db.ref(`servicios/${sid}`).update({
+                choferId: uid, estado: 'tarifa_propuesta', tarifa_propuesta: fare,
+                choferNombre: document.getElementById('choferName').textContent, choferPlaca: '---',
+                choferRating: '4.5', ts: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                document.getElementById('incomingView').classList.remove('show');
+                document.getElementById('idleView').style.display = 'block';
+                toast('💰 Tarifa enviada: $' + fare);
+                listenConfirm(sid);
+            });
+        }
+
+        function listenConfirm(id) {
+            db.ref(`servicios/${id}/estado`).on('value', s => {
+                const st = s.val();
+                if (st === 'aceptado') {
+                    document.getElementById('idleView').style.display = 'none';
+                    document.getElementById('activeView').classList.add('show');
+                    document.getElementById('stepAddr').textContent = sdata?.origen?.direccion || 'Cliente';
+                    step = 1; updateSteps();
+                    toast('✅ Cliente aceptó');
+                } else if (st === 'cancelado') {
+                    document.getElementById('activeView').classList.remove('show');
+                    document.getElementById('idleView').style.display = 'block';
+                    sid = null; sdata = null;
+                    toast('❌ Cancelado');
+                }
+            });
+        }
+
+        function deny() {
+            if (!sid) return;
+            db.ref(`servicios/${sid}`).update({ estado: 'rechazado', choferId: uid, ts: firebase.database.ServerValue.TIMESTAMP }).then(() => {
+                document.getElementById('incomingView').classList.remove('show');
+                document.getElementById('idleView').style.display = 'block';
+                sid = null; sdata = null;
+                toast('Rechazado');
+            });
+        }
+
+        // ETAPAS
+        function nextStep() {
+            if (step === 1) {
+                db.ref(`servicios/${sid}`).update({ estado: 'en_camino' });
+                step = 2;
+                document.getElementById('btnStep').textContent = 'Llegué al cliente';
+                document.getElementById('stepAddr').textContent = sdata?.destino?.direccion || 'Destino';
+                updateSteps();
+                toast('📍 En camino');
+            } else if (step === 2) {
+                db.ref(`servicios/${sid}`).update({ estado: 'en_servicio' });
+                step = 3;
+                document.getElementById('btnStep').textContent = 'Finalizar viaje';
+                updateSteps();
+                toast('🚀 Viaje iniciado');
+            } else {
+                finishRide();
+            }
+        }
+
+        function updateSteps() {
+            const s1 = document.getElementById('st1'), s2 = document.getElementById('st2');
+            s1.className = 'step'; s2.className = 'step';
+            if (step === 1) s1.classList.add('now');
+            else if (step === 2) { s1.classList.add('done'); s2.classList.add('now'); }
+            else { s1.classList.add('done'); s2.classList.add('done'); }
+        }
+
+        function finishRide() {
+            const fare = sdata?.tarifa_propuesta || sdata?.tarifa_estimada || 40;
+            if (confirm('¿Cobrar $' + fare + ' y finalizar?')) {
+                const hoy = new Date().toISOString().split('T')[0];
+                db.ref(`servicios/${sid}`).update({ estado: 'completado', cobro: fare, fecha: hoy });
+                db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g => (g || 0) + fare);
+                db.ref('admin/comisiones').push({ servicioId: sid, choferId: uid, monto_servicio: fare, comision: Math.round(fare * 0.1), fecha: hoy });
+                resetRide();
+                toast('✅ Completado: $' + fare);
+            }
+        }
+
+        function resetRide() {
+            sid = null; sdata = null; step = 1;
+            document.getElementById('activeView').classList.remove('show');
+            document.getElementById('idleView').style.display = 'block';
+            document.getElementById('btnStep').textContent = 'Iniciar Recogida';
+            loadData();
+        }
+
+        function chat() {
+            const m = prompt('Mensaje:');
+            if (m && sid) db.ref(`chats/${sid}`).push({ remitente: 'chofer', mensaje: m, ts: firebase.database.ServerValue.TIMESTAMP }).then(() => toast('Enviado'));
+        }
+
+        // UTIL
+        function dist(lat1, lon1, lat2, lon2) {
+            const R = 6371, dLat = (lat2 - lat1) * Math.PI / 180, dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) ** 2 + Math.cos(lat1 * Math.PI/180) * Math.cos(lat2 * Math.PI/180) * Math.sin(dLon/2) ** 2;
+            return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+        }
+
+        function toast(m) {
+            const t = document.createElement('div'); t.className = 'toast'; t.textContent = m;
+            document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
+        }
+
+        document.addEventListener('keypress', e => { if (e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') login(); });
+    </script>
+</body>
+</html>
