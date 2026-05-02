@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mototaxi - Conductor</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
+        .viaje { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        button { background: #00b4d8; color: white; border: none; padding: 10px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h2>🏍️ Viajes disponibles</h2>
+    <div id="lista"></div>
+    <script>
+        function cargarViajes() {
+            const viajes = JSON.parse(localStorage.getItem('mototaxi_pasajero_viajes') || '[]');
+            const pendientes = viajes.filter(v => v.status === 'Solicitado');
+            document.getElementById('lista').innerHTML = pendientes.map(v => `
+                <div class="viaje">
+                    <p><b>${v.customer}</b> - ${v.origin} → ${v.dest}</p>
+                    <p>Tarifa estimada: $${v.fare}</p>
+                    <button onclick="aceptar('${v.id}')">Aceptar viaje</button>
+                </div>
+            `).join('') || '<p>No hay viajes pendientes.</p>';
+        }
+        function aceptar(id) {
+            let viajes = JSON.parse(localStorage.getItem('mototaxi_pasajero_viajes') || '[]');
+            const viaje = viajes.find(v => v.id === id);
+            if (viaje) {
+                viaje.status = 'En curso';
+                viaje.driver = 'Conductor Demo';
+                localStorage.setItem('mototaxi_pasajero_viajes', JSON.stringify(viajes));
+                cargarViajes();
+                alert('Viaje aceptado. Dirígete al punto de recogida.');
+            }
+        }
+        cargarViajes();
+    </script>
+</body>
+</html>
