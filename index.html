@@ -2,41 +2,674 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mototaxi - Conductor</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Zaachila Moto - Chofer</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <style>
-        body { font-family: sans-serif; background: #f4f4f4; margin: 0; padding: 20px; }
-        .viaje { background: white; padding: 15px; margin: 10px 0; border-radius: 8px; }
-        button { background: #00b4d8; color: white; border: none; padding: 10px; border-radius: 5px; }
+        :root {
+            --primary: #2D1B69;
+            --primary-light: #4A3A8A;
+            --secondary: #FF6B35;
+            --accent: #00C9A7;
+            --dark: #1A1A2E;
+            --light: #F8F9FA;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: linear-gradient(135deg, #0F0C29, #302B63, #24243E);
+            color: #fff;
+            min-height: 100vh;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mobile-container {
+            max-width: 430px;
+            margin: 0 auto;
+            min-height: 100vh;
+            background: linear-gradient(180deg, #1A1A2E 0%, #16213E 100%);
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+        }
+
+        @media (min-width: 431px) {
+            body {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+            }
+            .mobile-container {
+                border-radius: 30px;
+                min-height: 90vh;
+                max-height: 95vh;
+                overflow-y: auto;
+            }
+        }
+
+        /* Header */
+        .app-header {
+            background: linear-gradient(135deg, #2D1B69, #4A3A8A);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* Active/Inactive Toggle */
+        .status-toggle {
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .status-toggle.active {
+            background: #10B981;
+            color: white;
+            animation: pulse-green 2s infinite;
+        }
+
+        .status-toggle.inactive {
+            background: #EF4444;
+            color: white;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
+
+        /* Map */
+        .map-wrapper {
+            height: 300px;
+            position: relative;
+        }
+
+        #driverMap {
+            height: 100%;
+            width: 100%;
+        }
+
+        /* Earnings Card */
+        .earnings-card {
+            background: linear-gradient(135deg, #2D1B69, #4A3A8A);
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin: 1rem;
+        }
+
+        .earnings-amount {
+            font-size: 2.5rem;
+            font-weight: 800;
+        }
+
+        /* Incoming Request */
+        .incoming-request {
+            background: white;
+            border-radius: 25px 25px 0 0;
+            padding: 1.5rem;
+            margin-top: -20px;
+            position: relative;
+            z-index: 2;
+            color: #333;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .incoming-request.active {
+            display: block;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-accept {
+            flex: 1;
+            padding: 1rem;
+            background: #10B981;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .btn-decline {
+            flex: 1;
+            padding: 1rem;
+            background: #EF4444;
+            color: white;
+            border: none;
+            border-radius: 15px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        /* Active Service */
+        .active-ride {
+            background: white;
+            border-radius: 25px 25px 0 0;
+            padding: 1.5rem;
+            margin-top: -20px;
+            color: #333;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.2);
+            display: none;
+        }
+
+        .active-ride.active {
+            display: block;
+        }
+
+        .ride-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .ride-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f5f5f5;
+            border-radius: 12px;
+        }
+
+        .step-indicator {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2D1B69;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .step-indicator.completed {
+            background: #10B981;
+        }
+
+        /* Navigation */
+        .bottom-nav {
+            display: flex;
+            justify-content: space-around;
+            padding: 0.8rem;
+            background: white;
+            border-top: 1px solid #eee;
+            position: sticky;
+            bottom: 0;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.3rem;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active {
+            color: #2D1B69;
+        }
+
+        .nav-icon {
+            font-size: 1.5rem;
+        }
+
+        /* Finance Cards */
+        .finance-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            padding: 1rem;
+        }
+
+        .finance-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            color: #333;
+            text-align: center;
+        }
+
+        .finance-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #2D1B69;
+        }
+
+        /* Service History */
+        .service-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 15px;
+            margin-bottom: 0.8rem;
+            color: #333;
+        }
+
+        /* Chat */
+        .chat-modal {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 25px 25px 0 0;
+            z-index: 2000;
+            height: 60vh;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+            color: #333;
+        }
+
+        .chat-modal.active {
+            display: flex;
+        }
+
+        .chat-modal-header {
+            background: #2D1B69;
+            color: white;
+            padding: 1rem;
+            border-radius: 25px 25px 0 0;
+        }
+
+        .chat-modal-body {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+        }
+
+        .chat-modal-input {
+            padding: 1rem;
+            display: flex;
+            gap: 0.5rem;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-modal-input input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+        }
+
+        /* Report */
+        .report-form {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 25px 25px 0 0;
+            z-index: 2000;
+            padding: 1.5rem;
+            display: none;
+            color: #333;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.3);
+        }
+
+        .report-form.active {
+            display: block;
+        }
     </style>
 </head>
 <body>
-    <h2>🏍️ Viajes disponibles</h2>
-    <div id="lista"></div>
-    <script>
-        function cargarViajes() {
-            const viajes = JSON.parse(localStorage.getItem('mototaxi_pasajero_viajes') || '[]');
-            const pendientes = viajes.filter(v => v.status === 'Solicitado');
-            document.getElementById('lista').innerHTML = pendientes.map(v => `
-                <div class="viaje">
-                    <p><b>${v.customer}</b> - ${v.origin} → ${v.dest}</p>
-                    <p>Tarifa estimada: $${v.fare}</p>
-                    <button onclick="aceptar('${v.id}')">Aceptar viaje</button>
+    <div class="mobile-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="logo-text" style="font-size:1.2rem;font-weight:800;">
+                🏍️ Zaachila Moto
+            </div>
+            <button class="status-toggle active" id="statusToggle" onclick="toggleStatus()">
+                🟢 Activo
+            </button>
+            <div class="profile-avatar" onclick="showProfile()" style="width:40px;height:40px;border-radius:50%;background:rgba(255,255,255,0.3);display:flex;align-items:center;justify-content:center;cursor:pointer;">
+                👤
+            </div>
+        </header>
+
+        <!-- Main Screen -->
+        <div id="mainScreen">
+            <!-- Map -->
+            <div class="map-wrapper">
+                <div id="driverMap"></div>
+            </div>
+
+            <!-- Earnings -->
+            <div class="earnings-card">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div>
+                        <div style="opacity:0.8;">💰 Ganancias de Hoy</div>
+                        <div class="earnings-amount">$580</div>
+                        <div style="opacity:0.8;">8 servicios completados</div>
+                    </div>
+                    <div style="font-size:3rem;">💵</div>
                 </div>
-            `).join('') || '<p>No hay viajes pendientes.</p>';
-        }
-        function aceptar(id) {
-            let viajes = JSON.parse(localStorage.getItem('mototaxi_pasajero_viajes') || '[]');
-            const viaje = viajes.find(v => v.id === id);
-            if (viaje) {
-                viaje.status = 'En curso';
-                viaje.driver = 'Conductor Demo';
-                localStorage.setItem('mototaxi_pasajero_viajes', JSON.stringify(viajes));
-                cargarViajes();
-                alert('Viaje aceptado. Dirígete al punto de recogida.');
+            </div>
+
+            <!-- Incoming Request -->
+            <div class="incoming-request" id="incomingRequest">
+                <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;">
+                    <div style="font-size:2rem;">🔔</div>
+                    <h3>¡Nuevo Servicio!</h3>
+                </div>
+                <div style="background:#f5f5f5;padding:1rem;border-radius:12px;margin-bottom:1rem;">
+                    <div><strong>📍 Recoger en:</strong> Calle Principal #123</div>
+                    <div><strong>🏁 Destino:</strong> Mercado Municipal</div>
+                    <div><strong>📏 Distancia:</strong> 1.2 km</div>
+                    <div><strong>💰 Tarifa:</strong> $40 MXN</div>
+                    <div><strong>⭐ Cliente:</strong> 4.8</div>
+                </div>
+                <div class="request-actions">
+                    <button class="btn-accept" onclick="acceptService()">✅ Aceptar</button>
+                    <button class="btn-decline" onclick="declineService()">❌ Rechazar</button>
+                </div>
+            </div>
+
+            <!-- Active Ride -->
+            <div class="active-ride" id="activeRide">
+                <h3 style="margin-bottom:1rem;">🏍️ Servicio en Curso</h3>
+                <div class="ride-steps">
+                    <div class="ride-step">
+                        <div class="step-indicator completed">1</div>
+                        <div>
+                            <div style="font-weight:700;">Recoger al cliente</div>
+                            <div style="font-size:0.9rem;color:#666;">Calle Principal #123</div>
+                        </div>
+                    </div>
+                    <div class="ride-step">
+                        <div class="step-indicator">2</div>
+                        <div>
+                            <div style="font-weight:700;">Llevar a destino</div>
+                            <div style="font-size:0.9rem;color:#666;">Mercado Municipal</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="display:flex;gap:1rem;">
+                    <button class="btn-accept" onclick="completeService()" style="flex:1;">✔️ Finalizar Servicio</button>
+                    <button style="background:#2D1B69;color:white;border:none;padding:1rem;border-radius:15px;cursor:pointer;" onclick="openChatWithClient()">💬</button>
+                </div>
+                <button style="background:#f5f5f5;border:none;padding:1rem;border-radius:15px;width:100%;margin-top:0.5rem;cursor:pointer;color:#333;" onclick="reportFoundItem()">
+                    📦 Reportar Objeto Encontrado
+                </button>
+            </div>
+        </div>
+
+        <!-- Finance Screen -->
+        <div id="financeScreen" style="display:none;padding:1rem;">
+            <h3 style="color:white;margin-bottom:1rem;">💰 Mis Finanzas</h3>
+            <div class="finance-grid">
+                <div class="finance-card">
+                    <div>Hoy</div>
+                    <div class="finance-value">$580</div>
+                    <div>8 servicios</div>
+                </div>
+                <div class="finance-card">
+                    <div>Semana</div>
+                    <div class="finance-value">$3,240</div>
+                    <div>45 servicios</div>
+                </div>
+                <div class="finance-card">
+                    <div>Mes</div>
+                    <div class="finance-value">$12,800</div>
+                    <div>180 servicios</div>
+                </div>
+                <div class="finance-card">
+                    <div>Comisión</div>
+                    <div class="finance-value" style="color:#EF4444;">-$1,280</div>
+                    <div>10% admin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Screen -->
+        <div id="historyScreen" style="display:none;padding:1rem;">
+            <h3 style="color:white;margin-bottom:1rem;">📋 Historial de Servicios</h3>
+            <div class="service-item">
+                <div>🏍️</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;">Centro → Mercado</div>
+                    <div style="font-size:0.9rem;color:#666;">15 Mar 2024 - $35</div>
+                </div>
+                <div>⭐ 5</div>
+            </div>
+            <div class="service-item">
+                <div>🏍️</div>
+                <div style="flex:1;">
+                    <div style="font-weight:700;">Parque → Iglesia</div>
+                    <div style="font-size:0.9rem;color:#666;">14 Mar 2024 - $40</div>
+                </div>
+                <div>⭐ 4</div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <div class="nav-item active" onclick="switchScreen('main')">
+                <span class="nav-icon">🏠</span>
+                <small>Inicio</small>
+            </div>
+            <div class="nav-item" onclick="switchScreen('finance')">
+                <span class="nav-icon">💰</span>
+                <small>Finanzas</small>
+            </div>
+            <div class="nav-item" onclick="switchScreen('history')">
+                <span class="nav-icon">📋</span>
+                <small>Historial</small>
+            </div>
+            <div class="nav-item" onclick="showProfile()">
+                <span class="nav-icon">👤</span>
+                <small>Perfil</small>
+            </div>
+        </div>
+
+        <!-- Chat Modal -->
+        <div class="chat-modal" id="chatModal">
+            <div class="chat-modal-header">
+                <span>💬 Chat con Cliente</span>
+                <button onclick="closeChat()" style="background:none;border:none;color:white;font-size:1.5rem;cursor:pointer;">✕</button>
+            </div>
+            <div class="chat-modal-body" id="chatBody">
+                <div style="margin-bottom:1rem;">
+                    <div style="background:#f0f0f0;padding:0.8rem;border-radius:15px;display:inline-block;max-width:80%;">
+                        ¿Cuánto tardas en llegar?
+                    </div>
+                </div>
+            </div>
+            <div class="chat-modal-input">
+                <input type="text" id="chatInput" placeholder="Escribe un mensaje...">
+                <button onclick="sendDriverMessage()" style="background:#2D1B69;color:white;border:none;padding:0.8rem 1.2rem;border-radius:25px;cursor:pointer;">Enviar</button>
+            </div>
+        </div>
+
+        <!-- Report Form -->
+        <div class="report-form" id="reportForm">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+                <h3>📦 Reportar Objeto Encontrado</h3>
+                <button onclick="closeReport()" style="background:none;border:none;font-size:1.5rem;cursor:pointer;">✕</button>
+            </div>
+            <textarea style="width:100%;padding:0.8rem;border:1px solid #ddd;border-radius:10px;margin-bottom:1rem;" rows="3" placeholder="Describe el objeto encontrado..."></textarea>
+            <div style="border:2px dashed #ddd;border-radius:15px;padding:2rem;text-align:center;margin-bottom:1rem;cursor:pointer;" onclick="alert('📸 Subir fotos (simulación)')">
+                📸 Toca para subir fotos
+            </div>
+            <button class="btn-accept" onclick="submitReport()" style="width:100%;">Enviar Reporte</button>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // Initialize Map
+        const driverMap = L.map('driverMap').setView([16.9516, -96.7491], 15);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap'
+        }).addTo(driverMap);
+
+        // Driver marker
+        const driverMarker = L.marker([16.9516, -96.7491], {
+            icon: L.divIcon({
+                className: 'driver-marker',
+                html: '<div style="background:#2D1B69;color:white;padding:5px 10px;border-radius:20px;font-weight:700;">🏍️ Tú</div>',
+                iconSize: [60, 30]
+            })
+        }).addTo(driverMap);
+
+        // Status toggle
+        let isActive = true;
+
+        function toggleStatus() {
+            isActive = !isActive;
+            const btn = document.getElementById('statusToggle');
+            if (isActive) {
+                btn.className = 'status-toggle active';
+                btn.innerHTML = '🟢 Activo';
+                driverMap.setView([16.9516, -96.7491], 15);
+            } else {
+                btn.className = 'status-toggle inactive';
+                btn.innerHTML = '🔴 Inactivo';
+                document.getElementById('incomingRequest').classList.remove('active');
             }
         }
-        cargarViajes();
+
+        // Simulate incoming request
+        function simulateIncoming() {
+            if (isActive) {
+                document.getElementById('incomingRequest').classList.add('active');
+                // Vibrate on mobile
+                if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            }
+        }
+
+        // Accept service
+        function acceptService() {
+            document.getElementById('incomingRequest').classList.remove('active');
+            document.getElementById('activeRide').classList.add('active');
+            alert('✅ Servicio aceptado. Dirígete a recoger al cliente.');
+        }
+
+        // Decline service
+        function declineService() {
+            document.getElementById('incomingRequest').classList.remove('active');
+            alert('❌ Servicio rechazado');
+        }
+
+        // Complete service
+        function completeService() {
+            if (confirm('¿Confirmas finalizar el servicio? Cobro: $40 MXN en efectivo')) {
+                document.getElementById('activeRide').classList.remove('active');
+                alert('✅ Servicio completado. Ganancias actualizadas.');
+            }
+        }
+
+        // Chat
+        function openChatWithClient() {
+            document.getElementById('chatModal').classList.add('active');
+        }
+
+        function closeChat() {
+            document.getElementById('chatModal').classList.remove('active');
+        }
+
+        function sendDriverMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            if (message) {
+                const chatBody = document.getElementById('chatBody');
+                chatBody.innerHTML += `
+                    <div style="margin-bottom:1rem;text-align:right;">
+                        <div style="background:#2D1B69;color:white;padding:0.8rem;border-radius:15px;display:inline-block;max-width:80%;">
+                            ${message}
+                        </div>
+                    </div>
+                `;
+                input.value = '';
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        }
+
+        // Report found item
+        function reportFoundItem() {
+            document.getElementById('reportForm').classList.add('active');
+        }
+
+        function closeReport() {
+            document.getElementById('reportForm').classList.remove('active');
+        }
+
+        function submitReport() {
+            alert('✅ Reporte enviado al administrador y cliente');
+            closeReport();
+        }
+
+        // Switch screens
+        function switchScreen(screen) {
+            document.getElementById('mainScreen').style.display = screen === 'main' ? 'block' : 'none';
+            document.getElementById('financeScreen').style.display = screen === 'finance' ? 'block' : 'none';
+            document.getElementById('historyScreen').style.display = screen === 'history' ? 'block' : 'none';
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.nav-item').classList.add('active');
+        }
+
+        // Profile
+        function showProfile() {
+            alert('👤 Mi Perfil\n\nNombre: Juan Pérez\nMoto: XYZ-123\nCalificación: ⭐ 4.9\nTotal servicios: 256');
+        }
+
+        // Simulate incoming requests
+        setInterval(() => {
+            if (isActive && Math.random() > 0.7) {
+                simulateIncoming();
+            }
+        }, 15000);
+
+        // Update location periodically
+        if (navigator.geolocation) {
+            setInterval(() => {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const { latitude, longitude } = position.coords;
+                        driverMarker.setLatLng([latitude, longitude]);
+                    },
+                    () => {}
+                );
+            }, 10000);
+        }
+
+        console.log('🏍️ Zaachila Moto - Chofer App Ready');
     </script>
 </body>
 </html>
