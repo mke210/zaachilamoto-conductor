@@ -41,8 +41,7 @@
         .btn-accept{flex:1;padding:.6rem;background:var(--green);color:#000;border:0;border-radius:var(--r);font-weight:700;cursor:pointer;font-size:.75rem}.btn-deny{flex:1;padding:.6rem;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:var(--r);font-weight:700;cursor:pointer;font-size:.75rem}
         .ride-step{display:flex;align-items:center;gap:.5rem;padding:.5rem;background:var(--card);border-radius:var(--r);margin-bottom:.3rem;border:1px solid var(--bd)}.ride-step .num{width:28px;height:28px;border-radius:50%;background:var(--bd);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;flex-shrink:0}.ride-step .num.done{background:var(--green)}.ride-step .num.now{background:var(--acc);animation:pulse 1.5s infinite}.ride-step .info{flex:1;font-size:.7rem}.ride-step .addr{font-size:.6rem;color:var(--txt3)}
         .btn-full{width:100%;padding:.6rem;border-radius:var(--r);font-weight:700;font-size:.75rem;cursor:pointer;border:0;margin-top:.3rem}.btn-purple{background:var(--acc);color:#fff}.btn-outline{background:transparent;border:1px solid var(--bd);color:var(--txt2);position:relative}.btn-red{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3)}
-        .badge-new{background:var(--red);color:#fff;padding:2px 6px;border-radius:10px;font-size:.55rem;font-weight:700;display:none;animation:pulse 1.5s infinite;position:absolute;top:-6px;right:-6px}
-        .badge-new.show{display:inline-block}
+        .badge-new{background:var(--red);color:#fff;padding:2px 6px;border-radius:10px;font-size:.55rem;font-weight:700;display:none;animation:pulse 1.5s infinite;position:absolute;top:-6px;right:-6px}.badge-new.show{display:inline-block}
         .chat-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:999;display:flex;flex-direction:column}.chat-header{background:var(--bg2);padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}.chat-body{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:.5rem}.msg{max-width:80%;padding:.5rem .7rem;border-radius:14px;font-size:.75rem}.msg.sent{background:var(--acc);align-self:flex-end}.msg.recv{background:var(--card);align-self:flex-start;border:1px solid var(--bd)}.chat-input-wrap{padding:.5rem;display:flex;gap:.3rem;border-top:1px solid var(--bd);background:var(--bg2)}.chat-input-wrap input{flex:1;padding:.5rem;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);color:var(--txt);outline:0;font-size:.75rem}.chat-input-wrap button{padding:.5rem .8rem;background:var(--acc);color:#fff;border:0;border-radius:var(--r);font-weight:700;cursor:pointer}
         .card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.card-row{display:flex;justify-content:space-between;align-items:center}.card-val{font-size:1.3rem;font-weight:800}.card-lbl{font-size:.6rem;color:var(--txt3)}
         .empty{text-align:center;color:var(--txt3);padding:1rem;font-size:.75rem}.stars{display:flex;gap:.2rem}.stars span{color:var(--warn);font-size:.7rem}
@@ -86,7 +85,9 @@ function toggleStatus(){active=!active;const b=document.getElementById('statusTo
 function listenSvc(){db.ref('servicios').orderByChild('estado').equalTo('buscando').limitToLast(1).on('child_added',s=>{if(active&&!sid&&!svcAct){svcAct=true;db.ref(`servicios/${s.key}/estado`).once('value',es=>{if(es.val()==='buscando'){sid=s.key;sdata=s.val();showInc()}else{svcAct=false}})}})}
 function listenGlobal(){db.ref('servicios').on('child_changed',s=>{const v=s.val();if(s.key===sid&&v.estado==='aceptado'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Servicio asignado','Otro chofer fue elegido','error');resetAll()}if(s.key===sid&&v.estado==='tarifa_propuesta'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('No disponible','Otro chofer envió tarifa','error');resetAll()}})}
 function showInc(){notif('Nueva solicitud','Cliente cerca','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div><div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,sdata?.origen?.lat||ZA[0],sdata?.origen?.lng||ZA[1]).toFixed(1)} km</b></div><div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`}
-function accept(){if(!sid||!sdata)return;db.ref(`servicios/${sid}/estado`).once('value',es=>{if(es.val()!=='buscando'){toast('Ya no disponible');document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();return}const price=prompt('💰 Tarifa a cobrar ($):','50');if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}const fare=parseInt(price);if(sdata)sdata.tarifa_propuesta=fare;svcAct=false;db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:document.getElementById('choferName').textContent,choferPlaca:'---',choferRating:String(calif),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Tarifa enviada','$'+fare,'success');if(!confAct){confAct=true;listenConfirm(sid)}}).catch(()=>{toast('Error');svcAct=false})})}
+
+// ✅ Enviar datos completos del chofer al aceptar
+function accept(){if(!sid||!sdata)return;db.ref(`servicios/${sid}/estado`).once('value',es=>{if(es.val()!=='buscando'){toast('Ya no disponible');document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();return}const price=prompt('💰 Tarifa a cobrar ($):','50');if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}const fare=parseInt(price);if(sdata)sdata.tarifa_propuesta=fare;svcAct=false;db.ref(`choferes/${uid}`).once('value',snap=>{const ch=snap.val()||{};db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:ch.nombre||document.getElementById('choferName').textContent,choferPlaca:ch.placa||'---',choferColor:ch.color||'No especificado',choferUnidad:ch.unidad||'No especificado',choferTelefono:ch.telefono||'No especificado',choferRating:String(calif),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Tarifa enviada','$'+fare,'success');if(!confAct){confAct=true;listenConfirm(sid)}}).catch(()=>{toast('Error');svcAct=false})})})}
 function listenConfirm(id){db.ref(`servicios/${id}/estado`).once('value',s=>handleSt(s.val()));db.ref(`servicios/${id}/estado`).on('value',s=>handleSt(s.val()))}
 function handleSt(st){if(st==='aceptado'){if(document.getElementById('activeView').style.display==='none'){showAct();notif('Aceptado','Cliente aceptó','success');playSound('accept')}}else if(st==='cancelado'){resetAll();notif('Cancelado','Cliente rechazó','error')}}
 function deny(){if(!sid)return;svcAct=false;db.ref(`servicios/${sid}`).update({estado:'rechazado',choferId:uid,ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();notif('Rechazado','Servicio rechazado','error')})}
@@ -99,51 +100,9 @@ function finishNow(){step=3;finishRide()}
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=function(){const f=i.files[0];if(f){const r=storage.ref(`objetos/${sid}_${Date.now()}`);r.put(f).then(()=>r.getDownloadURL()).then(u=>{db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:u,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP});notif('Reporte','Con foto','success')}).catch(()=>saveR(d))}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 
-// ✅ CHAT CORREGIDO - Ahora con animación de parpadeo
-function listenChats(){
-    db.ref('chats').on('child_added', s => {
-        if(s.key === sid && !chatOpen){
-            const ms = s.val();
-            if(!ms) return;
-            const last = Object.values(ms).pop();
-            if(last && last.remitente === 'cliente'){
-                const badge = document.getElementById('chatBadge');
-                if(badge){
-                    let count = parseInt(badge.textContent) || 0;
-                    count++;
-                    badge.textContent = count;
-                    badge.classList.add('show');
-                }
-                notif('💬 Nuevo mensaje', last.mensaje.substring(0, 35), 'message');
-                playSound('msg');
-                if(navigator.vibrate) navigator.vibrate(150);
-            }
-        }
-    });
-}
-
-function openChat(){
-    if(!sid) return;
-    chatOpen = true;
-    const badge = document.getElementById('chatBadge');
-    if(badge){
-        badge.classList.remove('show');
-        badge.textContent = '0';
-    }
-    const d = document.createElement('div');
-    d.className = 'chat-modal';
-    d.innerHTML = `<div class="chat-header"><span>💬 Chat con el cliente</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;
-    document.body.appendChild(d);
-    db.ref(`chats/${sid}`).on('child_added', s => {
-        const m = s.val();
-        const el = document.getElementById('chatMsgs');
-        if(el){
-            el.innerHTML += `<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;
-            el.scrollTop = el.scrollHeight;
-        }
-    });
-}
-
+// ✅ Chat con sonido y badge parpadeante
+function listenChats(){db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const l=Object.values(ms).pop();if(l&&l.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',l.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate(150)}}})}
+function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
 function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 
