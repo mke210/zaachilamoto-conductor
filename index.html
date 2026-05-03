@@ -6,13 +6,15 @@
     <meta name="theme-color" content="#0a0a0f">
     <title>Zaachila Moto - Chofer</title>
     
+    <!-- Icono integrado -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%236C5CE7'/><text x='50' y='65' text-anchor='middle' font-size='45'>🛺</text></svg>">
+    
     <!-- PWA -->
     <link rel="manifest" href="/manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="apple-mobile-web-app-title" content="ZM Chofer">
-    <link rel="apple-touch-icon" href="/icon-192.png">
-    <link rel="icon" href="/icon-192.png">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='48' fill='%236C5CE7'/><text x='50' y='65' text-anchor='middle' font-size='45'>🛺</text></svg>">
     
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -58,9 +60,9 @@
 </head>
 <body>
 <div class="app">
-    <div id="loginScreen" class="login-screen"><div class="logo">🏍️</div><h1>Zaachila <span>Moto</span></h1><div class="login-err" id="loginError"></div><input type="email" id="loginEmail" class="inp" placeholder="Correo"><input type="password" id="loginPassword" class="inp" placeholder="Contraseña"><button class="btn btn-acc" id="btnLogin" onclick="login()">Iniciar Sesión</button><p style="font-size:.65rem;color:var(--txt3);margin-top:.8rem">¿Olvidaste tu contraseña? Contacta al administrador</p></div>
+    <div id="loginScreen" class="login-screen"><div class="logo">🛺</div><h1>Zaachila <span>Moto</span></h1><div class="login-err" id="loginError"></div><input type="email" id="loginEmail" class="inp" placeholder="Correo"><input type="password" id="loginPassword" class="inp" placeholder="Contraseña"><button class="btn btn-acc" id="btnLogin" onclick="login()">Iniciar Sesión</button><p style="font-size:.65rem;color:var(--txt3);margin-top:.8rem">¿Olvidaste tu contraseña? Contacta al administrador</p></div>
     <div id="dashboard" class="dashboard">
-        <header class="topbar"><h2>🏍️ <span id="choferName">Chofer</span></h2><div class="topbar-right"><span class="notif-dot" id="notificationDot">0</span><button class="toggle on" id="statusToggle" onclick="toggleStatus()">ACTIVO</button><button class="btn-sm" onclick="logout()">Salir</button></div></header>
+        <header class="topbar"><h2>🛺 <span id="choferName">Chofer</span></h2><div class="topbar-right"><span class="notif-dot" id="notificationDot">0</span><button class="toggle on" id="statusToggle" onclick="toggleStatus()">ACTIVO</button><button class="btn-sm" onclick="logout()">Salir</button></div></header>
         <div class="map-wrap"><div id="driverMap"></div></div>
         <div class="tabs"><div class="tab on" onclick="switchTab('home',this)">🏠 Inicio</div><div class="tab" onclick="switchTab('earnings',this)">💰 Ganancias</div><div class="tab" onclick="switchTab('history',this)">📋 Historial</div></div>
         <div class="content" id="tabContent">
@@ -109,11 +111,6 @@ function switchTab(n,el){document.querySelectorAll('#tabContent > div').forEach(
 function calcDist(l1,l2,lo1,lo2){const R=6371,dLa=(l2-l1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180;return R*2*Math.atan2(Math.sqrt(Math.sin(dLa/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2),Math.sqrt(1-Math.sin(dLa/2)**2-Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2))}
 document.addEventListener('keypress',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')login()});
 window.addEventListener('resize',()=>{if(map)setTimeout(()=>map.invalidateSize(),200)});
-</script>
-<!-- PWA Register -->
-<script>
-if('serviceWorker'in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('/service-worker.js').then(reg=>console.log('✅ SW')).catch(err=>console.log('SW:',err))})}
-let deferredPrompt;window.addEventListener('beforeinstallprompt',(e)=>{e.preventDefault();deferredPrompt=e;setTimeout(()=>{if(deferredPrompt){const btn=document.createElement('button');btn.textContent='📲 Instalar App';btn.style.cssText='position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#FF8F00;color:#000;border:none;padding:12px 24px;border-radius:25px;font-weight:700;font-size:14px;z-index:9999;cursor:pointer;box-shadow:0 4px 20px rgba(255,143,0,.5);animation:pulse 2s infinite';btn.onclick=async()=>{deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;btn.remove()};document.body.appendChild(btn);setTimeout(()=>{if(btn.parentNode)btn.remove()},15000)}},3000)});
 </script>
 </body>
 </html>
