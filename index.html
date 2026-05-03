@@ -41,7 +41,8 @@
         .btn-accept{flex:1;padding:.6rem;background:var(--green);color:#000;border:0;border-radius:var(--r);font-weight:700;cursor:pointer;font-size:.75rem}.btn-deny{flex:1;padding:.6rem;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:var(--r);font-weight:700;cursor:pointer;font-size:.75rem}
         .ride-step{display:flex;align-items:center;gap:.5rem;padding:.5rem;background:var(--card);border-radius:var(--r);margin-bottom:.3rem;border:1px solid var(--bd)}.ride-step .num{width:28px;height:28px;border-radius:50%;background:var(--bd);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;flex-shrink:0}.ride-step .num.done{background:var(--green)}.ride-step .num.now{background:var(--acc);animation:pulse 1.5s infinite}.ride-step .info{flex:1;font-size:.7rem}.ride-step .addr{font-size:.6rem;color:var(--txt3)}
         .btn-full{width:100%;padding:.6rem;border-radius:var(--r);font-weight:700;font-size:.75rem;cursor:pointer;border:0;margin-top:.3rem}.btn-purple{background:var(--acc);color:#fff}.btn-outline{background:transparent;border:1px solid var(--bd);color:var(--txt2);position:relative}.btn-red{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3)}
-        .chat-badge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;width:18px;height:18px;border-radius:50%;font-size:.55rem;display:none;align-items:center;justify-content:center;font-weight:700}.chat-badge.show{display:flex}
+        .badge-new{background:var(--red);color:#fff;padding:2px 6px;border-radius:10px;font-size:.55rem;font-weight:700;display:none;animation:pulse 1.5s infinite;position:absolute;top:-6px;right:-6px}
+        .badge-new.show{display:inline-block}
         .chat-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:999;display:flex;flex-direction:column}.chat-header{background:var(--bg2);padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}.chat-body{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:.5rem}.msg{max-width:80%;padding:.5rem .7rem;border-radius:14px;font-size:.75rem}.msg.sent{background:var(--acc);align-self:flex-end}.msg.recv{background:var(--card);align-self:flex-start;border:1px solid var(--bd)}.chat-input-wrap{padding:.5rem;display:flex;gap:.3rem;border-top:1px solid var(--bd);background:var(--bg2)}.chat-input-wrap input{flex:1;padding:.5rem;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);color:var(--txt);outline:0;font-size:.75rem}.chat-input-wrap button{padding:.5rem .8rem;background:var(--acc);color:#fff;border:0;border-radius:var(--r);font-weight:700;cursor:pointer}
         .card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.card-row{display:flex;justify-content:space-between;align-items:center}.card-val{font-size:1.3rem;font-weight:800}.card-lbl{font-size:.6rem;color:var(--txt3)}
         .empty{text-align:center;color:var(--txt3);padding:1rem;font-size:.75rem}.stars{display:flex;gap:.2rem}.stars span{color:var(--warn);font-size:.7rem}
@@ -91,15 +92,58 @@ function handleSt(st){if(st==='aceptado'){if(document.getElementById('activeView
 function deny(){if(!sid)return;svcAct=false;db.ref(`servicios/${sid}`).update({estado:'rechazado',choferId:uid,ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();notif('Rechazado','Servicio rechazado','error')})}
 function resetAll(){if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}sid=null;sdata=null;svcAct=false;confAct=false}
 function showAct(){document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='block';step=1;updateUI()}
-function updateUI(){document.getElementById('activeView').innerHTML=`<div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div><div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div><button class="btn-full btn-purple" onclick="nextStep()">${step===1?'Iniciar Recogida':step===2?'Llegué al Cliente':'Finalizar Viaje'}</button><button class="btn-full btn-outline" onclick="openChat()" style="position:relative">Chat <span class="chat-badge" id="chatBadge"></span></button><button class="btn-full btn-outline" onclick="reportFound()">Reportar objeto</button><button class="btn-full btn-red" onclick="finishNow()">Finalizar ahora</button>`}
+function updateUI(){document.getElementById('activeView').innerHTML=`<div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div><div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div><button class="btn-full btn-purple" onclick="nextStep()">${step===1?'Iniciar Recogida':step===2?'Llegué al Cliente':'Finalizar Viaje'}</button><button class="btn-full btn-outline" onclick="openChat()" style="position:relative">💬 Chat <span class="badge-new" id="chatBadge">0</span></button><button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto</button><button class="btn-full btn-red" onclick="finishNow()">🏁 Finalizar ahora</button>`}
 function nextStep(){if(step===1){db.ref(`servicios/${sid}`).update({estado:'en_camino'});step=2;updateUI();notif('En camino','Al cliente','success')}else if(step===2){db.ref(`servicios/${sid}`).update({estado:'en_servicio'});step=3;updateUI();notif('Viaje iniciado','Al destino','success')}else finishRide()}
 function finishRide(){if(!sid)return;db.ref(`servicios/${sid}/tarifa_propuesta`).once('value',snap=>{const fare=snap.val()||sdata?.tarifa_propuesta||50;const hoy=new Date().toISOString().split('T')[0];if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});resetAll();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje completado','$'+fare,'success');loadData();loadHistory()})}
 function finishNow(){step=3;finishRide()}
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=function(){const f=i.files[0];if(f){const r=storage.ref(`objetos/${sid}_${Date.now()}`);r.put(f).then(()=>r.getDownloadURL()).then(u=>{db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:u,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP});notif('Reporte','Con foto','success')}).catch(()=>saveR(d))}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 
-function listenChats(){db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const l=Object.values(ms).pop();if(l&&l.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',l.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate(150)}}})}
-function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>Chat</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
+// ✅ CHAT CORREGIDO - Ahora con animación de parpadeo
+function listenChats(){
+    db.ref('chats').on('child_added', s => {
+        if(s.key === sid && !chatOpen){
+            const ms = s.val();
+            if(!ms) return;
+            const last = Object.values(ms).pop();
+            if(last && last.remitente === 'cliente'){
+                const badge = document.getElementById('chatBadge');
+                if(badge){
+                    let count = parseInt(badge.textContent) || 0;
+                    count++;
+                    badge.textContent = count;
+                    badge.classList.add('show');
+                }
+                notif('💬 Nuevo mensaje', last.mensaje.substring(0, 35), 'message');
+                playSound('msg');
+                if(navigator.vibrate) navigator.vibrate(150);
+            }
+        }
+    });
+}
+
+function openChat(){
+    if(!sid) return;
+    chatOpen = true;
+    const badge = document.getElementById('chatBadge');
+    if(badge){
+        badge.classList.remove('show');
+        badge.textContent = '0';
+    }
+    const d = document.createElement('div');
+    d.className = 'chat-modal';
+    d.innerHTML = `<div class="chat-header"><span>💬 Chat con el cliente</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;
+    document.body.appendChild(d);
+    db.ref(`chats/${sid}`).on('child_added', s => {
+        const m = s.val();
+        const el = document.getElementById('chatMsgs');
+        if(el){
+            el.innerHTML += `<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;
+            el.scrollTop = el.scrollHeight;
+        }
+    });
+}
+
 function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 
