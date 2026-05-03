@@ -32,35 +32,26 @@
         .inp:focus{border-color:var(--acc)}
         .btn{width:100%;max-width:300px;padding:.7rem;border-radius:var(--r);font-weight:700;cursor:pointer;border:0;font-size:.85rem;transition:.2s}
         .btn-acc{background:var(--acc);color:#fff}
-        .btn-acc:hover{opacity:.9}
-        .login-err{background:rgba(255,71,87,.1);border:1px solid var(--red);padding:.5rem;border-radius:var(--r);margin-bottom:.5rem;font-size:.75rem;display:none;max-width:300px}
+        .btn-acc:disabled{opacity:.5;cursor:not-allowed}
+        .login-err{background:rgba(255,71,87,.1);border:1px solid var(--red);padding:.5rem;border-radius:var(--r);margin-bottom:.5rem;font-size:.75rem;display:none;max-width:300px;width:100%}
 
         /* DASHBOARD */
         .dashboard{display:none;flex-direction:column;height:100%}
         .dashboard.active{display:flex}
-
         .topbar{background:var(--bg2);padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0}
         .topbar h2{font-size:.9rem;display:flex;align-items:center;gap:.3rem}
         .topbar-right{display:flex;gap:.4rem;align-items:center}
-        .toggle{padding:.3rem .6rem;border-radius:15px;font-size:.65rem;font-weight:700;cursor:pointer;border:0;transition:.2s}
+        .toggle{padding:.3rem .6rem;border-radius:15px;font-size:.65rem;font-weight:700;cursor:pointer;border:0}
         .toggle.on{background:var(--green);color:#000}
         .toggle.off{background:var(--red);color:#fff}
         .btn-sm{padding:.3rem .6rem;border-radius:8px;font-size:.65rem;background:var(--card);border:1px solid var(--bd);color:var(--txt2);cursor:pointer}
 
-        /* Map */
         .map-wrap{flex:1;min-height:0;position:relative}
         #driverMap{width:100%;height:100%;position:absolute;top:0;left:0}
-
-        /* Tabs */
         .tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0}
-        .tab{flex:1;text-align:center;padding:.5rem;font-size:.7rem;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:.2s}
+        .tab{flex:1;text-align:center;padding:.5rem;font-size:.7rem;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent}
         .tab.on{color:var(--acc);border-bottom-color:var(--acc)}
-
-        /* Content */
         .content{flex-shrink:0;max-height:42vh;overflow-y:auto;padding:.6rem}
-        .content::-webkit-scrollbar{width:3px}
-        .content::-webkit-scrollbar-thumb{background:var(--bd);border-radius:3px}
-
         .card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}
         .card-row{display:flex;justify-content:space-between;align-items:center}
         .card-val{font-size:1.3rem;font-weight:800}
@@ -82,31 +73,26 @@
         @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(108,92,231,.4)}50%{box-shadow:0 0 0 8px rgba(108,92,231,0)}}
         .ride-step .info{flex:1;font-size:.7rem}
         .ride-step .addr{font-size:.6rem;color:var(--txt3)}
-
-        .btn-full{width:100%;padding:.6rem;border-radius:var(--r);font-weight:700;font-size:.75rem;cursor:pointer;border:0;margin-top:.3rem;transition:.2s}
+        .btn-full{width:100%;padding:.6rem;border-radius:var(--r);font-weight:700;font-size:.75rem;cursor:pointer;border:0;margin-top:.3rem}
         .btn-purple{background:var(--acc);color:#fff}
         .btn-outline{background:transparent;border:1px solid var(--bd);color:var(--txt2)}
         .btn-red{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3)}
 
-        /* Chat Modal */
         .chat-modal{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:999;display:flex;flex-direction:column}
         .chat-header{background:var(--bg2);padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
         .chat-body{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:.5rem}
         .msg{max-width:80%;padding:.5rem .7rem;border-radius:14px;font-size:.75rem}
-        .msg.sent{background:var(--acc);align-self:flex-end;border-bottom-right-radius:4px}
-        .msg.recv{background:var(--card);align-self:flex-start;border-bottom-left-radius:4px;border:1px solid var(--bd)}
+        .msg.sent{background:var(--acc);align-self:flex-end}
+        .msg.recv{background:var(--card);align-self:flex-start;border:1px solid var(--bd)}
         .chat-input-wrap{padding:.5rem;display:flex;gap:.3rem;border-top:1px solid var(--bd);background:var(--bg2)}
         .chat-input-wrap input{flex:1;padding:.5rem;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);color:var(--txt);outline:0;font-size:.75rem}
         .chat-input-wrap button{padding:.5rem .8rem;background:var(--acc);color:#fff;border:0;border-radius:var(--r);font-weight:700;cursor:pointer}
 
         .toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:var(--card);border:1px solid var(--bd);padding:.5rem .8rem;border-radius:var(--r);z-index:9999;font-size:.7rem;font-weight:600;animation:ti 2.5s ease forwards;pointer-events:none}
         @keyframes ti{0%{opacity:0;transform:translateX(-50%) translateY(-10px)}10%{opacity:1;transform:translateX(-50%) translateY(0)}80%{opacity:1}100%{opacity:0}}
-
         .empty{text-align:center;color:var(--txt3);padding:1.5rem;font-size:.75rem}
-        .badge-new{background:var(--red);color:#fff;padding:2px 6px;border-radius:10px;font-size:.55rem;font-weight:700;animation:pulse 1.5s infinite}
-        
-        .stars{display:flex;gap:.2rem}
-        .stars span{color:var(--warn);font-size:.7rem}
+        .badge-new{background:var(--red);color:#fff;padding:2px 6px;border-radius:10px;font-size:.55rem;animation:pulse 1.5s infinite}
+        .stars{display:flex;gap:.2rem}.stars span{color:var(--warn);font-size:.7rem}
     </style>
 </head>
 <body>
@@ -131,17 +117,13 @@
                 <button class="btn-sm" onclick="logout()">Salir</button>
             </div>
         </header>
-
         <div class="map-wrap"><div id="driverMap"></div></div>
-
         <div class="tabs">
             <div class="tab on" onclick="switchTab('home',this)">🏠 Inicio</div>
             <div class="tab" onclick="switchTab('earnings',this)">💰 Ganancias</div>
             <div class="tab" onclick="switchTab('history',this)">📋 Historial</div>
         </div>
-
         <div class="content" id="tabContent">
-            <!-- HOME -->
             <div id="tab-home">
                 <div id="idleView">
                     <div class="card"><div class="card-row"><div><div class="card-lbl">SERVICIOS HOY</div><div class="card-val" id="hoyCount">0</div></div><div style="font-size:2rem">📋</div></div></div>
@@ -150,7 +132,6 @@
                 <div id="incomingView" style="display:none"></div>
                 <div id="activeView" style="display:none"></div>
             </div>
-            <!-- EARNINGS -->
             <div id="tab-earnings" style="display:none">
                 <div class="card"><div class="card-lbl">GANANCIAS HOY</div><div class="card-val" id="earnToday">$0</div></div>
                 <div class="card"><div class="card-lbl">SERVICIOS HOY</div><div class="card-val" id="earnServices">0</div></div>
@@ -159,10 +140,7 @@
                 <div class="card"><div class="card-lbl">COMISIÓN (10%)</div><div class="card-val" style="color:var(--red)" id="earnComm">$0</div></div>
                 <div class="card"><div class="card-row"><div><div class="card-lbl">⭐ CALIFICACIÓN</div><div class="card-val" id="earnRating">0</div></div><div class="stars" id="starsDisplay"></div></div></div>
             </div>
-            <!-- HISTORY -->
-            <div id="tab-history" style="display:none">
-                <div id="historyList"><div class="empty">Cargando historial...</div></div>
-            </div>
+            <div id="tab-history" style="display:none"><div id="historyList"><div class="empty">Cargando...</div></div></div>
         </div>
     </div>
 </div>
@@ -174,230 +152,533 @@ const auth=firebase.auth(),db=firebase.database(),storage=firebase.storage();
 let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calificacion=0;
 const ZA=[16.9516,-96.7491];
 
-// ========== LOGIN ==========
+// ========== LOGIN CORREGIDO ==========
 function login(){
-    const e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPassword').value;
-    const err=document.getElementById('loginError'),btn=document.getElementById('btnLogin');
-    if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}
-    btn.disabled=true;btn.textContent='...';err.style.display='none';
-    auth.signInWithEmailAndPassword(e,p).then(u=>{uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);showDash()})
-    .catch(er=>{let m='Error';if(er.code==='auth/wrong-password')m='Contraseña incorrecta';else if(er.code==='auth/user-not-found')m='Chofer no registrado';err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const err = document.getElementById('loginError');
+    const btn = document.getElementById('btnLogin');
+
+    if(!email || !password){
+        err.textContent = 'Completa todos los campos';
+        err.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Iniciando...';
+    err.style.display = 'none';
+
+    console.log('Intentando login:', email);
+
+    auth.signInWithEmailAndPassword(email, password)
+        .then(userCredential => {
+            uid = userCredential.user.uid;
+            console.log('✅ Login exitoso. UID:', uid);
+            
+            // Guardar credenciales
+            localStorage.setItem('chofer_email', email);
+            localStorage.setItem('chofer_password', password);
+            
+            // Verificar que existe en la base de datos
+            return db.ref(`choferes/${uid}`).once('value');
+        })
+        .then(snapshot => {
+            const choferData = snapshot.val();
+            if(choferData){
+                console.log('✅ Datos del chofer encontrados:', choferData.nombre);
+                showDashboard();
+            } else {
+                console.warn('⚠️ No hay datos en choferes/' + uid);
+                // Crear datos básicos si no existen
+                return db.ref(`choferes/${uid}`).set({
+                    nombre: email.split('@')[0],
+                    email: email,
+                    estado: 'activo',
+                    calificacion: 0,
+                    total_servicios: 0,
+                    servicios_hoy: 0,
+                    ubicacion: { lat: ZA[0], lng: ZA[1] }
+                });
+            }
+        })
+        .then(() => {
+            showDashboard();
+        })
+        .catch(error => {
+            console.error('❌ Error login:', error.code, error.message);
+            
+            let mensaje = 'Error al iniciar sesión';
+            switch(error.code){
+                case 'auth/user-not-found':
+                    mensaje = '❌ Chofer no registrado.\nContacta al administrador: admin@zaachilamoto.com';
+                    break;
+                case 'auth/wrong-password':
+                    mensaje = '❌ Contraseña incorrecta';
+                    break;
+                case 'auth/invalid-email':
+                    mensaje = '❌ Correo electrónico no válido';
+                    break;
+                case 'auth/too-many-requests':
+                    mensaje = '❌ Demasiados intentos. Espera un momento';
+                    break;
+                case 'auth/network-request-failed':
+                    mensaje = '❌ Error de conexión. Verifica tu internet';
+                    break;
+            }
+            
+            err.textContent = mensaje;
+            err.style.display = 'block';
+            btn.disabled = false;
+            btn.textContent = 'Iniciar Sesión';
+        });
 }
 
-function showDash(){
-    document.getElementById('loginScreen').style.display='none';
+function showDashboard(){
+    document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('dashboard').classList.add('active');
-    initMap();loadData();listenServices();getPos();listenChats();
+    
+    // Inicializar todo
+    setTimeout(() => {
+        initMap();
+        loadData();
+        listenServices();
+        getPos();
+        listenChats();
+    }, 300);
 }
 
 function logout(){
-    if(confirm('¿Cerrar sesión?')){if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});auth.signOut();localStorage.clear();location.reload()}
+    if(confirm('¿Cerrar sesión?')){
+        if(uid) db.ref(`choferes/${uid}`).update({estado:'inactivo'});
+        auth.signOut();
+        localStorage.removeItem('chofer_email');
+        localStorage.removeItem('chofer_password');
+        location.reload();
+    }
 }
 
-auth.onAuthStateChanged(u=>{if(u){uid=u.uid;showDash()}else{const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login()}}});
+// Verificar sesión al cargar
+window.addEventListener('DOMContentLoaded', () => {
+    const savedEmail = localStorage.getItem('chofer_email');
+    const savedPass = localStorage.getItem('chofer_password');
+    
+    if(savedEmail && savedPass){
+        document.getElementById('loginEmail').value = savedEmail;
+        document.getElementById('loginPassword').value = savedPass;
+        // Intentar login automático
+        auth.signInWithEmailAndPassword(savedEmail, savedPass)
+            .then(u => {
+                uid = u.user.uid;
+                showDashboard();
+            })
+            .catch(() => {
+                // Si falla, mostrar login manual
+                console.log('Sesión guardada inválida, login manual requerido');
+            });
+    }
+});
 
 // ========== MAPA ==========
 function initMap(){
-    map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);
-    marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(108,92,231,.6);"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);
-    setTimeout(()=>map.invalidateSize(),200);
+    const container = document.getElementById('driverMap');
+    if(!container || container.offsetHeight === 0){
+        container.style.height = '200px';
+    }
+    
+    map = L.map('driverMap', {zoomControl: false, attributionControl: false}).setView(ZA, 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {attribution:'© OSM'}).addTo(map);
+    marker = L.marker(ZA, {
+        icon: L.divIcon({
+            html: '<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;"></div>',
+            iconSize: [20,20], iconAnchor: [10,10]
+        })
+    }).addTo(map);
+    setTimeout(() => map.invalidateSize(), 300);
 }
 
 function getPos(){
-    if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP})},()=>{},{enableHighAccuracy:true});
+    if(navigator.geolocation){
+        navigator.geolocation.watchPosition(
+            p => {
+                pos = {lat: p.coords.latitude, lng: p.coords.longitude};
+                if(marker) marker.setLatLng([pos.lat, pos.lng]);
+                if(uid && active){
+                    db.ref(`choferes/${uid}/ubicacion`).set({
+                        lat: pos.lat, lng: pos.lng,
+                        ts: firebase.database.ServerValue.TIMESTAMP
+                    });
+                }
+            },
+            () => {},
+            {enableHighAccuracy: true}
+        );
+    }
 }
 
 // ========== DATOS ==========
 function loadData(){
-    if(!uid)return;
-    db.ref(`choferes/${uid}`).on('value',s=>{
-        const d=s.val()||{};
-        document.getElementById('choferName').textContent=(d.nombre||'Chofer').split(' ')[0];
-        const hoy=new Date().toISOString().split('T')[0];
-        const g=d.ganancias||{};
-        document.getElementById('hoyCount').textContent=d.servicios_hoy||0;
-        document.getElementById('earnToday').textContent='$'+(g[hoy]||0);
-        document.getElementById('earnServices').textContent=d.servicios_hoy||0;
-        document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);
-        document.getElementById('earnMonth').textContent='$'+Math.round((g[hoy]||0)*22);
-        document.getElementById('earnComm').textContent='$'+Math.round((g[hoy]||0)*0.1);
-        calificacion=d.calificacion||0;
-        document.getElementById('earnRating').textContent='⭐ '+calificacion;
-        document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calificacion)?'★':'☆'}</span>`).join('');
+    if(!uid) return;
+    
+    db.ref(`choferes/${uid}`).on('value', s => {
+        const d = s.val() || {};
+        console.log('📊 Datos cargados:', d.nombre);
+        
+        document.getElementById('choferName').textContent = (d.nombre || 'Chofer').split(' ')[0];
+        
+        const hoy = new Date().toISOString().split('T')[0];
+        const g = d.ganancias || {};
+        
+        document.getElementById('hoyCount').textContent = d.servicios_hoy || 0;
+        document.getElementById('earnToday').textContent = '$' + (g[hoy] || 0);
+        document.getElementById('earnServices').textContent = d.servicios_hoy || 0;
+        document.getElementById('earnWeek').textContent = '$' + Math.round((g[hoy] || 0) * 5);
+        document.getElementById('earnMonth').textContent = '$' + Math.round((g[hoy] || 0) * 22);
+        document.getElementById('earnComm').textContent = '$' + Math.round((g[hoy] || 0) * 0.1);
+        
+        calificacion = d.calificacion || 0;
+        document.getElementById('earnRating').textContent = '⭐ ' + calificacion;
+        document.getElementById('starsDisplay').innerHTML = Array.from({length: 5}, (_, i) => 
+            `<span>${i < Math.round(calificacion) ? '★' : '☆'}</span>`
+        ).join('');
     });
 }
 
 function toggleStatus(){
-    active=!active;
-    const btn=document.getElementById('statusToggle');
-    if(active){btn.className='toggle on';btn.textContent='ACTIVO';db.ref(`choferes/${uid}`).update({estado:'activo'});toast('Disponible')}
-    else{btn.className='toggle off';btn.textContent='INACTIVO';db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';toast('Pausado')}
+    active = !active;
+    const btn = document.getElementById('statusToggle');
+    
+    if(active){
+        btn.className = 'toggle on';
+        btn.textContent = 'ACTIVO';
+        if(uid) db.ref(`choferes/${uid}`).update({estado: 'activo'});
+        toast('✅ Disponible para servicios');
+    } else {
+        btn.className = 'toggle off';
+        btn.textContent = 'INACTIVO';
+        if(uid) db.ref(`choferes/${uid}`).update({estado: 'inactivo'});
+        document.getElementById('incomingView').style.display = 'none';
+        document.getElementById('idleView').style.display = 'block';
+        toast('🔴 Has pausado los servicios');
+    }
 }
 
 // ========== SERVICIOS ==========
 function listenServices(){
-    db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{if(active&&!sid)showIncoming(s.key,s.val())});
+    db.ref('servicios').orderByChild('estado').equalTo('buscando')
+        .on('child_added', s => {
+            if(active && !sid) showIncoming(s.key, s.val());
+        });
 }
 
-function showIncoming(id,data){
-    sid=id;sdata=data;
-    document.getElementById('idleView').style.display='none';
-    document.getElementById('incomingView').style.display='block';
-    document.getElementById('incomingView').innerHTML=`
-        <div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div>
-        <div class="inc-row"><span>Origen</span><b>${data.origen?.direccion||'Cliente'}</b></div>
-        <div class="inc-row"><span>Destino</span><b>${data.destino?.direccion||'---'}</b></div>
-        <div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,data.origen?.lat||ZA[0],data.origen?.lng||ZA[1]).toFixed(1)} km</b></div>
-        <div class="inc-row"><span>Tarifa sugerida</span><b>$${data.tarifa_estimada||40}</b></div>
-        <div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`;
-    if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);playSound('incoming');
+function showIncoming(id, data){
+    sid = id;
+    sdata = data;
+    
+    document.getElementById('idleView').style.display = 'none';
+    document.getElementById('incomingView').style.display = 'block';
+    document.getElementById('incomingView').innerHTML = `
+        <div class="incoming">
+            <div class="inc-header">🔔 Nueva solicitud</div>
+            <div class="inc-row"><span>Origen</span><b>${data.origen?.direccion || 'Cliente'}</b></div>
+            <div class="inc-row"><span>Destino</span><b>${data.destino?.direccion || '---'}</b></div>
+            <div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat, pos.lng, data.origen?.lat || ZA[0], data.origen?.lng || ZA[1]).toFixed(1)} km</b></div>
+            <div class="inc-row"><span>Tarifa sugerida</span><b>$${data.tarifa_estimada || 40}</b></div>
+            <div class="inc-btns">
+                <button class="btn-accept" onclick="accept()">✅ Aceptar</button>
+                <button class="btn-deny" onclick="deny()">❌ Rechazar</button>
+            </div>
+        </div>`;
+    
+    if(navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+    playSound('incoming');
 }
 
 function accept(){
-    const base=sdata?.tarifa_estimada||40;
-    const price=prompt('💰 Tarifa a cobrar ($):',base);
-    if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}
-    const fare=parseInt(price);
-    db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:document.getElementById('choferName').textContent,choferPlaca:'---',choferRating:String(calificacion),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
-        document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';
-        toast('Tarifa enviada: $'+fare);listenConfirm(sid);
+    const base = sdata?.tarifa_estimada || 40;
+    const price = prompt('💰 Tarifa a cobrar ($):', base);
+    if(!price || isNaN(price) || parseInt(price) <= 0){
+        toast('⚠️ Ingresa una tarifa válida');
+        return;
+    }
+    
+    const fare = parseInt(price);
+    db.ref(`servicios/${sid}`).update({
+        choferId: uid,
+        estado: 'tarifa_propuesta',
+        tarifa_propuesta: fare,
+        choferNombre: document.getElementById('choferName').textContent,
+        choferPlaca: '---',
+        choferRating: String(calificacion),
+        ts: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+        document.getElementById('incomingView').style.display = 'none';
+        document.getElementById('idleView').style.display = 'block';
+        toast('💰 Tarifa enviada: $' + fare);
+        listenConfirm(sid);
     });
 }
 
 function listenConfirm(id){
-    db.ref(`servicios/${id}/estado`).on('value',s=>{
-        const st=s.val();
-        if(st==='aceptado'){showActive();toast('✅ Cliente aceptó');playSound('accept')}
-        else if(st==='cancelado'){sid=null;sdata=null;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';toast('Cancelado')}
+    db.ref(`servicios/${id}/estado`).on('value', s => {
+        const st = s.val();
+        if(st === 'aceptado'){
+            showActive();
+            toast('✅ Cliente aceptó la tarifa');
+            playSound('accept');
+        } else if(st === 'cancelado'){
+            sid = null; sdata = null;
+            document.getElementById('activeView').style.display = 'none';
+            document.getElementById('idleView').style.display = 'block';
+            toast('❌ Cliente rechazó la tarifa');
+        }
     });
 }
 
 function deny(){
-    if(!sid)return;
-    db.ref(`servicios/${sid}`).update({estado:'rechazado',choferId:uid,ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
-        document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';sid=null;sdata=null;toast('Rechazado');
+    if(!sid) return;
+    db.ref(`servicios/${sid}`).update({
+        estado: 'rechazado',
+        choferId: uid,
+        ts: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => {
+        document.getElementById('incomingView').style.display = 'none';
+        document.getElementById('idleView').style.display = 'block';
+        sid = null; sdata = null;
+        toast('Servicio rechazado');
     });
 }
 
 function showActive(){
-    document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='none';
-    document.getElementById('activeView').style.display='block';step=1;updateActiveUI();
+    document.getElementById('idleView').style.display = 'none';
+    document.getElementById('incomingView').style.display = 'none';
+    document.getElementById('activeView').style.display = 'block';
+    step = 1;
+    updateActiveUI();
 }
 
 function updateActiveUI(){
-    document.getElementById('activeView').innerHTML=`
-        <div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger al cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div>
-        <div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div>
-        <button class="btn-full btn-purple" onclick="nextStep()">${step===1?'🏍️ Iniciar Recogida':step===2?'📍 Llegué al Cliente':'🏁 Finalizar Viaje'}</button>
+    document.getElementById('activeView').innerHTML = `
+        <div class="ride-step">
+            <div class="num ${step === 1 ? 'now' : step > 1 ? 'done' : ''}">1</div>
+            <div class="info"><div>Recoger al cliente</div><div class="addr">${sdata?.origen?.direccion || 'Cliente'}</div></div>
+        </div>
+        <div class="ride-step">
+            <div class="num ${step === 2 ? 'now' : step > 2 ? 'done' : ''}">2</div>
+            <div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion || 'Destino'}</div></div>
+        </div>
+        <button class="btn-full btn-purple" onclick="nextStep()">${step === 1 ? '🏍️ Iniciar Recogida' : step === 2 ? '📍 Llegué al Cliente' : '🏁 Finalizar Viaje'}</button>
         <button class="btn-full btn-outline" onclick="openChat()">💬 Chat <span id="chatBadge" class="badge-new" style="display:none">Nuevo</span></button>
-        <button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto encontrado</button>
+        <button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto</button>
         <button class="btn-full btn-red" onclick="finishNow()">🏁 Finalizar ahora</button>`;
 }
 
 function nextStep(){
-    if(step===1){db.ref(`servicios/${sid}`).update({estado:'en_camino'});step=2;updateActiveUI();toast('📍 En camino')}
-    else if(step===2){db.ref(`servicios/${sid}`).update({estado:'en_servicio'});step=3;updateActiveUI();toast('🚀 Viaje iniciado')}
-    else finishRide();
-}
-
-function finishRide(){
-    const fare=sdata?.tarifa_propuesta||sdata?.tarifa_estimada||40;
-    if(confirm('¿Cobrar $'+fare+' y finalizar?')){
-        const hoy=new Date().toISOString().split('T')[0];
-        db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});
-        db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);
-        db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);
-        db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);
-        db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});
-        resetRide();toast('✅ Completado: $'+fare);loadData();loadHistory();
+    if(step === 1){
+        db.ref(`servicios/${sid}`).update({estado: 'en_camino'});
+        step = 2;
+        updateActiveUI();
+        toast('📍 En camino al cliente');
+    } else if(step === 2){
+        db.ref(`servicios/${sid}`).update({estado: 'en_servicio'});
+        step = 3;
+        updateActiveUI();
+        toast('🚀 Viaje iniciado');
+    } else {
+        finishRide();
     }
 }
 
-function finishNow(){if(confirm('¿Finalizar viaje?')){step=3;finishRide()}}
+function finishRide(){
+    const fare = sdata?.tarifa_propuesta || sdata?.tarifa_estimada || 40;
+    if(confirm('💰 ¿Cobrar $' + fare + ' y finalizar viaje?')){
+        const hoy = new Date().toISOString().split('T')[0];
+        db.ref(`servicios/${sid}`).update({estado: 'completado', cobro: fare, fecha: hoy});
+        db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g => (g || 0) + fare);
+        db.ref(`choferes/${uid}/servicios_hoy`).transaction(c => (c || 0) + 1);
+        db.ref(`choferes/${uid}/total_servicios`).transaction(c => (c || 0) + 1);
+        db.ref('admin/comisiones').push({
+            servicioId: sid, choferId: uid,
+            monto_servicio: fare, comision: Math.round(fare * 0.1), fecha: hoy
+        });
+        resetRide();
+        toast('✅ Viaje completado: $' + fare);
+        loadData();
+        loadHistory();
+    }
+}
 
-function resetRide(){sid=null;sdata=null;step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';loadData();loadHistory()}
+function finishNow(){
+    if(confirm('¿Finalizar viaje ahora?')){
+        step = 3;
+        finishRide();
+    }
+}
 
-// ========== REPORTAR OBJETO ENCONTRADO ==========
+function resetRide(){
+    sid = null; sdata = null; step = 1;
+    document.getElementById('activeView').style.display = 'none';
+    document.getElementById('idleView').style.display = 'block';
+}
+
+// ========== REPORTAR OBJETO ==========
 function reportFound(){
-    if(!sid)return;
-    const desc=prompt('📦 Describe el objeto encontrado:');
-    if(!desc)return;
+    if(!sid) return;
+    const desc = prompt('📦 Describe el objeto encontrado:');
+    if(!desc) return;
     
-    if(confirm('¿Deseas subir una foto del objeto?')){
-        const input=document.createElement('input');input.type='file';input.accept='image/*';
-        input.onchange=function(){
-            const file=input.files[0];
+    if(confirm('¿Deseas subir una foto?')){
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = 'image/*';
+        input.onchange = function(){
+            const file = input.files[0];
             if(file){
-                const ref=storage.ref(`objetos/${sid}_${Date.now()}`);
-                ref.put(file).then(()=>ref.getDownloadURL()).then(url=>{
-                    db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:desc,foto:url,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>toast('✅ Reporte enviado con foto'))
-                }).catch(()=>{saveReportNoFoto(desc)});
+                const ref = storage.ref(`objetos/${sid}_${Date.now()}`);
+                ref.put(file).then(() => ref.getDownloadURL()).then(url => {
+                    db.ref('reportes/objetos_olvidados').push({
+                        servicioId: sid, choferId: uid,
+                        descripcion: desc, foto: url,
+                        estado: 'pendiente', tipo: 'chofer_reporta',
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                    toast('✅ Reporte enviado con foto');
+                }).catch(() => saveReportNoFoto(desc));
             }
         };
         input.click();
-    }else{saveReportNoFoto(desc)}
+    } else {
+        saveReportNoFoto(desc);
+    }
 }
 
 function saveReportNoFoto(desc){
-    db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:desc,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>toast('✅ Reporte enviado'))
+    db.ref('reportes/objetos_olvidados').push({
+        servicioId: sid, choferId: uid,
+        descripcion: desc, estado: 'pendiente',
+        tipo: 'chofer_reporta',
+        timestamp: firebase.database.ServerValue.TIMESTAMP
+    }).then(() => toast('✅ Reporte enviado'));
 }
 
 // ========== CHAT ==========
 function listenChats(){
-    db.ref('chats').on('child_added',snap=>{
-        if(snap.key===sid&&!chatOpen){
-            const msgs=snap.val();if(!msgs)return;
-            const last=Object.values(msgs).pop();
-            if(last&&last.remitente==='cliente'){document.getElementById('chatBadge')?.style?.display='inline-block';playSound('msg');if(navigator.vibrate)navigator.vibrate(100)}
+    db.ref('chats').on('child_added', snap => {
+        if(snap.key === sid && !chatOpen){
+            const msgs = snap.val();
+            if(!msgs) return;
+            const last = Object.values(msgs).pop();
+            if(last && last.remitente === 'cliente'){
+                const badge = document.getElementById('chatBadge');
+                if(badge) badge.style.display = 'inline-block';
+                playSound('msg');
+                if(navigator.vibrate) navigator.vibrate(100);
+            }
         }
     });
 }
 
 function openChat(){
-    if(!sid)return;
-    chatOpen=true;const badge=document.getElementById('chatBadge');if(badge)badge.style.display='none';
-    const d=document.createElement('div');d.className='chat-modal';
-    d.innerHTML=`<div class="chat-header"><span>💬 Chat con el cliente</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;
+    if(!sid) return;
+    chatOpen = true;
+    const badge = document.getElementById('chatBadge');
+    if(badge) badge.style.display = 'none';
+    
+    const d = document.createElement('div'); d.className = 'chat-modal';
+    d.innerHTML = `
+        <div class="chat-header">
+            <span>💬 Chat con el cliente</span>
+            <button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button>
+        </div>
+        <div class="chat-body" id="chatMsgs"></div>
+        <div class="chat-input-wrap">
+            <input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()">
+            <button onclick="sendMsg()">Enviar</button>
+        </div>`;
     document.body.appendChild(d);
-    db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}});
+    
+    db.ref(`chats/${sid}`).on('child_added', s => {
+        const m = s.val();
+        const el = document.getElementById('chatMsgs');
+        if(el){
+            el.innerHTML += `<div class="msg ${m.remitente === 'chofer' ? 'sent' : 'recv'}">${m.mensaje}</div>`;
+            el.scrollTop = el.scrollHeight;
+        }
+    });
 }
 
-function closeChat(btn){btn.closest('.chat-modal').remove();chatOpen=false}
+function closeChat(btn){ btn.closest('.chat-modal').remove(); chatOpen = false; }
 
-window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
+window.sendMsg = function(){
+    const i = document.getElementById('chatInput');
+    const m = i?.value.trim();
+    if(m && sid){
+        db.ref(`chats/${sid}`).push({
+            remitente: 'chofer', userId: uid,
+            mensaje: m, ts: firebase.database.ServerValue.TIMESTAMP
+        });
+        i.value = '';
+    }
+};
 
 // ========== HISTORIAL ==========
 function loadHistory(){
-    if(!uid)return;
-    db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value',s=>{
-        const d=s.val();let h='';
-        if(!d){document.getElementById('historyList').innerHTML='<div class="empty">Sin servicios</div>';return}
-        Object.entries(d).reverse().forEach(([id,v])=>{
-            h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`
+    if(!uid) return;
+    db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value', s => {
+        const d = s.val(); let h = '';
+        if(!d){ document.getElementById('historyList').innerHTML = '<div class="empty">Sin servicios</div>'; return; }
+        Object.entries(d).reverse().forEach(([id, v]) => {
+            h += `<div class="card"><div class="card-row">
+                <div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion || '').substring(0, 15)} → ${(v.destino?.direccion || '').substring(0, 15)}</div>
+                <div style="font-size:.6rem;color:var(--txt3)">${v.fecha || '-'} · ${v.estado}</div></div>
+                <div style="font-weight:700;color:var(--green)">$${v.cobro || v.tarifa_estimada || 0}</div>
+            </div></div>`;
         });
-        document.getElementById('historyList').innerHTML=h
+        document.getElementById('historyList').innerHTML = h;
     });
 }
 
 // ========== SONIDOS ==========
 function playSound(type){
-    try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(type==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(type==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(type==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}
+    try{
+        const c = new(window.AudioContext || window.webkitAudioContext)();
+        const o = c.createOscillator(), g = c.createGain();
+        o.connect(g); g.connect(c.destination);
+        if(type === 'incoming'){ o.frequency.value = 800; g.gain.value = .3; o.start(); o.stop(c.currentTime + .3); }
+        else if(type === 'accept'){ o.frequency.value = 600; g.gain.value = .2; o.start(); o.stop(c.currentTime + .2); }
+        else if(type === 'msg'){ o.frequency.value = 1000; g.gain.value = .15; o.start(); o.stop(c.currentTime + .1); }
+    }catch(e){}
 }
 
 // ========== TABS ==========
-function switchTab(name,el){
-    document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');
-    document.getElementById('tab-'+name).style.display='block';
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');
-    if(name==='earnings')loadData();if(name==='history')loadHistory();
+function switchTab(name, el){
+    document.querySelectorAll('#tabContent > div').forEach(d => d.style.display = 'none');
+    document.getElementById('tab-' + name).style.display = 'block';
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+    el.classList.add('on');
+    if(name === 'earnings') loadData();
+    if(name === 'history') loadHistory();
 }
 
-function calcDist(lat1,lon1,lat2,lon2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
-function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2500)}
+function calcDist(lat1, lon1, lat2, lon2){
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
 
-document.addEventListener('keypress',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')login()});
-window.addEventListener('resize',()=>{if(map)setTimeout(()=>map.invalidateSize(),100)});
+function toast(m){
+    const t = document.createElement('div'); t.className = 'toast'; t.textContent = m;
+    document.body.appendChild(t); setTimeout(() => t.remove(), 2500);
+}
+
+document.addEventListener('keypress', e => {
+    if(e.key === 'Enter' && document.getElementById('loginScreen').style.display !== 'none') login();
+});
+
+window.addEventListener('resize', () => {
+    if(map) setTimeout(() => map.invalidateSize(), 200);
+});
 </script>
 </body>
 </html>
