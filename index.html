@@ -19,51 +19,37 @@
         :root{--bg:#0a0a0f;--bg2:#13111a;--card:#1a1722;--acc:#6C5CE7;--green:#00C897;--red:#FF4757;--warn:#FFA502;--txt:#fff;--txt2:#aaa;--txt3:#666;--bd:#252130;--r:12px;--r2:18px}
         *{margin:0;padding:0;box-sizing:border-box}
         body{font-family:'Inter','Segoe UI',sans-serif;background:#000;color:var(--txt);height:100vh;overflow:hidden}
-        
         .app{max-width:430px;margin:0 auto;height:100vh;background:var(--bg);display:flex;flex-direction:column}
         @media(min-width:431px){body{display:flex;justify-content:center;align-items:center;padding:20px}.app{border-radius:30px;height:90vh;max-height:800px;box-shadow:0 0 50px rgba(108,92,231,.1)}}
 
-        /* LOGIN */
         .login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:2rem;text-align:center}
         .login-screen .logo{font-size:4rem;margin-bottom:.5rem}
-        .login-screen h1{font-size:1.4rem;margin-bottom:1.5rem}
-        .login-screen h1 span{color:var(--acc)}
+        .login-screen h1{font-size:1.4rem;margin-bottom:1.5rem}.login-screen h1 span{color:var(--acc)}
         .inp{width:100%;max-width:300px;padding:.7rem;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);color:var(--txt);margin-bottom:.5rem;outline:0;font-size:.85rem}
         .inp:focus{border-color:var(--acc)}
         .btn{width:100%;max-width:300px;padding:.7rem;border-radius:var(--r);font-weight:700;cursor:pointer;border:0;font-size:.85rem;transition:.2s}
-        .btn-acc{background:var(--acc);color:#fff}
-        .btn-acc:disabled{opacity:.5}
+        .btn-acc{background:var(--acc);color:#fff}.btn-acc:disabled{opacity:.5}
         .login-err{background:rgba(255,71,87,.1);border:1px solid var(--red);padding:.5rem;border-radius:var(--r);margin-bottom:.5rem;font-size:.75rem;display:none;max-width:300px;width:100%}
 
-        /* DASHBOARD */
-        .dashboard{display:none;flex-direction:column;height:100%}
-        .dashboard.active{display:flex}
+        .dashboard{display:none;flex-direction:column;height:100%}.dashboard.active{display:flex}
         .topbar{background:var(--bg2);padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd);flex-shrink:0;position:relative;z-index:50}
         .topbar h2{font-size:.9rem;display:flex;align-items:center;gap:.3rem}
         .topbar-right{display:flex;gap:.4rem;align-items:center}
         .toggle{padding:.3rem .6rem;border-radius:15px;font-size:.65rem;font-weight:700;cursor:pointer;border:0}
-        .toggle.on{background:var(--green);color:#000}
-        .toggle.off{background:var(--red);color:#fff}
+        .toggle.on{background:var(--green);color:#000}.toggle.off{background:var(--red);color:#fff}
         .btn-sm{padding:.3rem .6rem;border-radius:8px;font-size:.65rem;background:var(--card);border:1px solid var(--bd);color:var(--txt2);cursor:pointer}
 
-        /* NOTIFICACIONES */
         .notification-container{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:9999;width:90%;max-width:400px;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-        .notification{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem 1rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:notifIn .4s ease,notifOut .4s ease 3s forwards;pointer-events:auto;backdrop-filter:blur(10px)}
-        .notification.request{border-left:3px solid var(--acc)}
-        .notification.message{border-left:3px solid var(--green)}
-        .notification.success{border-left:3px solid var(--green)}
-        .notification.error{border-left:3px solid var(--red)}
-        .notif-icon{font-size:1.3rem;flex-shrink:0}
-        .notif-content{flex:1;min-width:0}
-        .notif-title{font-size:.75rem;font-weight:700}
-        .notif-text{font-size:.65rem;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .notification{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem 1rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:notifIn .4s ease,notifOut .4s ease 3s forwards;pointer-events:auto}
+        .notification.request{border-left:3px solid var(--acc)}.notification.message{border-left:3px solid var(--green)}
+        .notification.success{border-left:3px solid var(--green)}.notification.error{border-left:3px solid var(--red)}
+        .notif-icon{font-size:1.3rem;flex-shrink:0}.notif-content{flex:1;min-width:0}
+        .notif-title{font-size:.75rem;font-weight:700}.notif-text{font-size:.65rem;color:var(--txt2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .notif-close{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:.8rem;flex-shrink:0}
         @keyframes notifIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}
         @keyframes notifOut{from{transform:translateY(0);opacity:1}to{transform:translateY(-100%);opacity:0}}
-
         .notif-dot{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center;animation:pulse 1.5s infinite}
-        .notif-dot.show{display:flex}
-        @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+        .notif-dot.show{display:flex}@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
         .map-wrap{flex:1;min-height:0;position:relative}
         #driverMap{width:100%;height:100%;position:absolute;top:0;left:0}
@@ -73,29 +59,24 @@
         .content{flex-shrink:0;max-height:42vh;overflow-y:auto;padding:.6rem}
         .card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}
         .card-row{display:flex;justify-content:space-between;align-items:center}
-        .card-val{font-size:1.3rem;font-weight:800}
-        .card-lbl{font-size:.6rem;color:var(--txt3)}
+        .card-val{font-size:1.3rem;font-weight:800}.card-lbl{font-size:.6rem;color:var(--txt3)}
 
         .incoming{background:linear-gradient(135deg,#1a1a2e,#211d2a);border:2px solid var(--acc);border-radius:var(--r2);padding:.8rem;margin-bottom:.4rem;animation:pop .3s ease}
         @keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
         .inc-header{font-size:.9rem;font-weight:700;color:var(--acc);margin-bottom:.5rem}
-        .inc-row{display:flex;justify-content:space-between;font-size:.7rem;padding:.2rem 0;color:var(--txt2)}
-        .inc-row b{color:var(--txt)}
+        .inc-row{display:flex;justify-content:space-between;font-size:.7rem;padding:.2rem 0;color:var(--txt2)}.inc-row b{color:var(--txt)}
         .inc-btns{display:flex;gap:.4rem;margin-top:.6rem}
         .btn-accept{flex:1;padding:.6rem;background:var(--green);color:#000;border:0;border-radius:var(--r);font-weight:700;cursor:pointer;font-size:.75rem}
         .btn-deny{flex:1;padding:.6rem;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:var(--r);font-weight:700;cursor:pointer;font-size:.75rem}
 
         .ride-step{display:flex;align-items:center;gap:.5rem;padding:.5rem;background:var(--card);border-radius:var(--r);margin-bottom:.3rem;border:1px solid var(--bd)}
         .ride-step .num{width:28px;height:28px;border-radius:50%;background:var(--bd);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.7rem;flex-shrink:0}
-        .ride-step .num.done{background:var(--green)}
-        .ride-step .num.now{background:var(--acc);animation:pulse 1.5s infinite}
-        .ride-step .info{flex:1;font-size:.7rem}
-        .ride-step .addr{font-size:.6rem;color:var(--txt3)}
+        .ride-step .num.done{background:var(--green)}.ride-step .num.now{background:var(--acc);animation:pulse 1.5s infinite}
+        .ride-step .info{flex:1;font-size:.7rem}.ride-step .addr{font-size:.6rem;color:var(--txt3)}
         .btn-full{width:100%;padding:.6rem;border-radius:var(--r);font-weight:700;font-size:.75rem;cursor:pointer;border:0;margin-top:.3rem}
         .btn-purple{background:var(--acc);color:#fff}
         .btn-outline{background:transparent;border:1px solid var(--bd);color:var(--txt2);position:relative}
         .btn-red{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3)}
-        
         .chat-badge{position:absolute;top:-6px;right:-6px;background:var(--red);color:#fff;width:18px;height:18px;border-radius:50%;font-size:.55rem;display:none;align-items:center;justify-content:center;font-weight:700}
         .chat-badge.show{display:flex}
 
@@ -103,8 +84,7 @@
         .chat-header{background:var(--bg2);padding:.7rem 1rem;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--bd)}
         .chat-body{flex:1;overflow-y:auto;padding:.8rem;display:flex;flex-direction:column;gap:.5rem}
         .msg{max-width:80%;padding:.5rem .7rem;border-radius:14px;font-size:.75rem}
-        .msg.sent{background:var(--acc);align-self:flex-end}
-        .msg.recv{background:var(--card);align-self:flex-start;border:1px solid var(--bd)}
+        .msg.sent{background:var(--acc);align-self:flex-end}.msg.recv{background:var(--card);align-self:flex-start;border:1px solid var(--bd)}
         .chat-input-wrap{padding:.5rem;display:flex;gap:.3rem;border-top:1px solid var(--bd);background:var(--bg2)}
         .chat-input-wrap input{flex:1;padding:.5rem;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);color:var(--txt);outline:0;font-size:.75rem}
         .chat-input-wrap button{padding:.5rem .8rem;background:var(--acc);color:#fff;border:0;border-radius:var(--r);font-weight:700;cursor:pointer}
@@ -115,7 +95,6 @@
 </head>
 <body>
 <div class="app">
-    <!-- LOGIN -->
     <div id="loginScreen" class="login-screen">
         <div class="logo">🏍️</div>
         <h1>Zaachila <span>Moto</span></h1>
@@ -126,7 +105,6 @@
         <p style="font-size:.65rem;color:var(--txt3);margin-top:.8rem">¿Olvidaste tu contraseña? Contacta al administrador</p>
     </div>
 
-    <!-- DASHBOARD -->
     <div id="dashboard" class="dashboard">
         <header class="topbar">
             <h2>🏍️ <span id="choferName">Chofer</span></h2>
@@ -168,197 +146,61 @@
 const fb={apiKey:"AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",authDomain:"zaachilamoto.firebaseapp.com",databaseURL:"https://zaachilamoto-default-rtdb.firebaseio.com",projectId:"zaachilamoto",storageBucket:"zaachilamoto.firebasestorage.app",messagingSenderId:"559788509526",appId:"1:559788509526:web:c751d8d22068f09041aef7"};
 firebase.initializeApp(fb);
 const auth=firebase.auth(),db=firebase.database(),storage=firebase.storage();
-let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calificacion=0,pendingNotifs=0;
+let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calificacion=0,pendingNotifs=0,serviceActive=false,confirmActive=false;
 const ZA=[16.9516,-96.7491];
 
-// ========== NOTIFICACIONES ==========
-function showNotification(title,text,type='message'){
-    pendingNotifs++;
-    updateNotifDot();
-    playSound(type==='request'?'incoming':'msg');
-    
-    let container=document.getElementById('notificationContainer');
-    if(!container){container=document.createElement('div');container.id='notificationContainer';container.className='notification-container';document.body.appendChild(container)}
-    
-    const icons={request:'🔔',message:'💬',success:'✅',error:'❌'};
-    const n=document.createElement('div');n.className=`notification ${type}`;
-    n.innerHTML=`<span class="notif-icon">${icons[type]||'📢'}</span><div class="notif-content"><div class="notif-title">${title}</div><div class="notif-text">${text}</div></div><button class="notif-close" onclick="dismissNotif(this)">✕</button>`;
-    container.appendChild(n);
-    setTimeout(()=>{if(n.parentNode){n.remove();pendingNotifs--;updateNotifDot()}},3500);
-}
-
-function dismissNotif(btn){const n=btn.closest('.notification');if(n){n.style.animation='notifOut .3s ease forwards';setTimeout(()=>{n.remove();pendingNotifs--;updateNotifDot()},300)}}
-
-function updateNotifDot(){const d=document.getElementById('notificationDot');if(d){d.textContent=pendingNotifs;if(pendingNotifs>0)d.classList.add('show');else d.classList.remove('show')}}
-
+function showNotification(t,m,ty='message'){pendingNotifs++;updateDot();playSound(ty==='request'?'incoming':'msg');let c=document.getElementById('notificationContainer');if(!c){c=document.createElement('div');c.id='notificationContainer';c.className='notification-container';document.body.appendChild(c)}const icons={request:'🔔',message:'💬',success:'✅',error:'❌'};const n=document.createElement('div');n.className=`notification ${ty}`;n.innerHTML=`<span class="notif-icon">${icons[ty]||'📢'}</span><div class="notif-content"><div class="notif-title">${t}</div><div class="notif-text">${m}</div></div><button class="notif-close" onclick="dismissNotif(this)">✕</button>`;c.appendChild(n);setTimeout(()=>{if(n.parentNode){n.remove();pendingNotifs--;updateDot()}},3500)}
+function dismissNotif(b){const n=b.closest('.notification');if(n){n.style.animation='notifOut .3s ease forwards';setTimeout(()=>{n.remove();pendingNotifs--;updateDot()},300)}}
+function updateDot(){const d=document.getElementById('notificationDot');if(d){d.textContent=pendingNotifs;if(pendingNotifs>0)d.classList.add('show');else d.classList.remove('show')}}
 function toast(m){showNotification('Zaachila Moto',m,'success')}
 
-// ========== LOGIN ==========
 function login(){
-    const email=document.getElementById('loginEmail').value.trim(),password=document.getElementById('loginPassword').value;
+    const e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPassword').value;
     const err=document.getElementById('loginError'),btn=document.getElementById('btnLogin');
-    if(!email||!password){err.textContent='Completa los campos';err.style.display='block';return}
-    btn.disabled=true;btn.textContent='Iniciando...';err.style.display='none';
-    console.log('Login:',email);
-    auth.signInWithEmailAndPassword(email,password).then(u=>{
-        uid=u.user.uid;console.log('✅ UID:',uid);
-        localStorage.setItem('ce',email);localStorage.setItem('cp',password);
-        return db.ref(`choferes/${uid}`).once('value');
-    }).then(snap=>{
-        if(!snap.val()){console.warn('Creando registro...');return db.ref(`choferes/${uid}`).set({nombre:document.getElementById('loginEmail').value.split('@')[0],email:document.getElementById('loginEmail').value.trim(),estado:'activo',calificacion:0,total_servicios:0,servicios_hoy:0,ubicacion:{lat:ZA[0],lng:ZA[1]}})}
-    }).then(()=>{
-        document.getElementById('loginScreen').style.display='none';document.getElementById('dashboard').classList.add('active');
-        setTimeout(()=>{initMap();loadData();listenServices();getPos();listenChats()},300);
-        showNotification('Bienvenido','Has iniciado sesión correctamente','success');
-    }).catch(er=>{
-        console.error('❌',er.code,er.message);
-        let m='Error';if(er.code==='auth/user-not-found')m='Chofer no registrado';else if(er.code==='auth/wrong-password')m='Contraseña incorrecta';else if(er.code==='auth/network-request-failed')m='Error de conexión';
-        err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión';
-    });
+    if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}
+    btn.disabled=true;btn.textContent='...';err.style.display='none';
+    auth.signInWithEmailAndPassword(e,p).then(u=>{uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);return db.ref(`choferes/${uid}`).once('value')}).then(s=>{if(!s.val())return db.ref(`choferes/${uid}`).set({nombre:e.split('@')[0],email:e,estado:'activo',calificacion:0,total_servicios:0,servicios_hoy:0,ubicacion:{lat:ZA[0],lng:ZA[1]}})}).then(()=>{document.getElementById('loginScreen').style.display='none';document.getElementById('dashboard').classList.add('active');setTimeout(()=>{initMap();loadData();listenServices();getPos();listenChats()},300);showNotification('Bienvenido','Sesión iniciada','success')}).catch(er=>{let m='Error';if(er.code==='auth/user-not-found')m='Chofer no registrado';else if(er.code==='auth/wrong-password')m='Contraseña incorrecta';err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})
 }
-
 function logout(){if(confirm('¿Cerrar sesión?')){if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});auth.signOut();localStorage.clear();location.reload()}}
+window.addEventListener('DOMContentLoaded',()=>{const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login()}});
 
-window.addEventListener('DOMContentLoaded',()=>{
-    const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');
-    if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login()}
-});
-
-// ========== MAPA ==========
-function initMap(){
-    const c=document.getElementById('driverMap');if(!c||c.offsetHeight===0)c.style.height='200px';
-    map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);
-    marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);
-    setTimeout(()=>map.invalidateSize(),300);
-}
-
+function initMap(){const c=document.getElementById('driverMap');if(!c||c.offsetHeight===0)c.style.height='200px';map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);setTimeout(()=>map.invalidateSize(),300)}
 function getPos(){if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};if(marker)marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP})},()=>{},{enableHighAccuracy:true})}
 
-// ========== DATOS ==========
-function loadData(){
-    if(!uid)return;
-    db.ref(`choferes/${uid}`).on('value',s=>{
-        const d=s.val()||{};console.log('📊',d.nombre);
-        document.getElementById('choferName').textContent=(d.nombre||'Chofer').split(' ')[0];
-        const hoy=new Date().toISOString().split('T')[0],g=d.ganancias||{};
-        document.getElementById('hoyCount').textContent=d.servicios_hoy||0;
-        document.getElementById('earnToday').textContent='$'+(g[hoy]||0);
-        document.getElementById('earnServices').textContent=d.servicios_hoy||0;
-        document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);
-        document.getElementById('earnMonth').textContent='$'+Math.round((g[hoy]||0)*22);
-        document.getElementById('earnComm').textContent='$'+Math.round((g[hoy]||0)*.1);
-        calificacion=d.calificacion||0;
-        document.getElementById('earnRating').textContent='⭐ '+calificacion;
-        document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calificacion)?'★':'☆'}</span>`).join('');
-    });
-}
+function loadData(){if(!uid)return;db.ref(`choferes/${uid}`).on('value',s=>{const d=s.val()||{};document.getElementById('choferName').textContent=(d.nombre||'Chofer').split(' ')[0];const hoy=new Date().toISOString().split('T')[0],g=d.ganancias||{};document.getElementById('hoyCount').textContent=d.servicios_hoy||0;document.getElementById('earnToday').textContent='$'+(g[hoy]||0);document.getElementById('earnServices').textContent=d.servicios_hoy||0;document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);document.getElementById('earnMonth').textContent='$'+Math.round((g[hoy]||0)*22);document.getElementById('earnComm').textContent='$'+Math.round((g[hoy]||0)*.1);calificacion=d.calificacion||0;document.getElementById('earnRating').textContent='⭐ '+calificacion;document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calificacion)?'★':'☆'}</span>`).join('')})}
+function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});showNotification('Disponible','Recibiendo solicitudes','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';showNotification('Pausado','Servicios detenidos','error')}}
 
-function toggleStatus(){
-    active=!active;const btn=document.getElementById('statusToggle');
-    if(active){btn.className='toggle on';btn.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});showNotification('Disponible','Estás activo para recibir servicios','success')}
-    else{btn.className='toggle off';btn.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';showNotification('Pausado','Has pausado los servicios','error')}
-}
-
-// ========== SERVICIOS ==========
-function listenServices(){db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{if(active&&!sid)showIncoming(s.key,s.val())})}
-
-function showIncoming(id,data){
-    sid=id;sdata=data;
-    showNotification('Nueva solicitud','Cliente en '+(data.origen?.direccion||'tu zona'),'request');
-    if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);
-    document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';
-    document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${data.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${data.destino?.direccion||'---'}</b></div><div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,data.origen?.lat||ZA[0],data.origen?.lng||ZA[1]).toFixed(1)} km</b></div><div class="inc-row"><span>Tarifa sugerida</span><b>$${data.tarifa_estimada||40}</b></div><div class="inc-btns"><button class="btn-accept" onclick="accept()">✅ Aceptar</button><button class="btn-deny" onclick="deny()">❌ Rechazar</button></div></div>`;
-}
+function listenServices(){db.ref('servicios').orderByChild('estado').equalTo('buscando').limitToLast(1).on('child_added',s=>{if(active&&!sid&&!serviceActive){serviceActive=true;db.ref(`servicios/${s.key}/estado`).once('value',es=>{if(es.val()==='buscando'){sid=s.key;sdata=s.val();showIncoming()}})}})}
+function showIncoming(){showNotification('Nueva solicitud','Cliente en '+(sdata?.origen?.direccion||'tu zona'),'request');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div><div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,sdata?.origen?.lat||ZA[0],sdata?.origen?.lng||ZA[1]).toFixed(1)} km</b></div><div class="inc-row"><span>Tarifa sugerida</span><b>$${sdata?.tarifa_estimada||40}</b></div><div class="inc-btns"><button class="btn-accept" onclick="accept()">✅ Aceptar</button><button class="btn-deny" onclick="deny()">❌ Rechazar</button></div></div>`}
 
 function accept(){
-    const base=sdata?.tarifa_estimada||40,price=prompt('💰 Tarifa a cobrar ($):',base);
-    if(!price||isNaN(price)||parseInt(price)<=0){toast('⚠️ Ingresa una tarifa válida');return}
-    const fare=parseInt(price);
-    db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:document.getElementById('choferName').textContent,choferPlaca:'---',choferRating:String(calificacion),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
-        document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';
-        showNotification('Tarifa enviada','$'+fare+' - Esperando confirmación','success');listenConfirm(sid);
-    });
-}
+    if(!sid||!sdata)return;const base=sdata?.tarifa_estimada||40,price=prompt('💰 Tarifa a cobrar ($):',base);
+    if(!price||isNaN(price)||parseInt(price)<=0){toast('⚠️ Tarifa inválida');return}
+    const fare=parseInt(price);serviceActive=false;
+    db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:document.getElementById('choferName').textContent,choferPlaca:'---',choferRating:String(calificacion),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';showNotification('Tarifa enviada','$'+fare,'success');if(!confirmActive){confirmActive=true;listenConfirm(sid)}}).catch(()=>{toast('Error');serviceActive=false})}
+function listenConfirm(id){db.ref(`servicios/${id}/estado`).once('value',s=>handleState(s.val()));db.ref(`servicios/${id}/estado`).on('value',s=>handleState(s.val()))}
+function handleState(st){if(st==='aceptado'){if(document.getElementById('activeView').style.display==='none'){showActive();showNotification('✅ Aceptado','Cliente aceptó','success');playSound('accept')}}else if(st==='cancelado'){resetAll();showNotification('Cancelado','Cliente rechazó','error')}}
+function deny(){if(!sid)return;serviceActive=false;db.ref(`servicios/${sid}`).update({estado:'rechazado',choferId:uid,ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();showNotification('Rechazado','Servicio rechazado','error')})}
+function resetAll(){if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}sid=null;sdata=null;serviceActive=false;confirmActive=false}
+function showActive(){document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='block';step=1;updateUI()}
+function updateUI(){document.getElementById('activeView').innerHTML=`<div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger al cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div><div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div><button class="btn-full btn-purple" onclick="nextStep()">${step===1?'🏍️ Iniciar Recogida':step===2?'📍 Llegué al Cliente':'🏁 Finalizar Viaje'}</button><button class="btn-full btn-outline" onclick="openChat()" style="position:relative">💬 Chat <span class="chat-badge" id="chatBadge"></span></button><button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto</button><button class="btn-full btn-red" onclick="finishNow()">🏁 Finalizar ahora</button>`}
+function nextStep(){if(step===1){db.ref(`servicios/${sid}`).update({estado:'en_camino'});step=2;updateUI();showNotification('En camino','Dirígete al cliente','success')}else if(step===2){db.ref(`servicios/${sid}`).update({estado:'en_servicio'});step=3;updateUI();showNotification('Viaje iniciado','Al destino','success')}else finishRide()}
+function finishRide(){const fare=sdata?.tarifa_propuesta||sdata?.tarifa_estimada||40;if(confirm('💰 Cobrar $'+fare+'?')){const hoy=new Date().toISOString().split('T')[0];if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});resetAll();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';showNotification('✅ Completado','$'+fare,'success');loadData();loadHistory()}}
+function finishNow(){if(confirm('¿Finalizar?')){step=3;finishRide()}}
 
-function listenConfirm(id){db.ref(`servicios/${id}/estado`).on('value',s=>{const st=s.val();if(st==='aceptado'){showActive();showNotification('✅ Aceptado','Cliente aceptó la tarifa','success')}else if(st==='cancelado'){sid=null;sdata=null;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';showNotification('Cancelado','Cliente rechazó la tarifa','error')}})}
+function reportFound(){if(!sid)return;const d=prompt('📦 Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=function(){const f=i.files[0];if(f){const r=storage.ref(`objetos/${sid}_${Date.now()}`);r.put(f).then(()=>r.getDownloadURL()).then(u=>{db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:u,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP});showNotification('Reporte enviado','Con foto','success')}).catch(()=>saveR(d))}};i.click()}else saveR(d)}
+function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>showNotification('Reporte enviado','Objeto reportado','success'))}
 
-function deny(){if(!sid)return;db.ref(`servicios/${sid}`).update({estado:'rechazado',choferId:uid,ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';sid=null;sdata=null;showNotification('Rechazado','Has rechazado el servicio','error')})}
-
-function showActive(){document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='block';step=1;updateActiveUI()}
-
-function updateActiveUI(){
-    document.getElementById('activeView').innerHTML=`<div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger al cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div><div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div><button class="btn-full btn-purple" onclick="nextStep()">${step===1?'🏍️ Iniciar Recogida':step===2?'📍 Llegué al Cliente':'🏁 Finalizar Viaje'}</button><button class="btn-full btn-outline" onclick="openChat()" style="position:relative">💬 Chat <span class="chat-badge" id="chatBadge"></span></button><button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto</button><button class="btn-full btn-red" onclick="finishNow()">🏁 Finalizar ahora</button>`;
-}
-
-function nextStep(){if(step===1){db.ref(`servicios/${sid}`).update({estado:'en_camino'});step=2;updateActiveUI();showNotification('En camino','Dirígete a recoger al cliente','success')}else if(step===2){db.ref(`servicios/${sid}`).update({estado:'en_servicio'});step=3;updateActiveUI();showNotification('Viaje iniciado','Lleva al cliente a su destino','success')}else finishRide()}
-
-function finishRide(){
-    const fare=sdata?.tarifa_propuesta||sdata?.tarifa_estimada||40;
-    if(confirm('💰 ¿Cobrar $'+fare+' y finalizar?')){
-        const hoy=new Date().toISOString().split('T')[0];
-        db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});
-        db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);
-        db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);
-        db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);
-        db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});
-        resetRide();showNotification('✅ Completado','Viaje finalizado: $'+fare,'success');loadData();loadHistory();
-    }
-}
-
-function finishNow(){if(confirm('¿Finalizar viaje ahora?')){step=3;finishRide()}}
-function resetRide(){sid=null;sdata=null;step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block'}
-
-// ========== REPORTAR OBJETO ==========
-function reportFound(){
-    if(!sid)return;const desc=prompt('📦 Describe el objeto encontrado:');if(!desc)return;
-    if(confirm('¿Subir foto?')){
-        const input=document.createElement('input');input.type='file';input.accept='image/*';
-        input.onchange=function(){const file=input.files[0];if(file){const ref=storage.ref(`objetos/${sid}_${Date.now()}`);ref.put(file).then(()=>ref.getDownloadURL()).then(url=>{db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:desc,foto:url,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP});showNotification('Reporte enviado','Con foto del objeto','success')}).catch(()=>saveReportNoFoto(desc))}};
-        input.click();
-    }else saveReportNoFoto(desc);
-}
-
-function saveReportNoFoto(desc){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:desc,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>showNotification('Reporte enviado','Objeto reportado','success'))}
-
-// ========== CHAT ==========
-function listenChats(){
-    db.ref('chats').on('child_added',snap=>{
-        if(snap.key===sid&&!chatOpen){
-            const msgs=snap.val();if(!msgs)return;const last=Object.values(msgs).pop();
-            if(last&&last.remitente==='cliente'){
-                const badge=document.getElementById('chatBadge');if(badge){let count=parseInt(badge.textContent)||0;count++;badge.textContent=count;badge.classList.add('show')}
-                showNotification('Nuevo mensaje',last.mensaje.substring(0,40)+(last.mensaje.length>40?'...':''),'message');
-                if(navigator.vibrate)navigator.vibrate(80);
-            }
-        }
-    });
-}
-
-function openChat(){
-    if(!sid)return;chatOpen=true;const badge=document.getElementById('chatBadge');if(badge){badge.classList.remove('show');badge.textContent='0'}
-    const d=document.createElement('div');d.className='chat-modal';
-    d.innerHTML=`<div class="chat-header"><span>💬 Chat con el cliente</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;
-    document.body.appendChild(d);
-    db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}});
-}
-
-function closeChat(btn){btn.closest('.chat-modal').remove();chatOpen=false}
+function listenChats(){db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const l=Object.values(ms).pop();if(l&&l.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}showNotification('Nuevo mensaje',l.mensaje.substring(0,40),'message');if(navigator.vibrate)navigator.vibrate(80)}}})}
+function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
+function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 
-// ========== HISTORIAL ==========
-function loadHistory(){
-    if(!uid)return;db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value',s=>{const d=s.val();let h='';if(!d){document.getElementById('historyList').innerHTML='<div class="empty">Sin servicios</div>';return}Object.entries(d).reverse().forEach(([id,v])=>{h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`});document.getElementById('historyList').innerHTML=h})
-}
+function loadHistory(){if(!uid)return;db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value',s=>{const d=s.val();let h='';if(!d){document.getElementById('historyList').innerHTML='<div class="empty">Sin servicios</div>';return}Object.entries(d).reverse().forEach(([id,v])=>{h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`});document.getElementById('historyList').innerHTML=h})}
 
-// ========== SONIDOS ==========
-function playSound(type){try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(type==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(type==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(type==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}}
-
-// ========== TABS ==========
-function switchTab(name,el){document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');document.getElementById('tab-'+name).style.display='block';document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');if(name==='earnings')loadData();if(name==='history')loadHistory()}
-
-function calcDist(lat1,lon1,lat2,lon2){const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLon=(lon2-lon1)*Math.PI/180;return R*2*Math.atan2(Math.sqrt(Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2),Math.sqrt(1-Math.sin(dLat/2)**2-Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2))}
-
+function playSound(t){try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(t==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(t==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(t==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}}
+function switchTab(n,el){document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');document.getElementById('tab-'+n).style.display='block';document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');if(n==='earnings')loadData();if(n==='history')loadHistory()}
+function calcDist(l1,l2,lo1,lo2){const R=6371,dLa=(l2-l1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180;const a=Math.sin(dLa/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2;return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a))}
 document.addEventListener('keypress',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')login()});
 window.addEventListener('resize',()=>{if(map)setTimeout(()=>map.invalidateSize(),200)});
 </script>
