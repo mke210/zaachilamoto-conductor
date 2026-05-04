@@ -94,36 +94,40 @@ function showAct(){document.getElementById('idleView').style.display='none';docu
 function updateUI(){document.getElementById('activeView').innerHTML=`<div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div><div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div><button class="btn-full btn-purple" onclick="nextStep()">${step===1?'Iniciar Recogida':step===2?'Llegué al Cliente':'Finalizar Viaje'}</button><button class="btn-full btn-outline" onclick="openChat()" style="position:relative">💬 Chat <span class="badge-new" id="chatBadge">0</span></button><button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto</button><button class="btn-full btn-red" onclick="finishNow()">🏁 Finalizar ahora</button>`}
 function nextStep(){if(step===1){db.ref(`servicios/${sid}`).update({estado:'en_camino'});step=2;updateUI();notif('En camino','Al cliente','success')}else if(step===2){db.ref(`servicios/${sid}`).update({estado:'en_servicio'});step=3;updateUI();notif('Viaje iniciado','Al destino','success')}else finishRide()}
 function finishRide(){if(!sid)return;db.ref(`servicios/${sid}/tarifa_propuesta`).once('value',snap=>{const fare=snap.val()||sdata?.tarifa_propuesta||50;const hoy=new Date().toISOString().split('T')[0];if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});resetAll();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje completado','$'+fare,'success');loadData();loadHistory()})}
-function finishNow(){
-    if(!sid) return;
-    if(step <= 2){
-        // Cancelar antes de recoger - notificar al cliente
-        db.ref(`servicios/${sid}`).update({
-            estado: 'cancelado_chofer',
-            motivo: 'Chofer canceló antes de recoger',
-            ts: firebase.database.ServerValue.TIMESTAMP
-        }).then(() => {
-            resetAll();
-            step = 1;
-            document.getElementById('activeView').style.display = 'none';
-            document.getElementById('idleView').style.display = 'block';
-            notif('Viaje cancelado', 'Se notificó al cliente', 'error');
-            loadHistory();
-        });
-    } else {
-        step = 3;
-        finishRide();
-    }
-}
+function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).update({estado:'cancelado_chofer',motivo:'Chofer canceló antes de recoger',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{resetAll();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje cancelado','Se notificó al cliente','error');loadHistory()})}else{step=3;finishRide()}}
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=function(){const f=i.files[0];if(f){const r=storage.ref(`objetos/${sid}_${Date.now()}`);r.put(f).then(()=>r.getDownloadURL()).then(u=>{db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:u,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP});notif('Reporte','Con foto','success')}).catch(()=>saveR(d))}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
-function listenChats(){db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const l=Object.values(ms).pop();if(l&&l.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',l.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate(150)}}})}
+
+// ✅ CHAT CON VIBRACIÓN FUERTE
+function listenChats(){
+    db.ref('chats').on('child_added', s => {
+        if(s.key === sid && !chatOpen){
+            const ms = s.val();
+            if(!ms) return;
+            const last = Object.values(ms).pop();
+            if(last && last.remitente === 'cliente'){
+                const badge = document.getElementById('chatBadge');
+                if(badge){
+                    let count = parseInt(badge.textContent) || 0;
+                    count++;
+                    badge.textContent = count;
+                    badge.classList.add('show');
+                }
+                notif('💬 Nuevo mensaje', last.mensaje.substring(0, 35), 'message');
+                playSound('msg');
+                if(navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
+            }
+        }
+    });
+}
+
 function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
 function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 function loadHistory(){if(!uid)return;db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value',s=>{const d=s.val();let h='';if(!d){document.getElementById('historyList').innerHTML='<div class="empty">Sin servicios</div>';return}Object.entries(d).reverse().forEach(([id,v])=>{h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`});document.getElementById('historyList').innerHTML=h})}
 function switchTab(n,el){document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');document.getElementById('tab-'+n).style.display='block';document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');if(n==='earnings')loadData();if(n==='history')loadHistory()}
 function calcDist(l1,l2,lo1,lo2){const R=6371,dLa=(l2-l1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180;return R*2*Math.atan2(Math.sqrt(Math.sin(dLa/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2),Math.sqrt(1-Math.sin(dLa/2)**2-Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2))}
+function toast(m){const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),2500)}
 document.addEventListener('keypress',e=>{if(e.key==='Enter'&&document.getElementById('loginScreen').style.display!=='none')login()});
 window.addEventListener('resize',()=>{if(map)setTimeout(()=>map.invalidateSize(),200)});
 </script>
