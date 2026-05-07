@@ -24,7 +24,6 @@
         .app{max-width:430px;margin:0 auto;height:100vh;background:var(--bg);display:flex;flex-direction:column}
         @media(min-width:431px){body{display:flex;justify-content:center;align-items:center;padding:20px}.app{border-radius:30px;height:90vh;max-height:800px;box-shadow:0 0 50px rgba(108,92,231,.1)}}
         
-        /* LOGIN */
         .login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:1.5rem;text-align:center;overflow-y:auto}
         .login-screen .logo{font-size:4rem;margin-bottom:.3rem}
         .login-screen h1{font-size:1.3rem;margin-bottom:.2rem}.login-screen h1 span{color:var(--acc)}
@@ -34,7 +33,6 @@
         .login-err{background:rgba(255,71,87,.1);border:1px solid var(--red);padding:.5rem;border-radius:var(--r);margin-bottom:.4rem;font-size:.7rem;display:none;max-width:300px;width:100%}
         .login-success{background:rgba(0,200,151,.1);border:1px solid var(--green);padding:.5rem;border-radius:var(--r);margin-bottom:.4rem;font-size:.7rem;display:none;max-width:300px;width:100%;color:var(--green)}
         
-        /* FOTO UPLOAD */
         .photo-box{width:90px;height:90px;border-radius:50%;background:var(--card);border:2px dashed var(--bd);display:flex;align-items:center;justify-content:center;margin:.4rem auto;cursor:pointer;font-size:.65rem;color:var(--txt3);overflow:hidden;transition:.2s;flex-shrink:0}
         .photo-box:hover{border-color:var(--acc)}.photo-box img{width:100%;height:100%;object-fit:cover}
         .photo-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin:.5rem 0}
@@ -42,13 +40,11 @@
         
         .toggle-form{font-size:.7rem;color:var(--acc);cursor:pointer;margin-top:.8rem;text-decoration:underline}
         
-        /* ESTADO DE APROBACIÓN */
         .approval-status{text-align:center;padding:2rem}
         .approval-status .icon{font-size:4rem;margin-bottom:1rem}
         .approval-status h2{font-size:1.2rem;margin-bottom:.5rem}
         .approval-status p{font-size:.8rem;color:var(--txt2);margin-bottom:1.5rem}
         
-        /* DASHBOARD */
         .dashboard{display:none;flex-direction:column;height:100%}.dashboard.active{display:flex}
         .topbar{background:linear-gradient(135deg,var(--acc),#4834d4);padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:50;box-shadow:0 4px 15px rgba(108,92,231,.3)}
         .topbar-brand{display:flex;align-items:center;gap:.4rem}
@@ -82,7 +78,6 @@
 </head>
 <body>
 <div class="app">
-    <!-- PANTALLA INICIAL (REGISTRO / LOGIN / ESPERA) -->
     <div id="loginScreen" class="login-screen">
         <div class="logo">🛺</div>
         <h1>Zaachila <span>Moto</span></h1>
@@ -90,17 +85,10 @@
         <div class="login-err" id="loginError"></div>
         <div class="login-success" id="loginSuccess"></div>
         
-        <!-- FORMULARIO DE REGISTRO (principal) -->
         <div id="registerForm">
             <div class="photo-row">
-                <div class="photo-item">
-                    <div class="photo-box" id="photoChofer" onclick="takePhoto('chofer')">📷<br>Tu foto</div>
-                    <div class="label">Foto del chofer</div>
-                </div>
-                <div class="photo-item">
-                    <div class="photo-box" id="photoMoto" onclick="takePhoto('moto')">📷<br>Moto</div>
-                    <div class="label">Foto mototaxi</div>
-                </div>
+                <div class="photo-item"><div class="photo-box" id="photoChofer" onclick="takePhoto('chofer')">📷<br>Tu foto</div><div class="label">Foto del chofer</div></div>
+                <div class="photo-item"><div class="photo-box" id="photoMoto" onclick="takePhoto('moto')">📷<br>Moto</div><div class="label">Foto mototaxi</div></div>
             </div>
             <input type="text" id="regName" class="inp" placeholder="Nombre completo">
             <input type="email" id="regEmail" class="inp" placeholder="Correo electrónico">
@@ -111,14 +99,12 @@
             <button class="btn btn-acc" onclick="register()">📝 Enviar Solicitud</button>
         </div>
         
-        <!-- FORMULARIO DE LOGIN (oculto inicialmente) -->
         <div id="loginForm" style="display:none">
             <input type="email" id="loginEmail" class="inp" placeholder="Correo electrónico">
             <input type="password" id="loginPassword" class="inp" placeholder="Contraseña">
             <button class="btn btn-acc" id="btnLogin" onclick="login()">Iniciar Sesión</button>
         </div>
         
-        <!-- PANTALLA DE ESPERA DE APROBACIÓN -->
         <div id="approvalWait" style="display:none" class="approval-status">
             <div class="icon">⏳</div>
             <h2>Solicitud Enviada</h2>
@@ -130,16 +116,8 @@
         <p class="toggle-form" id="toggleText" onclick="toggleForms()">¿Ya estás registrado? Inicia sesión</p>
     </div>
 
-    <!-- DASHBOARD (aparece después de login exitoso) -->
     <div id="dashboard" class="dashboard">
-        <header class="topbar">
-            <div class="topbar-brand"><div class="topbar-logo">🛺</div><h2>Zaachila Moto<span>Chofer</span></h2></div>
-            <div class="topbar-right">
-                <span class="notif-dot" id="notificationDot">0</span>
-                <button class="toggle on" id="statusToggle" onclick="toggleStatus()">ACTIVO</button>
-                <button class="btn-sm" onclick="logout()">Salir</button>
-            </div>
-        </header>
+        <header class="topbar"><div class="topbar-brand"><div class="topbar-logo">🛺</div><h2>Zaachila Moto<span>Chofer</span></h2></div><div class="topbar-right"><span class="notif-dot" id="notificationDot">0</span><button class="toggle on" id="statusToggle" onclick="toggleStatus()">ACTIVO</button><button class="btn-sm" onclick="logout()">Salir</button></div></header>
         <div class="map-wrap"><div id="driverMap"></div></div>
         <div class="tabs"><div class="tab on" onclick="switchTab('home',this)">🏠 Inicio</div><div class="tab" onclick="switchTab('earnings',this)">💰 Ganancias</div><div class="tab" onclick="switchTab('history',this)">📋 Historial</div></div>
         <div class="content" id="tabContent">
@@ -153,144 +131,38 @@
 const fb={apiKey:"AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",authDomain:"zaachilamoto.firebaseapp.com",databaseURL:"https://zaachilamoto-default-rtdb.firebaseio.com",projectId:"zaachilamoto",storageBucket:"zaachilamoto.firebasestorage.app",messagingSenderId:"559788509526",appId:"1:559788509526:web:c751d8d22068f09041aef7"};
 firebase.initializeApp(fb);const auth=firebase.auth(),db=firebase.database(),storage=firebase.storage();
 let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calif=0,notifC=0,svcAct=false,confAct=false;
-let photoChofer='',photoMoto='';
-const ZA=[16.9516,-96.7491];
+let photoChofer='',photoMoto='';const ZA=[16.9516,-96.7491];
 
-// ========== NOTIFICACIONES Y SONIDOS ==========
 function notif(t,m,ty='message'){notifC++;updateDot();playSound(ty==='request'?'incoming':ty==='message'?'msg':'accept');let c=document.getElementById('notificationContainer');if(!c){c=document.createElement('div');c.id='notificationContainer';c.className='notification-container';document.body.appendChild(c)}const n=document.createElement('div');n.className=`notification ${ty}`;n.innerHTML=`<span class="notif-icon">${ty==='request'?'🔔':ty==='message'?'💬':ty==='error'?'❌':'✅'}</span><div class="notif-content"><div class="notif-title">${t}</div><div class="notif-text">${m}</div></div><button class="notif-close" onclick="dismissN(this)">✕</button>`;c.appendChild(n);setTimeout(()=>{if(n.parentNode){n.remove();notifC--;updateDot()}},3500)}
 function dismissN(b){const n=b.closest('.notification');if(n){n.style.animation='notifOut .3s ease forwards';setTimeout(()=>{n.remove();notifC--;updateDot()},300)}}
 function updateDot(){const d=document.getElementById('notificationDot');if(d){d.textContent=notifC;if(notifC>0)d.classList.add('show');else d.classList.remove('show')}}
 function playSound(t){try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(t==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(t==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(t==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}}
 function toast(m){notif('Zaachila Moto',m,'success')}
 
-// ========== CÁMARA ==========
-function takePhoto(type){
-    const input=document.createElement('input');input.type='file';input.accept='image/*';input.capture='environment';
-    input.onchange=function(){
-        const file=input.files[0];if(!file)return;
-        const reader=new FileReader();
-        reader.onload=function(e){
-            if(type==='chofer'){photoChofer=e.target.result;document.getElementById('photoChofer').innerHTML=`<img src="${e.target.result}">`}
-            else if(type==='moto'){photoMoto=e.target.result;document.getElementById('photoMoto').innerHTML=`<img src="${e.target.result}">`}
-        };
-        reader.readAsDataURL(file);
-    };
-    input.click();
-}
+function takePhoto(type){const input=document.createElement('input');input.type='file';input.accept='image/*';input.capture='environment';input.onchange=function(){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(e){if(type==='chofer'){photoChofer=e.target.result;document.getElementById('photoChofer').innerHTML=`<img src="${e.target.result}">`}else if(type==='moto'){photoMoto=e.target.result;document.getElementById('photoMoto').innerHTML=`<img src="${e.target.result}">`}};reader.readAsDataURL(file)};input.click()}
 
-// ========== REGISTRO ==========
-function toggleForms(){
-    const reg=document.getElementById('registerForm');
-    const login=document.getElementById('loginForm');
-    const title=document.getElementById('formTitle');
-    const toggle=document.getElementById('toggleText');
-    if(login.style.display==='none'){
-        reg.style.display='none';login.style.display='block';
-        title.textContent='Iniciar Sesión';toggle.textContent='¿No tienes cuenta? Regístrate';
-    }else{
-        reg.style.display='block';login.style.display='none';
-        title.textContent='Solicitar Registro';toggle.textContent='¿Ya estás registrado? Inicia sesión';
-    }
-}
+function toggleForms(){const reg=document.getElementById('registerForm'),login=document.getElementById('loginForm'),title=document.getElementById('formTitle'),toggle=document.getElementById('toggleText');if(login.style.display==='none'){reg.style.display='none';login.style.display='block';title.textContent='Iniciar Sesión';toggle.textContent='¿No tienes cuenta? Regístrate'}else{reg.style.display='block';login.style.display='none';title.textContent='Solicitar Registro';toggle.textContent='¿Ya estás registrado? Inicia sesión'}}
 
-function register(){
-    const name=document.getElementById('regName').value.trim();
-    const email=document.getElementById('regEmail').value.trim();
-    const phone=document.getElementById('regPhone').value.trim();
-    const sitio=document.getElementById('regSitio').value.trim();
-    const placa=document.getElementById('regPlaca').value.trim();
-    const numero=document.getElementById('regNumero').value.trim();
-    const err=document.getElementById('loginError');
-    const suc=document.getElementById('loginSuccess');
-    err.style.display='none';suc.style.display='none';
-    
-    if(!name||!email||!phone||!placa){err.textContent='Nombre, email, teléfono y placa son obligatorios';err.style.display='block';return}
-    
-    db.ref('solicitudes_choferes').push({
-        nombre:name,email:email,telefono:phone,sitio:sitio,placa:placa,numero:numero,
-        foto_chofer:photoChofer,foto_moto:photoMoto,
-        estado:'pendiente',timestamp:firebase.database.ServerValue.TIMESTAMP
-    }).then(()=>{
-        localStorage.setItem('chofer_email',email);
-        document.getElementById('registerForm').style.display='none';
-        document.getElementById('loginForm').style.display='none';
-        document.getElementById('approvalWait').style.display='block';
-        document.getElementById('formTitle').textContent='Estado de Solicitud';
-        document.getElementById('toggleText').style.display='none';
-        suc.textContent='✅ Solicitud enviada. Revisa tu correo cuando sea aprobada.';
-        suc.style.display='block';
-    }).catch(er=>{err.textContent='Error: '+er.message;err.style.display='block'});
-}
+function register(){const name=document.getElementById('regName').value.trim(),email=document.getElementById('regEmail').value.trim(),phone=document.getElementById('regPhone').value.trim(),sitio=document.getElementById('regSitio').value.trim(),placa=document.getElementById('regPlaca').value.trim(),numero=document.getElementById('regNumero').value.trim(),err=document.getElementById('loginError'),suc=document.getElementById('loginSuccess');err.style.display='none';suc.style.display='none';if(!name||!email||!phone||!placa){err.textContent='Nombre, email, teléfono y placa son obligatorios';err.style.display='block';return}db.ref('solicitudes_choferes').push({nombre:name,email:email,telefono:phone,sitio:sitio,placa:placa,numero:numero,foto_chofer:photoChofer,foto_moto:photoMoto,estado:'pendiente',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>{localStorage.setItem('chofer_email',email);document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='none';document.getElementById('approvalWait').style.display='block';document.getElementById('formTitle').textContent='Estado de Solicitud';document.getElementById('toggleText').style.display='none';suc.textContent='✅ Solicitud enviada. Revisa tu correo cuando sea aprobada.';suc.style.display='block'}).catch(er=>{err.textContent='Error: '+er.message;err.style.display='block'})}
 
-function checkApproval(){
-    const email=localStorage.getItem('chofer_email');
-    if(!email){toast('No hay email guardado');return}
-    db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{
-        let found=false;
-        s.forEach(snap=>{
-            const sol=snap.val();
-            if(sol.estado==='autorizado'){
-                document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">✅</div><h2>¡Aprobado!</h2><p>Tu cuenta ha sido activada. Revisa tu correo <b>${email}</b> para ver tu contraseña.</p><button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al inicio de sesión</button></div>`;
-                found=true;
-            }
-        });
-        if(!found)toast('⏳ Tu solicitud sigue en revisión. Espera la aprobación.');
-    });
-}
+function checkApproval(){const email=localStorage.getItem('chofer_email');if(!email){toast('No hay email guardado');return}db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{let found=false;s.forEach(snap=>{const sol=snap.val();found=true;if(sol.estado==='declinado'){document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">❌</div><h2>Solicitud Rechazada</h2><p>Tu solicitud ha sido declinada. Contacta al administrador.</p><p style="font-size:.65rem;color:var(--txt3);margin-top:.5rem">📞 951 923 1764</p></div>`}else if(sol.estado==='autorizado'){document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">✅</div><h2>¡Aprobado!</h2><p>Revisa tu correo <b>${email}</b> para ver tu contraseña.</p><button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al inicio de sesión</button></div>`}});if(!found)toast('⏳ Tu solicitud sigue en revisión.')})}
 
-// ========== LOGIN ==========
-function login(){
-    const e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPassword').value;
-    const err=document.getElementById('loginError'),btn=document.getElementById('btnLogin');
-    if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}
-    btn.disabled=true;btn.textContent='...';err.style.display='none';
-    auth.signInWithEmailAndPassword(e,p).then(u=>{
-        uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);
-        return db.ref(`choferes/${uid}`).once('value');
-    }).then(s=>{
-        if(!s.val())return db.ref(`choferes/${uid}`).set({nombre:e.split('@')[0],email:e,estado:'activo',calificacion:0,total_servicios:0,servicios_hoy:0,ubicacion:{lat:ZA[0],lng:ZA[1]}});
-    }).then(()=>{
-        document.getElementById('loginScreen').style.display='none';
-        document.getElementById('dashboard').classList.add('active');
-        setTimeout(()=>{initMap();loadData();listenSvc();getPos();listenChats();listenGlobal()},300);
-        notif('Bienvenido','Sesión iniciada como Chofer','success');
-    }).catch(er=>{
-        let m='Error';if(er.code==='auth/user-not-found')m='Chofer no registrado o aún no aprobado.';else if(er.code==='auth/wrong-password')m='Contraseña incorrecta';
-        err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión';
-    });
-}
+// ✅ VERIFICACIÓN AUTOMÁTICA CADA 10 SEGUNDOS
+setInterval(()=>{const email=localStorage.getItem('chofer_email');if(email&&document.getElementById('approvalWait').style.display!=='none'){db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{s.forEach(snap=>{const sol=snap.val();if(sol.estado==='declinado'){document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">❌</div><h2>Solicitud Rechazada</h2><p>Tu solicitud ha sido declinada. Contacta al administrador.</p><p style="font-size:.65rem;color:var(--txt3);margin-top:.5rem">📞 951 923 1764</p></div>`}else if(sol.estado==='autorizado'){document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">✅</div><h2>¡Aprobado!</h2><p>Revisa tu correo <b>${email}</b> para ver tu contraseña.</p><button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al inicio de sesión</button></div>`}})})}},10000);
 
+// ✅ LOGIN
+function login(){const e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPassword').value,err=document.getElementById('loginError'),btn=document.getElementById('btnLogin');if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}btn.disabled=true;btn.textContent='...';err.style.display='none';auth.signInWithEmailAndPassword(e,p).then(u=>{uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);return db.ref(`choferes/${uid}`).once('value')}).then(s=>{if(!s.val())return db.ref(`choferes/${uid}`).set({nombre:e.split('@')[0],email:e,estado:'activo',calificacion:0,total_servicios:0,servicios_hoy:0,ubicacion:{lat:ZA[0],lng:ZA[1]}})}).then(()=>{document.getElementById('loginScreen').style.display='none';document.getElementById('dashboard').classList.add('active');setTimeout(()=>{initMap();loadData();listenSvc();getPos();listenChats();listenGlobal()},300);notif('Bienvenido','Sesión iniciada como Chofer','success')}).catch(er=>{let m='Error';if(er.code==='auth/user-not-found')m='Chofer no registrado o aún no aprobado.';else if(er.code==='auth/wrong-password')m='Contraseña incorrecta';else if(er.code==='auth/too-many-requests')m='Demasiados intentos. Espera.';err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})}
 function logout(){if(confirm('¿Cerrar sesión?')){if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});auth.signOut();localStorage.removeItem('ce');localStorage.removeItem('cp');location.reload()}}
 
-// Al cargar: verificar sesión guardada
-window.addEventListener('DOMContentLoaded',()=>{
-    const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');
-    if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login();return}
-    const savedEmail=localStorage.getItem('chofer_email');
-    if(savedEmail){
-        document.getElementById('registerForm').style.display='none';
-        document.getElementById('loginForm').style.display='none';
-        document.getElementById('approvalWait').style.display='block';
-        document.getElementById('formTitle').textContent='Estado de Solicitud';
-        document.getElementById('toggleText').style.display='none';
-    }
-});
+window.addEventListener('DOMContentLoaded',()=>{const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login();return}const savedEmail=localStorage.getItem('chofer_email');if(savedEmail){document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='none';document.getElementById('approvalWait').style.display='block';document.getElementById('formTitle').textContent='Estado de Solicitud';document.getElementById('toggleText').style.display='none'}});
 
-// ========== MAPA Y DATOS ==========
 function initMap(){const c=document.getElementById('driverMap');if(!c||c.offsetHeight===0)c.style.height='160px';map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);setTimeout(()=>map.invalidateSize(),300)}
 function getPos(){if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};if(marker)marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP})},()=>{},{enableHighAccuracy:true})}
 function loadData(){if(!uid)return;db.ref(`choferes/${uid}`).on('value',s=>{const d=s.val()||{};const hoy=new Date().toISOString().split('T')[0],g=d.ganancias||{};document.getElementById('earnToday').textContent='$'+(g[hoy]||0);document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);calif=d.calificacion||0;document.getElementById('earnRating').textContent='⭐ '+calif;document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calif)?'★':'☆'}</span>`).join('')})}
 function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});notif('Disponible','Recibiendo solicitudes','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Pausado','Servicios detenidos','error')}}
-
-// ========== SERVICIOS ==========
 function listenSvc(){db.ref('servicios').orderByChild('estado').equalTo('buscando').limitToLast(1).on('child_added',s=>{if(active&&!sid&&!svcAct){svcAct=true;db.ref(`servicios/${s.key}/estado`).once('value',es=>{if(es.val()==='buscando'){sid=s.key;sdata=s.val();showInc()}else{svcAct=false}})}})}
 function listenGlobal(){db.ref('servicios').on('child_changed',s=>{const v=s.val();if(s.key===sid&&v.estado==='aceptado'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Servicio asignado','Otro chofer fue elegido','error');resetAll()}if(s.key===sid&&v.estado==='tarifa_propuesta'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('No disponible','Otro chofer envió tarifa','error');resetAll()}})}
-function showInc(){
-    const extraPax=sdata?.pasajeros_extra?`<div class="extra-passenger">👥 El cliente lleva ${sdata.pasajeros_extra} pasajero(s) extra</div>`:'';
-    notif('Nueva solicitud','Cliente cerca','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);
-    document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';
-    document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div><div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,sdata?.origen?.lat||ZA[0],sdata?.origen?.lng||ZA[1]).toFixed(1)} km</b></div>${extraPax}<div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`;
-}
+function showInc(){const extraPax=sdata?.pasajeros_extra?`<div class="extra-passenger">👥 El cliente lleva ${sdata.pasajeros_extra} pasajero(s) extra</div>`:'';notif('Nueva solicitud','Cliente cerca','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div><div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,sdata?.origen?.lat||ZA[0],sdata?.origen?.lng||ZA[1]).toFixed(1)} km</b></div>${extraPax}<div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`}
 function accept(){if(!sid||!sdata)return;db.ref(`servicios/${sid}/estado`).once('value',es=>{if(es.val()!=='buscando'){toast('Ya no disponible');document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();return}const price=prompt('💰 Tarifa a cobrar ($):','50');if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}const fare=parseInt(price);if(sdata)sdata.tarifa_propuesta=fare;svcAct=false;db.ref(`choferes/${uid}`).once('value',snap=>{const ch=snap.val()||{};db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:ch.nombre||'Chofer',choferPlaca:ch.placa||'---',choferColor:ch.color||'No especificado',choferUnidad:ch.numero||ch.unidad||'---',choferTelefono:ch.telefono||'No especificado',choferRating:String(calif),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Tarifa enviada','$'+fare,'success');if(!confAct){confAct=true;listenConfirm(sid)}}).catch(()=>{toast('Error');svcAct=false})})})}
 function listenConfirm(id){db.ref(`servicios/${id}/estado`).once('value',s=>handleSt(s.val()));db.ref(`servicios/${id}/estado`).on('value',s=>handleSt(s.val()))}
 function handleSt(st){if(st==='aceptado'){if(document.getElementById('activeView').style.display==='none'){showAct();notif('Aceptado','Cliente aceptó','success');playSound('accept')}}else if(st==='cancelado'){resetAll();notif('Cancelado','Cliente rechazó','error')}}
