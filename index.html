@@ -14,7 +14,6 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
@@ -23,32 +22,21 @@
         *{margin:0;padding:0;box-sizing:border-box}body{font-family:'Inter','Segoe UI',sans-serif;background:#000;color:var(--txt);height:100vh;overflow:hidden}
         .app{max-width:430px;margin:0 auto;height:100vh;background:var(--bg);display:flex;flex-direction:column}
         @media(min-width:431px){body{display:flex;justify-content:center;align-items:center;padding:20px}.app{border-radius:30px;height:90vh;max-height:800px;box-shadow:0 0 50px rgba(108,92,231,.1)}}
-        
         .login-screen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;padding:1.5rem;text-align:center;overflow-y:auto}
-        .login-screen .logo{font-size:4rem;margin-bottom:.3rem}
-        .login-screen h1{font-size:1.3rem;margin-bottom:.2rem}.login-screen h1 span{color:var(--acc)}
+        .login-screen .logo{font-size:4rem;margin-bottom:.3rem}.login-screen h1{font-size:1.3rem;margin-bottom:.2rem}.login-screen h1 span{color:var(--acc)}
         .login-screen .subtitle{font-size:.7rem;color:var(--txt3);margin-bottom:1rem;background:rgba(108,92,231,.15);padding:.25rem .8rem;border-radius:10px;display:inline-block}
         .inp{width:100%;max-width:300px;padding:.6rem;background:var(--card);border:1px solid var(--bd);border-radius:var(--r);color:var(--txt);margin-bottom:.4rem;outline:0;font-size:.8rem}.inp:focus{border-color:var(--acc)}
         .btn{width:100%;max-width:300px;padding:.6rem;border-radius:var(--r);font-weight:700;cursor:pointer;border:0;font-size:.8rem;margin-top:.3rem}.btn-acc{background:var(--acc);color:#fff}.btn-acc:disabled{opacity:.5}.btn-outline{background:transparent;border:1px solid var(--acc);color:var(--acc)}
+        .btn-red{background:var(--red);color:#fff}
         .login-err{background:rgba(255,71,87,.1);border:1px solid var(--red);padding:.5rem;border-radius:var(--r);margin-bottom:.4rem;font-size:.7rem;display:none;max-width:300px;width:100%}
         .login-success{background:rgba(0,200,151,.1);border:1px solid var(--green);padding:.5rem;border-radius:var(--r);margin-bottom:.4rem;font-size:.7rem;display:none;max-width:300px;width:100%;color:var(--green)}
-        
-        .photo-box{width:90px;height:90px;border-radius:50%;background:var(--card);border:2px dashed var(--bd);display:flex;align-items:center;justify-content:center;margin:.4rem auto;cursor:pointer;font-size:.65rem;color:var(--txt3);overflow:hidden;transition:.2s;flex-shrink:0}
-        .photo-box:hover{border-color:var(--acc)}.photo-box img{width:100%;height:100%;object-fit:cover}
-        .photo-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin:.5rem 0}
-        .photo-item{text-align:center}.photo-item .label{font-size:.6rem;color:var(--txt3);margin-top:.3rem}
-        
+        .photo-box{width:90px;height:90px;border-radius:50%;background:var(--card);border:2px dashed var(--bd);display:flex;align-items:center;justify-content:center;margin:.4rem auto;cursor:pointer;font-size:.65rem;color:var(--txt3);overflow:hidden;transition:.2s;flex-shrink:0}.photo-box:hover{border-color:var(--acc)}.photo-box img{width:100%;height:100%;object-fit:cover}
+        .photo-row{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin:.5rem 0}.photo-item{text-align:center}.photo-item .label{font-size:.6rem;color:var(--txt3);margin-top:.3rem}
         .toggle-form{font-size:.7rem;color:var(--acc);cursor:pointer;margin-top:.8rem;text-decoration:underline}
-        
-        .approval-status{text-align:center;padding:2rem}
-        .approval-status .icon{font-size:4rem;margin-bottom:1rem}
-        .approval-status h2{font-size:1.2rem;margin-bottom:.5rem}
-        .approval-status p{font-size:.8rem;color:var(--txt2);margin-bottom:1.5rem}
-        
+        .approval-status{text-align:center;padding:2rem}.approval-status .icon{font-size:4rem;margin-bottom:1rem}.approval-status h2{font-size:1.2rem;margin-bottom:.5rem}.approval-status p{font-size:.8rem;color:var(--txt2);margin-bottom:1.5rem}
         .dashboard{display:none;flex-direction:column;height:100%}.dashboard.active{display:flex}
         .topbar{background:linear-gradient(135deg,var(--acc),#4834d4);padding:.5rem .8rem;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:50;box-shadow:0 4px 15px rgba(108,92,231,.3)}
-        .topbar-brand{display:flex;align-items:center;gap:.4rem}
-        .topbar-logo{width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
+        .topbar-brand{display:flex;align-items:center;gap:.4rem}.topbar-logo{width:30px;height:30px;background:rgba(255,255,255,.2);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem}
         .topbar h2{font-size:.85rem;line-height:1.1}.topbar h2 span{font-size:.55rem;opacity:.8;display:block;font-weight:400}
         .topbar-right{display:flex;gap:.4rem;align-items:center}
         .toggle{padding:.3rem .6rem;border-radius:15px;font-size:.65rem;font-weight:700;cursor:pointer;border:0}.toggle.on{background:var(--green);color:#000}.toggle.off{background:var(--red);color:#fff}
@@ -107,10 +95,10 @@
         
         <div id="approvalWait" style="display:none" class="approval-status">
             <div class="icon">⏳</div>
-            <h2>Solicitud Enviada</h2>
-            <p>Tu solicitud está siendo revisada por el administrador. Recibirás un correo con tu contraseña cuando sea aprobada.</p>
-            <button class="btn btn-outline" onclick="checkApproval()">🔄 Verificar estado</button>
-            <p style="font-size:.65rem;color:var(--txt3);margin-top:.5rem">También puedes contactar al admin:<br>📞 951 923 1764</p>
+            <h2 id="approvalTitle">Solicitud Enviada</h2>
+            <p id="approvalText">Tu solicitud está siendo revisada por el administrador. Recibirás un correo con tu contraseña cuando sea aprobada.</p>
+            <div id="approvalActions"></div>
+            <p style="font-size:.65rem;color:var(--txt3);margin-top:.5rem">📞 951 923 1764</p>
         </div>
         
         <p class="toggle-form" id="toggleText" onclick="toggleForms()">¿Ya estás registrado? Inicia sesión</p>
@@ -121,7 +109,7 @@
         <div class="map-wrap"><div id="driverMap"></div></div>
         <div class="tabs"><div class="tab on" onclick="switchTab('home',this)">🏠 Inicio</div><div class="tab" onclick="switchTab('earnings',this)">💰 Ganancias</div><div class="tab" onclick="switchTab('history',this)">📋 Historial</div></div>
         <div class="content" id="tabContent">
-            <div id="tab-home"><div id="idleView"><div class="empty">🟢 Disponible para recibir solicitudes</div></div><div id="incomingView" style="display:none"></div><div id="activeView" style="display:none"></div></div>
+            <div id="tab-home"><div id="idleView"><div class="empty">🟢 Disponible</div></div><div id="incomingView" style="display:none"></div><div id="activeView" style="display:none"></div></div>
             <div id="tab-earnings" style="display:none"><div class="card"><div class="card-lbl">HOY</div><div class="card-val" id="earnToday">$0</div></div><div class="card"><div class="card-lbl">SEMANA</div><div class="card-val" id="earnWeek">$0</div></div><div class="card"><div class="card-row"><div><div class="card-lbl">⭐ CALIFICACIÓN</div><div class="card-val" id="earnRating">0</div></div><div class="stars" id="starsDisplay"></div></div></div></div>
             <div id="tab-history" style="display:none"><div id="historyList"><div class="empty">Cargando...</div></div></div>
         </div>
@@ -129,7 +117,7 @@
 </div>
 <script>
 const fb={apiKey:"AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",authDomain:"zaachilamoto.firebaseapp.com",databaseURL:"https://zaachilamoto-default-rtdb.firebaseio.com",projectId:"zaachilamoto",storageBucket:"zaachilamoto.firebasestorage.app",messagingSenderId:"559788509526",appId:"1:559788509526:web:c751d8d22068f09041aef7"};
-firebase.initializeApp(fb);const auth=firebase.auth(),db=firebase.database(),storage=firebase.storage();
+firebase.initializeApp(fb);const auth=firebase.auth(),db=firebase.database();
 let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calif=0,notifC=0,svcAct=false,confAct=false;
 let photoChofer='',photoMoto='';const ZA=[16.9516,-96.7491];
 
@@ -139,44 +127,162 @@ function updateDot(){const d=document.getElementById('notificationDot');if(d){d.
 function playSound(t){try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(t==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(t==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(t==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}}
 function toast(m){notif('Zaachila Moto',m,'success')}
 
-function takePhoto(type){const input=document.createElement('input');input.type='file';input.accept='image/*';input.capture='environment';input.onchange=function(){const file=input.files[0];if(!file)return;const reader=new FileReader();reader.onload=function(e){if(type==='chofer'){photoChofer=e.target.result;document.getElementById('photoChofer').innerHTML=`<img src="${e.target.result}">`}else if(type==='moto'){photoMoto=e.target.result;document.getElementById('photoMoto').innerHTML=`<img src="${e.target.result}">`}};reader.readAsDataURL(file)};input.click()}
+// ✅ TOMAR FOTO CON COMPRESIÓN
+function takePhoto(type){
+    const input=document.createElement('input');input.type='file';input.accept='image/*';input.capture='environment';
+    input.onchange=function(){
+        const file=input.files[0];if(!file)return;
+        compressImage(file,300,300,0.5,function(compressedDataURL){
+            if(type==='chofer'){photoChofer=compressedDataURL;document.getElementById('photoChofer').innerHTML=`<img src="${compressedDataURL}">`}
+            else{photoMoto=compressedDataURL;document.getElementById('photoMoto').innerHTML=`<img src="${compressedDataURL}">`}
+            toast('📸 Foto comprimida y lista');
+        });
+    };
+    input.click();
+}
 
-function toggleForms(){const reg=document.getElementById('registerForm'),login=document.getElementById('loginForm'),title=document.getElementById('formTitle'),toggle=document.getElementById('toggleText');if(login.style.display==='none'){reg.style.display='none';login.style.display='block';title.textContent='Iniciar Sesión';toggle.textContent='¿No tienes cuenta? Regístrate'}else{reg.style.display='block';login.style.display='none';title.textContent='Solicitar Registro';toggle.textContent='¿Ya estás registrado? Inicia sesión'}}
+function compressImage(file,maxWidth,maxHeight,quality,callback){
+    const reader=new FileReader();
+    reader.onload=function(e){
+        const img=new Image();
+        img.onload=function(){
+            const canvas=document.createElement('canvas');
+            let w=img.width,h=img.height;
+            if(w>h){if(w>maxWidth){h=Math.round(h*maxWidth/w);w=maxWidth}}else{if(h>maxHeight){w=Math.round(w*maxHeight/h);h=maxHeight}}
+            canvas.width=w;canvas.height=h;
+            const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);
+            callback(canvas.toDataURL('image/jpeg',quality));
+        };
+        img.src=e.target.result;
+    };
+    reader.readAsDataURL(file);
+}
 
-function register(){const name=document.getElementById('regName').value.trim(),email=document.getElementById('regEmail').value.trim(),phone=document.getElementById('regPhone').value.trim(),sitio=document.getElementById('regSitio').value.trim(),placa=document.getElementById('regPlaca').value.trim(),numero=document.getElementById('regNumero').value.trim(),err=document.getElementById('loginError'),suc=document.getElementById('loginSuccess');err.style.display='none';suc.style.display='none';if(!name||!email||!phone||!placa){err.textContent='Nombre, email, teléfono y placa son obligatorios';err.style.display='block';return}db.ref('solicitudes_choferes').push({nombre:name,email:email,telefono:phone,sitio:sitio,placa:placa,numero:numero,foto_chofer:photoChofer,foto_moto:photoMoto,estado:'pendiente',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>{localStorage.setItem('chofer_email',email);document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='none';document.getElementById('approvalWait').style.display='block';document.getElementById('formTitle').textContent='Estado de Solicitud';document.getElementById('toggleText').style.display='none';suc.textContent='✅ Solicitud enviada. Revisa tu correo cuando sea aprobada.';suc.style.display='block'}).catch(er=>{err.textContent='Error: '+er.message;err.style.display='block'})}
+// ✅ REGISTRO
+function toggleForms(){
+    const reg=document.getElementById('registerForm'),login=document.getElementById('loginForm');
+    const title=document.getElementById('formTitle'),toggle=document.getElementById('toggleText');
+    const wait=document.getElementById('approvalWait');
+    wait.style.display='none';
+    if(login.style.display==='none'){reg.style.display='none';login.style.display='block';title.textContent='Iniciar Sesión';toggle.textContent='¿No tienes cuenta? Regístrate'}
+    else{reg.style.display='block';login.style.display='none';title.textContent='Solicitar Registro';toggle.textContent='¿Ya estás registrado? Inicia sesión'}
+}
 
-function checkApproval(){const email=localStorage.getItem('chofer_email');if(!email){toast('No hay email guardado');return}db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{let found=false;s.forEach(snap=>{const sol=snap.val();found=true;if(sol.estado==='declinado'){document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">❌</div><h2>Solicitud Rechazada</h2><p>Tu solicitud ha sido declinada. Contacta al administrador.</p><p style="font-size:.65rem;color:var(--txt3);margin-top:.5rem">📞 951 923 1764</p></div>`}else if(sol.estado==='autorizado'){document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">✅</div><h2>¡Aprobado!</h2><p>Revisa tu correo <b>${email}</b> para ver tu contraseña.</p><button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al inicio de sesión</button></div>`}});if(!found)toast('⏳ Tu solicitud sigue en revisión.')})}
+function register(){
+    const name=document.getElementById('regName').value.trim(),email=document.getElementById('regEmail').value.trim();
+    const phone=document.getElementById('regPhone').value.trim(),sitio=document.getElementById('regSitio').value.trim();
+    const placa=document.getElementById('regPlaca').value.trim(),numero=document.getElementById('regNumero').value.trim();
+    const err=document.getElementById('loginError'),suc=document.getElementById('loginSuccess');
+    err.style.display='none';suc.style.display='none';
+    if(!name||!email||!phone||!placa){err.textContent='Nombre, email, teléfono y placa son obligatorios';err.style.display='block';return}
+    db.ref('solicitudes_choferes').push({
+        nombre:name,email:email,telefono:phone,sitio:sitio,placa:placa,numero:numero,
+        foto_chofer:photoChofer,foto_moto:photoMoto,estado:'pendiente',timestamp:firebase.database.ServerValue.TIMESTAMP
+    }).then(()=>{
+        localStorage.setItem('chofer_email',email);
+        document.getElementById('registerForm').style.display='none';
+        document.getElementById('loginForm').style.display='none';
+        document.getElementById('approvalWait').style.display='block';
+        document.getElementById('formTitle').textContent='Estado de Solicitud';
+        document.getElementById('toggleText').style.display='none';
+        document.getElementById('approvalTitle').textContent='Solicitud Enviada';
+        document.getElementById('approvalText').textContent='Tu solicitud está siendo revisada. Recibirás un correo cuando sea aprobada.';
+        document.getElementById('approvalActions').innerHTML='<button class="btn btn-outline" onclick="checkApproval()">🔄 Verificar estado</button>';
+        suc.textContent='✅ Solicitud enviada.';suc.style.display='block';
+    }).catch(er=>{err.textContent='Error: '+er.message;err.style.display='block'});
+}
 
-// ✅ VERIFICACIÓN AUTOMÁTICA CADA 10 SEGUNDOS
-setInterval(()=>{const email=localStorage.getItem('chofer_email');if(email&&document.getElementById('approvalWait').style.display!=='none'){db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{s.forEach(snap=>{const sol=snap.val();if(sol.estado==='declinado'){document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">❌</div><h2>Solicitud Rechazada</h2><p>Tu solicitud ha sido declinada. Contacta al administrador.</p><p style="font-size:.65rem;color:var(--txt3);margin-top:.5rem">📞 951 923 1764</p></div>`}else if(sol.estado==='autorizado'){document.getElementById('approvalWait').innerHTML=`<div class="approval-status"><div class="icon">✅</div><h2>¡Aprobado!</h2><p>Revisa tu correo <b>${email}</b> para ver tu contraseña.</p><button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al inicio de sesión</button></div>`}})})}},10000);
+function checkApproval(){
+    const email=localStorage.getItem('chofer_email');if(!email){toast('No hay email guardado');return}
+    db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{
+        let found=false;s.forEach(snap=>{
+            const sol=snap.val();found=true;
+            if(sol.estado==='declinado'){
+                document.getElementById('approvalTitle').textContent='Solicitud Rechazada';
+                document.getElementById('approvalText').textContent='Tu solicitud ha sido declinada. Puedes volver a intentarlo con otros datos.';
+                document.getElementById('approvalActions').innerHTML=`
+                    <button class="btn btn-red" onclick="retryRegister()">🔄 Volver a intentar</button>
+                    <p style="font-size:.65rem;color:var(--txt3);margin-top:.5rem">📞 951 923 1764</p>`;
+            }else if(sol.estado==='autorizado'){
+                document.getElementById('approvalTitle').textContent='¡Aprobado!';
+                document.getElementById('approvalText').textContent='Revisa tu correo '+email+' para ver tu contraseña.';
+                document.getElementById('approvalActions').innerHTML=`
+                    <button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al inicio de sesión</button>`;
+            }
+        });
+        if(!found)toast('⏳ Tu solicitud sigue en revisión.');
+    });
+}
+
+// ✅ REINTENTAR REGISTRO DESPUÉS DE RECHAZO
+function retryRegister(){
+    localStorage.removeItem('chofer_email');
+    photoChofer='';photoMoto='';
+    document.getElementById('photoChofer').innerHTML='📷<br>Tu foto';
+    document.getElementById('photoMoto').innerHTML='📷<br>Moto';
+    document.getElementById('regName').value='';document.getElementById('regEmail').value='';
+    document.getElementById('regPhone').value='';document.getElementById('regSitio').value='';
+    document.getElementById('regPlaca').value='';document.getElementById('regNumero').value='';
+    document.getElementById('approvalWait').style.display='none';
+    document.getElementById('registerForm').style.display='block';
+    document.getElementById('formTitle').textContent='Solicitar Registro';
+    document.getElementById('toggleText').style.display='block';
+}
+
+// ✅ VERIFICACIÓN AUTOMÁTICA
+setInterval(()=>{
+    const email=localStorage.getItem('chofer_email');
+    if(email&&document.getElementById('approvalWait').style.display!=='none'){
+        db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{
+            s.forEach(snap=>{
+                const sol=snap.val();
+                if(sol.estado==='declinado'){
+                    document.getElementById('approvalTitle').textContent='Solicitud Rechazada';
+                    document.getElementById('approvalText').textContent='Tu solicitud ha sido declinada.';
+                    document.getElementById('approvalActions').innerHTML=`
+                        <button class="btn btn-red" onclick="retryRegister()">🔄 Volver a intentar</button>`;
+                }else if(sol.estado==='autorizado'){
+                    document.getElementById('approvalTitle').textContent='¡Aprobado!';
+                    document.getElementById('approvalText').textContent='Revisa tu correo para ver tu contraseña.';
+                    document.getElementById('approvalActions').innerHTML=`
+                        <button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al inicio de sesión</button>`;
+                }
+            });
+        });
+    }
+},10000);
 
 // ✅ LOGIN
-function login(){const e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPassword').value,err=document.getElementById('loginError'),btn=document.getElementById('btnLogin');if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}btn.disabled=true;btn.textContent='...';err.style.display='none';auth.signInWithEmailAndPassword(e,p).then(u=>{uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);return db.ref(`choferes/${uid}`).once('value')}).then(s=>{if(!s.val())return db.ref(`choferes/${uid}`).set({nombre:e.split('@')[0],email:e,estado:'activo',calificacion:0,total_servicios:0,servicios_hoy:0,ubicacion:{lat:ZA[0],lng:ZA[1]}})}).then(()=>{document.getElementById('loginScreen').style.display='none';document.getElementById('dashboard').classList.add('active');setTimeout(()=>{initMap();loadData();listenSvc();getPos();listenChats();listenGlobal()},300);notif('Bienvenido','Sesión iniciada como Chofer','success')}).catch(er=>{let m='Error';if(er.code==='auth/user-not-found')m='Chofer no registrado o aún no aprobado.';else if(er.code==='auth/wrong-password')m='Contraseña incorrecta';else if(er.code==='auth/too-many-requests')m='Demasiados intentos. Espera.';err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})}
+function login(){
+    const e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPassword').value;
+    const err=document.getElementById('loginError'),btn=document.getElementById('btnLogin');
+    if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}
+    btn.disabled=true;btn.textContent='...';err.style.display='none';
+    auth.signInWithEmailAndPassword(e,p).then(u=>{uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);return db.ref(`choferes/${uid}`).once('value')}).then(s=>{if(!s.val())return db.ref(`choferes/${uid}`).set({nombre:e.split('@')[0],email:e,estado:'activo',calificacion:0,total_servicios:0,servicios_hoy:0,ubicacion:{lat:ZA[0],lng:ZA[1]}})}).then(()=>{document.getElementById('loginScreen').style.display='none';document.getElementById('dashboard').classList.add('active');setTimeout(()=>{initMap();loadData();listenSvc();getPos();listenChats();listenGlobal()},300);notif('Bienvenido','Sesión iniciada','success')}).catch(er=>{let m='Error';if(er.code==='auth/user-not-found')m='Chofer no registrado.';else if(er.code==='auth/wrong-password')m='Contraseña incorrecta';err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})}
 function logout(){if(confirm('¿Cerrar sesión?')){if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});auth.signOut();localStorage.removeItem('ce');localStorage.removeItem('cp');location.reload()}}
-
 window.addEventListener('DOMContentLoaded',()=>{const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login();return}const savedEmail=localStorage.getItem('chofer_email');if(savedEmail){document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='none';document.getElementById('approvalWait').style.display='block';document.getElementById('formTitle').textContent='Estado de Solicitud';document.getElementById('toggleText').style.display='none'}});
 
 function initMap(){const c=document.getElementById('driverMap');if(!c||c.offsetHeight===0)c.style.height='160px';map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);setTimeout(()=>map.invalidateSize(),300)}
 function getPos(){if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};if(marker)marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP})},()=>{},{enableHighAccuracy:true})}
 function loadData(){if(!uid)return;db.ref(`choferes/${uid}`).on('value',s=>{const d=s.val()||{};const hoy=new Date().toISOString().split('T')[0],g=d.ganancias||{};document.getElementById('earnToday').textContent='$'+(g[hoy]||0);document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);calif=d.calificacion||0;document.getElementById('earnRating').textContent='⭐ '+calif;document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calif)?'★':'☆'}</span>`).join('')})}
-function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});notif('Disponible','Recibiendo solicitudes','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Pausado','Servicios detenidos','error')}}
+function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});notif('Disponible','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Pausado','error')}}
 function listenSvc(){db.ref('servicios').orderByChild('estado').equalTo('buscando').limitToLast(1).on('child_added',s=>{if(active&&!sid&&!svcAct){svcAct=true;db.ref(`servicios/${s.key}/estado`).once('value',es=>{if(es.val()==='buscando'){sid=s.key;sdata=s.val();showInc()}else{svcAct=false}})}})}
-function listenGlobal(){db.ref('servicios').on('child_changed',s=>{const v=s.val();if(s.key===sid&&v.estado==='aceptado'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Servicio asignado','Otro chofer fue elegido','error');resetAll()}if(s.key===sid&&v.estado==='tarifa_propuesta'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('No disponible','Otro chofer envió tarifa','error');resetAll()}})}
+function listenGlobal(){db.ref('servicios').on('child_changed',s=>{const v=s.val();if(s.key===sid&&v.estado==='aceptado'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Servicio asignado','Otro chofer fue elegido','error');resetAll()}if(s.key===sid&&v.estado==='tarifa_propuesta'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('No disponible','Otro chofer envió tarifa','error');resetAll()}})}
 function showInc(){const extraPax=sdata?.pasajeros_extra?`<div class="extra-passenger">👥 El cliente lleva ${sdata.pasajeros_extra} pasajero(s) extra</div>`:'';notif('Nueva solicitud','Cliente cerca','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div><div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,sdata?.origen?.lat||ZA[0],sdata?.origen?.lng||ZA[1]).toFixed(1)} km</b></div>${extraPax}<div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`}
-function accept(){if(!sid||!sdata)return;db.ref(`servicios/${sid}/estado`).once('value',es=>{if(es.val()!=='buscando'){toast('Ya no disponible');document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();return}const price=prompt('💰 Tarifa a cobrar ($):','50');if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}const fare=parseInt(price);if(sdata)sdata.tarifa_propuesta=fare;svcAct=false;db.ref(`choferes/${uid}`).once('value',snap=>{const ch=snap.val()||{};db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:ch.nombre||'Chofer',choferPlaca:ch.placa||'---',choferColor:ch.color||'No especificado',choferUnidad:ch.numero||ch.unidad||'---',choferTelefono:ch.telefono||'No especificado',choferRating:String(calif),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Tarifa enviada','$'+fare,'success');if(!confAct){confAct=true;listenConfirm(sid)}}).catch(()=>{toast('Error');svcAct=false})})})}
+function accept(){if(!sid||!sdata)return;db.ref(`servicios/${sid}/estado`).once('value',es=>{if(es.val()!=='buscando'){toast('Ya no disponible');document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();return}const price=prompt('💰 Tarifa ($):','50');if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}const fare=parseInt(price);if(sdata)sdata.tarifa_propuesta=fare;svcAct=false;db.ref(`choferes/${uid}`).once('value',snap=>{const ch=snap.val()||{};db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:ch.nombre||'Chofer',choferPlaca:ch.placa||'---',choferColor:ch.color||'---',choferUnidad:ch.numero||'---',choferTelefono:ch.telefono||'---',choferRating:String(calif),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Tarifa enviada','$'+fare,'success');if(!confAct){confAct=true;listenConfirm(sid)}}).catch(()=>{toast('Error');svcAct=false})})})}
 function listenConfirm(id){db.ref(`servicios/${id}/estado`).once('value',s=>handleSt(s.val()));db.ref(`servicios/${id}/estado`).on('value',s=>handleSt(s.val()))}
-function handleSt(st){if(st==='aceptado'){if(document.getElementById('activeView').style.display==='none'){showAct();notif('Aceptado','Cliente aceptó','success');playSound('accept')}}else if(st==='cancelado'){resetAll();notif('Cancelado','Cliente rechazó','error')}}
-function deny(){if(!sid)return;svcAct=false;db.ref(`servicios/${sid}`).update({estado:'rechazado',choferId:uid,ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();notif('Rechazado','Servicio rechazado','error')})}
+function handleSt(st){if(st==='aceptado'){if(document.getElementById('activeView').style.display==='none'){showAct();notif('Aceptado','Cliente aceptó','success');playSound('accept')}}else if(st==='cancelado'){resetAll();notif('Cancelado','error')}}
+function deny(){if(!sid)return;svcAct=false;db.ref(`servicios/${sid}`).update({estado:'rechazado',choferId:uid,ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();notif('Rechazado','error')})}
 function resetAll(){if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}sid=null;sdata=null;svcAct=false;confAct=false}
 function showAct(){document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='block';step=1;updateUI()}
 function updateUI(){document.getElementById('activeView').innerHTML=`<div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div><div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div><button class="btn-full btn-purple" onclick="nextStep()">${step===1?'Iniciar Recogida':step===2?'Llegué al Cliente':'Finalizar Viaje'}</button><button class="btn-full btn-outline" onclick="openChat()" style="position:relative">💬 Chat <span class="badge-new" id="chatBadge">0</span></button><button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto</button><button class="btn-full btn-red" onclick="finishNow()">🏁 Finalizar ahora</button>`}
-function nextStep(){if(step===1){db.ref(`servicios/${sid}`).update({estado:'en_camino'});step=2;updateUI();notif('En camino','Al cliente','success')}else if(step===2){db.ref(`servicios/${sid}`).update({estado:'en_servicio'});step=3;updateUI();notif('Viaje iniciado','Al destino','success')}else finishRide()}
+function nextStep(){if(step===1){db.ref(`servicios/${sid}`).update({estado:'en_camino'});step=2;updateUI();notif('En camino','success')}else if(step===2){db.ref(`servicios/${sid}`).update({estado:'en_servicio'});step=3;updateUI();notif('Viaje iniciado','success')}else finishRide()}
 function finishRide(){if(!sid)return;db.ref(`servicios/${sid}/tarifa_propuesta`).once('value',snap=>{const fare=snap.val()||sdata?.tarifa_propuesta||50;const hoy=new Date().toISOString().split('T')[0];if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});resetAll();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje completado','$'+fare,'success');loadData();loadHistory()})}
-function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).update({estado:'cancelado_chofer',motivo:'Chofer canceló antes de recoger',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{resetAll();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje cancelado','Se notificó al cliente','error');loadHistory()})}else{step=3;finishRide()}}
-function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){const r=storage.ref(`objetos/${sid}_${Date.now()}`);r.put(f).then(()=>r.getDownloadURL()).then(u=>{db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:u,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP});notif('Reporte','Con foto','success')}).catch(()=>saveR(d))}};i.click()}else saveR(d)}
+function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).update({estado:'cancelado_chofer',motivo:'Chofer canceló',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{resetAll();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje cancelado','error');loadHistory()})}else{step=3;finishRide()}}
+function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(compressed){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:compressed,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 function listenChats(){db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const l=Object.values(ms).pop();if(l&&l.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',l.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}})}
-function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat con el cliente</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
+function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
 function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 function loadHistory(){if(!uid)return;db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value',s=>{const d=s.val();let h='';if(!d){document.getElementById('historyList').innerHTML='<div class="empty">Sin servicios</div>';return}Object.entries(d).reverse().forEach(([id,v])=>{h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`});document.getElementById('historyList').innerHTML=h})}
