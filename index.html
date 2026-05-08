@@ -121,6 +121,7 @@ const fb={apiKey:"AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",authDomain:"zaachilam
 firebase.initializeApp(fb);const auth=firebase.auth(),db=firebase.database();
 let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calif=0,notifC=0,svcAct=false,confAct=false;
 let photoChofer='',photoMoto='';const ZA=[16.9516,-96.7491];
+const RADIO_MAX = 0.5; // 500 metros en kilómetros
 
 function notif(t,m,ty='message'){notifC++;updateDot();playSound(ty==='request'?'incoming':ty==='message'?'msg':'accept');let c=document.getElementById('notificationContainer');if(!c){c=document.createElement('div');c.id='notificationContainer';c.className='notification-container';document.body.appendChild(c)}const n=document.createElement('div');n.className=`notification ${ty}`;n.innerHTML=`<span class="notif-icon">${ty==='request'?'🔔':ty==='message'?'💬':ty==='error'?'❌':'✅'}</span><div class="notif-content"><div class="notif-title">${t}</div><div class="notif-text">${m}</div></div><button class="notif-close" onclick="dismissN(this)">✕</button>`;c.appendChild(n);setTimeout(()=>{if(n.parentNode){n.remove();notifC--;updateDot()}},3500)}
 function dismissN(b){const n=b.closest('.notification');if(n){n.style.animation='notifOut .3s ease forwards';setTimeout(()=>{n.remove();notifC--;updateDot()},300)}}
@@ -128,7 +129,7 @@ function updateDot(){const d=document.getElementById('notificationDot');if(d){d.
 function playSound(t){try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(t==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(t==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(t==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}}
 function toast(m){notif('Zaachila Moto',m,'success')}
 
-function takePhoto(type){const input=document.createElement('input');input.type='file';input.accept='image/*';input.capture='environment';input.onchange=function(){const file=input.files[0];if(!file)return;compressImage(file,300,300,0.5,function(compressedDataURL){if(type==='chofer'){photoChofer=compressedDataURL;document.getElementById('photoChofer').innerHTML=`<img src="${compressedDataURL}">`}else{photoMoto=compressedDataURL;document.getElementById('photoMoto').innerHTML=`<img src="${compressedDataURL}">`}toast('📸 Foto comprimida y lista')})};input.click()}
+function takePhoto(type){const input=document.createElement('input');input.type='file';input.accept='image/*';input.capture='environment';input.onchange=function(){const file=input.files[0];if(!file)return;compressImage(file,300,300,0.5,function(compressedDataURL){if(type==='chofer'){photoChofer=compressedDataURL;document.getElementById('photoChofer').innerHTML=`<img src="${compressedDataURL}">`}else{photoMoto=compressedDataURL;document.getElementById('photoMoto').innerHTML=`<img src="${compressedDataURL}">`}toast('📸 Foto lista')})};input.click()}
 function compressImage(file,maxWidth,maxHeight,quality,callback){const reader=new FileReader();reader.onload=function(e){const img=new Image();img.onload=function(){const canvas=document.createElement('canvas');let w=img.width,h=img.height;if(w>h){if(w>maxWidth){h=Math.round(h*maxWidth/w);w=maxWidth}}else{if(h>maxHeight){w=Math.round(w*maxHeight/h);h=maxHeight}}canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);callback(canvas.toDataURL('image/jpeg',quality))};img.src=e.target.result};reader.readAsDataURL(file)}
 
 function toggleForms(){const reg=document.getElementById('registerForm'),login=document.getElementById('loginForm'),title=document.getElementById('formTitle'),toggle=document.getElementById('toggleText'),wait=document.getElementById('approvalWait');wait.style.display='none';if(login.style.display==='none'){reg.style.display='none';login.style.display='block';title.textContent='Iniciar Sesión';toggle.textContent='¿No tienes cuenta? Regístrate'}else{reg.style.display='block';login.style.display='none';title.textContent='Solicitar Registro';toggle.textContent='¿Ya estás registrado? Inicia sesión'}}
@@ -148,9 +149,35 @@ function initMap(){const c=document.getElementById('driverMap');if(!c||c.offsetH
 function getPos(){if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};if(marker)marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP})},()=>{},{enableHighAccuracy:true})}
 function loadData(){if(!uid)return;db.ref(`choferes/${uid}`).on('value',s=>{const d=s.val()||{};const hoy=new Date().toISOString().split('T')[0],g=d.ganancias||{};document.getElementById('earnToday').textContent='$'+(g[hoy]||0);document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);calif=d.calificacion||0;document.getElementById('earnRating').textContent='⭐ '+calif;document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calif)?'★':'☆'}</span>`).join('')})}
 function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});notif('Disponible','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Pausado','error')}}
-function listenSvc(){db.ref('servicios').orderByChild('estado').equalTo('buscando').limitToLast(1).on('child_added',s=>{if(active&&!sid&&!svcAct){svcAct=true;db.ref(`servicios/${s.key}/estado`).once('value',es=>{if(es.val()==='buscando'){sid=s.key;sdata=s.val();showInc()}else{svcAct=false}})}})}
+
+// ✅ SOLO RECIBIR SOLICITUDES A 500 METROS O MENOS
+function listenSvc(){
+    db.ref('servicios').orderByChild('estado').equalTo('buscando').limitToLast(1).on('child_added', s => {
+        if(active && !sid && !svcAct){
+            svcAct = true;
+            const servicio = s.val();
+            const origen = servicio.origen;
+            
+            const distancia = calcDist(
+                pos.lat, pos.lng,
+                origen?.lat || ZA[0],
+                origen?.lng || ZA[1]
+            );
+            
+            // Solo mostrar si está a 500 metros o menos
+            if(distancia <= RADIO_MAX){
+                sid = s.key;
+                sdata = servicio;
+                showInc();
+            } else {
+                svcAct = false;
+            }
+        }
+    });
+}
+
 function listenGlobal(){db.ref('servicios').on('child_changed',s=>{const v=s.val();if(s.key===sid&&v.estado==='aceptado'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Servicio asignado','Otro chofer fue elegido','error');resetAll()}if(s.key===sid&&v.estado==='tarifa_propuesta'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('No disponible','Otro chofer envió tarifa','error');resetAll()}})}
-function showInc(){const extraPax=sdata?.pasajeros_extra?`<div class="extra-passenger">👥 El cliente lleva ${sdata.pasajeros_extra} pasajero(s) extra</div>`:'';notif('Nueva solicitud','Cliente cerca','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div><div class="inc-row"><span>Distancia</span><b>${calcDist(pos.lat,pos.lng,sdata?.origen?.lat||ZA[0],sdata?.origen?.lng||ZA[1]).toFixed(1)} km</b></div>${extraPax}<div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`}
+function showInc(){const extraPax=sdata?.pasajeros_extra?`<div class="extra-passenger">👥 El cliente lleva ${sdata.pasajeros_extra} pasajero(s) extra</div>`:'';const dist=calcDist(pos.lat,pos.lng,sdata?.origen?.lat||ZA[0],sdata?.origen?.lng||ZA[1]);notif('Nueva solicitud','A '+dist.toFixed(2)+' km','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud (${dist.toFixed(2)} km)</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div>${extraPax}<div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`}
 function accept(){if(!sid||!sdata)return;db.ref(`servicios/${sid}/estado`).once('value',es=>{if(es.val()!=='buscando'){toast('Ya no disponible');document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';resetAll();return}const price=prompt('💰 Tarifa ($):','50');if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}const fare=parseInt(price);if(sdata)sdata.tarifa_propuesta=fare;svcAct=false;db.ref(`choferes/${uid}`).once('value',snap=>{const ch=snap.val()||{};db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:ch.nombre||'Chofer',choferPlaca:ch.placa||'---',choferColor:ch.color||'---',choferUnidad:ch.numero||'---',choferTelefono:ch.telefono||'---',choferRating:String(calif),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Tarifa enviada','$'+fare,'success');if(!confAct){confAct=true;listenConfirm(sid)}}).catch(()=>{toast('Error');svcAct=false})})})}
 function listenConfirm(id){db.ref(`servicios/${id}/estado`).once('value',s=>handleSt(s.val()));db.ref(`servicios/${id}/estado`).on('value',s=>handleSt(s.val()))}
 function handleSt(st){if(st==='aceptado'){if(document.getElementById('activeView').style.display==='none'){showAct();notif('Aceptado','Cliente aceptó','success');playSound('accept')}}else if(st==='cancelado'){resetAll();notif('Cancelado','error')}}
@@ -164,29 +191,7 @@ function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).updat
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(compressed){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:compressed,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 
-// ✅ CHAT CON ALERTA PERSISTENTE
-function listenChats(){
-    db.ref('chats').on('child_added', s => {
-        if(s.key === sid && !chatOpen){
-            const ms = s.val();
-            if(!ms) return;
-            const last = Object.values(ms).pop();
-            if(last && last.remitente === 'cliente'){
-                const badge = document.getElementById('chatBadge');
-                if(badge){
-                    let count = parseInt(badge.textContent) || 0;
-                    count++;
-                    badge.textContent = count;
-                    badge.classList.add('show');
-                }
-                notif('💬 Nuevo mensaje', last.mensaje.substring(0, 35), 'message');
-                playSound('msg');
-                if(navigator.vibrate) navigator.vibrate([200, 100, 200, 100, 200]);
-            }
-        }
-    });
-}
-
+function listenChats(){db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const l=Object.values(ms).pop();if(l&&l.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',l.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}})}
 function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
 function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
