@@ -44,8 +44,7 @@
         .btn-sm{padding:.3rem .6rem;border-radius:8px;font-size:.65rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;cursor:pointer}
         .notification-container{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:9999;width:90%;max-width:400px;display:flex;flex-direction:column;gap:6px;pointer-events:none}
         .notification{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem 1rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:notifIn .4s ease,notifOut .4s ease 4s forwards;pointer-events:auto}
-        .notification.request{border-left:3px solid var(--acc)}.notification.message{border-left:3px solid var(--green)}.notification.success{border-left:3px solid var(--green)}.notification.motivation{border-left:3px solid var(--warn);background:linear-gradient(135deg,#1a1a2e,#2d1b69)}
-        .notification.error{border-left:3px solid var(--red)}
+        .notification.request{border-left:3px solid var(--acc)}.notification.message{border-left:3px solid var(--green)}.notification.success{border-left:3px solid var(--green)}.notification.motivation{border-left:3px solid var(--warn);background:linear-gradient(135deg,#1a1a2e,#2d1b69)}.notification.error{border-left:3px solid var(--red)}
         .notif-icon{font-size:1.3rem;flex-shrink:0}.notif-content{flex:1}.notif-title{font-size:.75rem;font-weight:700}.notif-text{font-size:.65rem;color:var(--txt2)}
         .notif-close{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:.8rem}
         @keyframes notifIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes notifOut{from{transform:translateY(0);opacity:1}to{transform:translateY(-100%);opacity:0}}
@@ -71,9 +70,9 @@
         .profile-photo-box{width:80px;height:80px;border-radius:10px;background:var(--card);border:1px solid var(--bd);overflow:hidden}.profile-photo-box img{width:100%;height:100%;object-fit:cover}
         .profile-photo-label{font-size:.5rem;color:var(--txt3);text-align:center;margin-top:.2rem}
         .motivation-card{background:linear-gradient(135deg,#1a1a2e,#2d1b69);border:1px solid var(--warn);border-radius:var(--r);padding:.5rem .8rem;text-align:center;margin-bottom:.4rem;display:flex;align-items:center;gap:.6rem}
-        .motivation-card .icon{font-size:1.8rem;flex-shrink:0}
-        .motivation-card .msg{font-size:.7rem;font-weight:700;color:var(--warn)}
-        .motivation-card .sub{font-size:.55rem;color:var(--txt2)}
+        .motivation-card .icon{font-size:1.8rem;flex-shrink:0}.motivation-card .msg{font-size:.7rem;font-weight:700;color:var(--warn)}.motivation-card .sub{font-size:.55rem;color:var(--txt2)}
+        .neta-card{background:linear-gradient(135deg,#1a2e1a,#1b2d1b);border:2px solid var(--green);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}
+        .neta-card .neta-val{font-size:1.5rem;font-weight:800;color:var(--green)}
     </style>
 </head>
 <body>
@@ -102,12 +101,7 @@
             <input type="password" id="loginPassword" class="inp" placeholder="Contraseña">
             <button class="btn btn-acc" id="btnLogin" onclick="login()">Iniciar Sesión</button>
         </div>
-        <div id="approvalWait" style="display:none" class="approval-status">
-            <div class="icon">⏳</div><h2 id="approvalTitle">Solicitud Enviada</h2>
-            <p id="approvalText">Tu solicitud está siendo revisada.</p>
-            <div id="approvalActions"></div>
-            <p style="font-size:.6rem;color:var(--txt3);margin-top:.4rem">📞 951 923 1764</p>
-        </div>
+        <div id="approvalWait" style="display:none" class="approval-status"><div class="icon">⏳</div><h2 id="approvalTitle">Solicitud Enviada</h2><p id="approvalText">Tu solicitud está siendo revisada.</p><div id="approvalActions"></div><p style="font-size:.6rem;color:var(--txt3);margin-top:.4rem">📞 951 923 1764</p></div>
         <p class="toggle-form" id="toggleText" onclick="toggleForms()">¿Ya estás registrado? Inicia sesión</p>
     </div>
 
@@ -120,8 +114,18 @@
             <div id="tab-profile" style="display:none"><div class="card"><h3 style="font-size:.8rem;margin-bottom:.5rem">📸 Mis Documentos</h3><div class="profile-photos"><div><div class="profile-photo-box" id="viewPhotoChofer"><div class="empty">...</div></div><div class="profile-photo-label">Foto chofer</div></div><div><div class="profile-photo-box" id="viewPhotoMoto"><div class="empty">...</div></div><div class="profile-photo-label">Foto mototaxi</div></div><div><div class="profile-photo-box" id="viewPhotoPlaca"><div class="empty">...</div></div><div class="profile-photo-label">Foto placa</div></div></div><p style="font-size:.6rem;color:var(--txt3);text-align:center">No modificables. Contacta al admin.</p></div></div>
             <div id="tab-earnings" style="display:none">
                 <div id="motivationCard"></div>
-                <div class="card"><div class="card-lbl">HOY</div><div class="card-val" id="earnToday">$0</div></div>
-                <div class="card"><div class="card-lbl">SEMANA</div><div class="card-val" id="earnWeek">$0</div></div>
+                <div class="card"><div class="card-lbl">💰 HOY</div><div class="card-val" id="earnToday">$0</div></div>
+                <div class="card"><div class="card-lbl">📅 SEMANA (Bruto)</div><div class="card-val" id="earnWeek">$0</div></div>
+                <div class="card">
+                    <div class="card-lbl">🧾 GASTOS (Gasolina, refacciones, etc.)</div>
+                    <input type="number" id="gastosSemana" class="inp" placeholder="Ingresa tus gastos de la semana" style="width:100%;margin-top:.3rem" onchange="calcularGananciaNeta()" value="0">
+                </div>
+                <div class="neta-card">
+                    <div class="card-row">
+                        <div><div class="card-lbl">💵 GANANCIA NETA</div><div class="neta-val" id="earnNeta">$0</div></div>
+                        <div style="font-size:2rem">💵</div>
+                    </div>
+                </div>
                 <div class="card"><div class="card-row"><div><div class="card-lbl">⭐ CALIFICACIÓN</div><div class="card-val" id="earnRating">0</div></div><div class="stars" id="starsDisplay"></div></div></div>
             </div>
             <div id="tab-history" style="display:none"><div id="historyList"><div class="empty">Cargando...</div></div></div>
@@ -155,73 +159,13 @@ function login(){const e=document.getElementById('loginEmail').value.trim(),p=do
 function logout(){if(confirm('¿Cerrar sesión?')){if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});auth.signOut();localStorage.removeItem('ce');localStorage.removeItem('cp');location.reload()}}
 window.addEventListener('DOMContentLoaded',()=>{const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login();return}const savedEmail=localStorage.getItem('chofer_email');if(savedEmail){document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='none';document.getElementById('approvalWait').style.display='block';document.getElementById('formTitle').textContent='Estado de Solicitud';document.getElementById('toggleText').style.display='none'}});
 
-// ✅ MAPA CON RUTA AUTOMÁTICA
-function initMap(){
-    const c=document.getElementById('driverMap');
-    if(!c||c.offsetHeight===0)c.style.height='200px';
-    map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);
-    marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(108,92,231,.8);"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);
-    setTimeout(()=>map.invalidateSize(),300);
-}
+function initMap(){const c=document.getElementById('driverMap');if(!c||c.offsetHeight===0)c.style.height='200px';map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(108,92,231,.8);"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);setTimeout(()=>map.invalidateSize(),300)}
+function getPos(){if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};if(marker)marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP});if(sid&&sdata)actualizarRuta()},()=>{},{enableHighAccuracy:true})}
 
-function getPos(){
-    if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{
-        pos={lat:p.coords.latitude,lng:p.coords.longitude};
-        if(marker)marker.setLatLng([pos.lat,pos.lng]);
-        if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP});
-        // Actualizar ruta si hay servicio activo
-        if(sid&&sdata)actualizarRuta();
-    },()=>{},{enableHighAccuracy:true});
-}
+function actualizarRuta(){if(rutaLinea){map.removeLayer(rutaLinea);rutaLinea=null}if(clienteMarker){map.removeLayer(clienteMarker);clienteMarker=null}if(destinoMarker){map.removeLayer(destinoMarker);destinoMarker=null}if(!sdata)return;const puntos=[[pos.lat,pos.lng]];if(sdata.origen?.lat){clienteMarker=L.marker([sdata.origen.lat,sdata.origen.lng],{icon:L.divIcon({html:'<div style="background:#00C897;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(0,200,151,.8)">📍</div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);clienteMarker.bindPopup('👤 Cliente');puntos.push([sdata.origen.lat,sdata.origen.lng])}if(sdata.destino?.lat){destinoMarker=L.marker([sdata.destino.lat,sdata.destino.lng],{icon:L.divIcon({html:'<div style="background:#FF4757;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(255,71,87,.8)">🏁</div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);destinoMarker.bindPopup('🏁 Destino');puntos.push([sdata.destino.lat,sdata.destino.lng])}if(puntos.length>=2){rutaLinea=L.polyline(puntos,{color:'#6C5CE7',weight:3,dashArray:'8,8',opacity:.8}).addTo(map)}if(puntos.length>=2){map.fitBounds(L.latLngBounds(puntos),{padding:[40,40]})}}
+function limpiarRuta(){if(rutaLinea){map.removeLayer(rutaLinea);rutaLinea=null}if(clienteMarker){map.removeLayer(clienteMarker);clienteMarker=null}if(destinoMarker){map.removeLayer(destinoMarker);destinoMarker=null}}
 
-// ✅ DIBUJAR RUTA AUTOMÁTICA
-function actualizarRuta(){
-    // Limpiar ruta anterior
-    if(rutaLinea){map.removeLayer(rutaLinea);rutaLinea=null}
-    if(clienteMarker){map.removeLayer(clienteMarker);clienteMarker=null}
-    if(destinoMarker){map.removeLayer(destinoMarker);destinoMarker=null}
-    
-    if(!sdata)return;
-    
-    const puntos=[];
-    puntos.push([pos.lat,pos.lng]); // Chofer
-    
-    // Cliente
-    if(sdata.origen?.lat){
-        const clat=sdata.origen.lat,clng=sdata.origen.lng;
-        clienteMarker=L.marker([clat,clng],{icon:L.divIcon({html:'<div style="background:#00C897;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(0,200,151,.8);font-size:10px;text-align:center;line-height:14px">📍</div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);
-        clienteMarker.bindPopup('👤 Cliente');
-        puntos.push([clat,clng]);
-    }
-    
-    // Destino
-    if(sdata.destino?.lat){
-        const dlat=sdata.destino.lat,dlng=sdata.destino.lng;
-        destinoMarker=L.marker([dlat,dlng],{icon:L.divIcon({html:'<div style="background:#FF4757;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(255,71,87,.8);font-size:10px;text-align:center;line-height:14px">🏁</div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);
-        destinoMarker.bindPopup('🏁 Destino');
-        puntos.push([dlat,dlng]);
-    }
-    
-    // Dibujar línea
-    if(puntos.length>=2){
-        rutaLinea=L.polyline(puntos,{color:'#6C5CE7',weight:3,dashArray:'8,8',opacity:.8}).addTo(map);
-    }
-    
-    // Ajustar vista
-    if(puntos.length>=2){
-        const bounds=L.latLngBounds(puntos);
-        map.fitBounds(bounds,{padding:[40,40]});
-    }
-}
-
-function limpiarRuta(){
-    if(rutaLinea){map.removeLayer(rutaLinea);rutaLinea=null}
-    if(clienteMarker){map.removeLayer(clienteMarker);clienteMarker=null}
-    if(destinoMarker){map.removeLayer(destinoMarker);destinoMarker=null}
-}
-
-// ✅ CARGAR DATOS + MENSAJES MOTIVACIONALES
+// ✅ CARGAR DATOS + CALCULADORA NETA
 function loadData(){
     if(!uid)return;
     db.ref(`choferes/${uid}`).on('value',s=>{
@@ -242,7 +186,22 @@ function loadData(){
         if(d.foto_placa)document.getElementById('viewPhotoPlaca').innerHTML=`<img src="${d.foto_placa}">`;
         mostrarMensajesMotivacionales(gananciasHoy,gananciasSemana);
         actualizarTarjetaMotivacional(gananciasHoy,gananciasSemana);
+        // Restaurar gastos guardados
+        const gastosGuardados=parseFloat(localStorage.getItem('gastos_'+uid)||'0');
+        const gastosInput=document.getElementById('gastosSemana');
+        if(gastosInput&&gastosGuardados>0)gastosInput.value=gastosGuardados;
+        calcularGananciaNeta();
     });
+}
+
+// ✅ CALCULAR GANANCIA NETA
+function calcularGananciaNeta(){
+    const gananciaBruta=parseFloat((document.getElementById('earnWeek')?.textContent||'$0').replace('$',''))||0;
+    const gastos=parseFloat(document.getElementById('gastosSemana')?.value)||0;
+    const neta=Math.max(0,gananciaBruta-gastos);
+    const netaEl=document.getElementById('earnNeta');
+    if(netaEl)netaEl.textContent='$'+neta;
+    if(uid)localStorage.setItem('gastos_'+uid,gastos.toString());
 }
 
 function mostrarMensajesMotivacionales(gananciasHoy,gananciasSemana){
@@ -251,24 +210,15 @@ function mostrarMensajesMotivacionales(gananciasHoy,gananciasSemana){
     for(let meta of metasDiarias){if(gananciasHoy>=meta.monto&&ultimoMensajeDia!==meta.msg){ultimoMensajeDia=meta.msg;notif('💰 Meta del día',meta.msg,'motivation');break}}
     for(let meta of metasSemanales){if(gananciasSemana>=meta.monto&&ultimoMensajeSemana!==meta.msg){ultimoMensajeSemana=meta.msg;notif('🏆 Meta semanal',meta.msg,'motivation');break}}
 }
-
 function actualizarTarjetaMotivacional(gananciasHoy,gananciasSemana){
-    const card=document.getElementById('motivationCard');
-    if(!card)return;
+    const card=document.getElementById('motivationCard');if(!card)return;
     let icon='🛺',msg='¡Cada viaje te acerca a tu meta!',sub='Sigue así';
-    if(gananciasHoy>=500){icon='🛺';msg='¡Eres el rey del volante!';sub='$500 hoy'}
-    else if(gananciasHoy>=300){icon='🛺';msg='¡Gran día de trabajo!';sub='$300 hoy'}
-    else if(gananciasHoy>=100){icon='🛺';msg='¡Vas calentando motores!';sub='$100 hoy'}
-    else if(gananciasSemana>=2000){icon='🛺';msg='¡Profesional de la semana!';sub='$2,000 semana'}
-    else if(gananciasSemana>=1000){icon='🛺';msg='¡Semana productiva!';sub='$1,000 semana'}
+    if(gananciasHoy>=500){icon='🛺';msg='¡Eres el rey del volante!';sub='$500 hoy'}else if(gananciasHoy>=300){icon='🛺';msg='¡Gran día de trabajo!';sub='$300 hoy'}else if(gananciasHoy>=100){icon='🛺';msg='¡Vas calentando motores!';sub='$100 hoy'}else if(gananciasSemana>=2000){icon='🛺';msg='¡Profesional de la semana!';sub='$2,000 semana'}else if(gananciasSemana>=1000){icon='🛺';msg='¡Semana productiva!';sub='$1,000 semana'}
     card.innerHTML=`<div class="motivation-card"><div class="icon">${icon}</div><div><div class="msg">${msg}</div><div class="sub">${sub}</div></div></div>`;
 }
 
 function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});notif('Disponible','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';limpiarRuta();notif('Pausado','error')}}
-
-function listenSvc(){
-    db.ref(`choferes/${uid}/radio_ilimitado`).on('value',radioSnap=>{radioIlimitado=radioSnap.val()||false;const i=document.getElementById('radioIndicator');if(i){i.textContent=radioIlimitado?'🌐 Ilimitado':'📍 500m';i.className='radio-indicator '+(radioIlimitado?'radio-on':'radio-off')}});
-    db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{if(active&&!sid){const sv=s.val();const o=sv.origen;const d=calcDist(pos.lat,pos.lng,o?.lat||ZA[0],o?.lng||ZA[1]);if(radioIlimitado||d<=0.5){sid=s.key;sdata=sv;showInc();actualizarRuta()}}})}
+function listenSvc(){db.ref(`choferes/${uid}/radio_ilimitado`).on('value',radioSnap=>{radioIlimitado=radioSnap.val()||false;const i=document.getElementById('radioIndicator');if(i){i.textContent=radioIlimitado?'🌐 Ilimitado':'📍 500m';i.className='radio-indicator '+(radioIlimitado?'radio-on':'radio-off')}});db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{if(active&&!sid){const sv=s.val();const o=sv.origen;const d=calcDist(pos.lat,pos.lng,o?.lat||ZA[0],o?.lng||ZA[1]);if(radioIlimitado||d<=0.5){sid=s.key;sdata=sv;showInc();actualizarRuta()}}})}
 function listenGlobal(){db.ref('servicios').on('child_changed',s=>{const v=s.val();if(s.key===sid&&v.estado==='aceptado'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';limpiarRuta();notif('Servicio asignado','Otro chofer fue elegido','error');resetAll()}if(s.key===sid&&v.estado==='tarifa_propuesta'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';limpiarRuta();notif('No disponible','Otro chofer envió tarifa','error');resetAll()}})}
 function showInc(){const ep=sdata?.pasajeros_extra?`<div class="extra-passenger">👥 El cliente lleva ${sdata.pasajeros_extra} pasajero(s) extra</div>`:'';notif('Nueva solicitud','Cliente cerca','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div>${ep}<div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`}
 function accept(){if(!sid||!sdata)return;const price=prompt('💰 Tarifa ($):','50');if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}const fare=parseInt(price);if(sdata)sdata.tarifa_propuesta=fare;db.ref(`choferes/${uid}`).once('value',snap=>{const ch=snap.val()||{};db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:ch.nombre||'Chofer',choferPlaca:ch.placa||'---',choferColor:ch.color||'---',choferUnidad:ch.numero||'---',choferTelefono:ch.telefono||'---',choferRating:String(calif),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Tarifa enviada','$'+fare,'success');if(!confAct){confAct=true;listenConfirm(sid)}}).catch(()=>{toast('Error')})})}
