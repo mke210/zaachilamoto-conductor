@@ -30,13 +30,9 @@
         .btn{width:100%;max-width:300px;padding:.5rem;border-radius:var(--r);font-weight:700;cursor:pointer;border:0;font-size:.75rem;margin-top:.2rem}.btn-acc{background:var(--acc);color:#fff}.btn-acc:disabled{opacity:.5}.btn-outline{background:transparent;border:1px solid var(--acc);color:var(--acc)}.btn-red{background:var(--red);color:#fff}
         .login-err{background:rgba(255,71,87,.1);border:1px solid var(--red);padding:.4rem;border-radius:var(--r);margin-bottom:.3rem;font-size:.65rem;display:none;max-width:300px;width:100%}
         .login-success{background:rgba(0,200,151,.1);border:1px solid var(--green);padding:.4rem;border-radius:var(--r);margin-bottom:.3rem;font-size:.65rem;display:none;max-width:300px;width:100%;color:var(--green)}
-        
-        /* FOTOS EN REGISTRO */
         .photo-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;max-width:300px;margin:.4rem auto}
-        .photo-box{width:85px;height:85px;border-radius:12px;background:var(--card);border:2px dashed var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.55rem;color:var(--txt3);overflow:hidden;transition:.2s;margin:0 auto}
-        .photo-box:hover{border-color:var(--acc)}.photo-box img{width:100%;height:100%;object-fit:cover}
+        .photo-box{width:85px;height:85px;border-radius:12px;background:var(--card);border:2px dashed var(--bd);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.55rem;color:var(--txt3);overflow:hidden;transition:.2s;margin:0 auto}.photo-box:hover{border-color:var(--acc)}.photo-box img{width:100%;height:100%;object-fit:cover}
         .photo-item{text-align:center}.photo-item .label{font-size:.55rem;color:var(--txt3);margin-top:.2rem}
-        
         .toggle-form{font-size:.65rem;color:var(--acc);cursor:pointer;margin-top:.5rem;text-decoration:underline}
         .approval-status{text-align:center;padding:1.5rem}.approval-status .icon{font-size:3.5rem;margin-bottom:.8rem}.approval-status h2{font-size:1.1rem;margin-bottom:.4rem}.approval-status p{font-size:.75rem;color:var(--txt2);margin-bottom:1rem}
         .dashboard{display:none;flex-direction:column;height:100%}.dashboard.active{display:flex}
@@ -67,12 +63,12 @@
         .card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.card-row{display:flex;justify-content:space-between;align-items:center}.card-val{font-size:1.3rem;font-weight:800}.card-lbl{font-size:.6rem;color:var(--txt3)}
         .empty{text-align:center;color:var(--txt3);padding:1rem;font-size:.75rem}.stars{display:flex;gap:.2rem}.stars span{color:var(--warn);font-size:.7rem}
         .extra-passenger{background:rgba(255,165,2,.1);border:1px solid var(--warn);border-radius:var(--r);padding:.5rem;margin:.4rem 0;font-size:.7rem;color:var(--warn);text-align:center}
-        
-        /* PERFIL FOTOS */
-        .profile-photos{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center;margin:.5rem 0}
-        .profile-photo-box{width:90px;height:90px;border-radius:12px;background:var(--card);border:1px solid var(--bd);overflow:hidden}
-        .profile-photo-box img{width:100%;height:100%;object-fit:cover}
-        .profile-photo-label{font-size:.55rem;color:var(--txt3);text-align:center;margin-top:.2rem}
+        .radio-indicator{font-size:.55rem;padding:.15rem .5rem;border-radius:8px;display:inline-block;margin-left:.3rem}
+        .radio-on{background:rgba(0,200,151,.15);color:var(--green);border:1px solid rgba(0,200,151,.3)}
+        .radio-off{background:rgba(255,165,2,.15);color:var(--warn);border:1px solid rgba(255,165,2,.3)}
+        .profile-photos{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:.5rem 0}
+        .profile-photo-box{width:80px;height:80px;border-radius:10px;background:var(--card);border:1px solid var(--bd);overflow:hidden}.profile-photo-box img{width:100%;height:100%;object-fit:cover}
+        .profile-photo-label{font-size:.5rem;color:var(--txt3);text-align:center;margin-top:.2rem}
     </style>
 </head>
 <body>
@@ -111,20 +107,12 @@
     </div>
 
     <div id="dashboard" class="dashboard">
-        <header class="topbar"><div class="topbar-brand"><div class="topbar-logo">🛺</div><h2>Zaachila Moto<span>Chofer</span></h2></div><div class="topbar-right"><span class="notif-dot" id="notificationDot">0</span><button class="toggle on" id="statusToggle" onclick="toggleStatus()">ACTIVO</button><button class="btn-sm" onclick="logout()">Salir</button></div></header>
+        <header class="topbar"><div class="topbar-brand"><div class="topbar-logo">🛺</div><h2>Zaachila Moto<span>Chofer <span class="radio-indicator" id="radioIndicator">📍 500m</span></span></h2></div><div class="topbar-right"><span class="notif-dot" id="notificationDot">0</span><button class="toggle on" id="statusToggle" onclick="toggleStatus()">ACTIVO</button><button class="btn-sm" onclick="logout()">Salir</button></div></header>
         <div class="map-wrap"><div id="driverMap"></div></div>
         <div class="tabs"><div class="tab on" onclick="switchTab('home',this)">🏠 Inicio</div><div class="tab" onclick="switchTab('profile',this)">📸 Perfil</div><div class="tab" onclick="switchTab('earnings',this)">💰 Ganancias</div><div class="tab" onclick="switchTab('history',this)">📋 Historial</div></div>
         <div class="content" id="tabContent">
             <div id="tab-home"><div id="idleView"><div class="empty">🟢 Disponible</div></div><div id="incomingView" style="display:none"></div><div id="activeView" style="display:none"></div></div>
-            <div id="tab-profile" style="display:none">
-                <div class="card"><h3 style="font-size:.8rem;margin-bottom:.5rem">📸 Mis Documentos</h3>
-                <div class="profile-photos">
-                    <div><div class="profile-photo-box" id="viewPhotoChofer"><div class="empty">Cargando...</div></div><div class="profile-photo-label">Foto chofer</div></div>
-                    <div><div class="profile-photo-box" id="viewPhotoMoto"><div class="empty">Cargando...</div></div><div class="profile-photo-label">Foto mototaxi</div></div>
-                    <div><div class="profile-photo-box" id="viewPhotoPlaca"><div class="empty">Cargando...</div></div><div class="profile-photo-label">Foto placa</div></div>
-                </div>
-                <p style="font-size:.6rem;color:var(--txt3);text-align:center">Estas fotos no se pueden modificar. Contacta al administrador para cambios.</p></div>
-            </div>
+            <div id="tab-profile" style="display:none"><div class="card"><h3 style="font-size:.8rem;margin-bottom:.5rem">📸 Mis Documentos</h3><div class="profile-photos"><div><div class="profile-photo-box" id="viewPhotoChofer"><div class="empty">...</div></div><div class="profile-photo-label">Foto chofer</div></div><div><div class="profile-photo-box" id="viewPhotoMoto"><div class="empty">...</div></div><div class="profile-photo-label">Foto mototaxi</div></div><div><div class="profile-photo-box" id="viewPhotoPlaca"><div class="empty">...</div></div><div class="profile-photo-label">Foto placa</div></div></div><p style="font-size:.6rem;color:var(--txt3);text-align:center">No modificables. Contacta al admin.</p></div></div>
             <div id="tab-earnings" style="display:none"><div class="card"><div class="card-lbl">HOY</div><div class="card-val" id="earnToday">$0</div></div><div class="card"><div class="card-lbl">SEMANA</div><div class="card-val" id="earnWeek">$0</div></div><div class="card"><div class="card-row"><div><div class="card-lbl">⭐ CALIFICACIÓN</div><div class="card-val" id="earnRating">0</div></div><div class="stars" id="starsDisplay"></div></div></div></div>
             <div id="tab-history" style="display:none"><div id="historyList"><div class="empty">Cargando...</div></div></div>
         </div>
@@ -134,8 +122,7 @@
 const fb={apiKey:"AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",authDomain:"zaachilamoto.firebaseapp.com",databaseURL:"https://zaachilamoto-default-rtdb.firebaseio.com",projectId:"zaachilamoto",storageBucket:"zaachilamoto.firebasestorage.app",messagingSenderId:"559788509526",appId:"1:559788509526:web:c751d8d22068f09041aef7"};
 firebase.initializeApp(fb);const auth=firebase.auth(),db=firebase.database();
 let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calif=0,notifC=0,confAct=false;
-let photoChofer='',photoMoto='',photoPlaca='';const ZA=[16.9516,-96.7491];
-let lastMsgCount=0;
+let photoChofer='',photoMoto='',photoPlaca='';const ZA=[16.9516,-96.7491];let lastMsgCount=0;let radioIlimitado=false;
 
 function notif(t,m,ty='message'){notifC++;updateDot();playSound(ty==='request'?'incoming':ty==='message'?'msg':'accept');let c=document.getElementById('notificationContainer');if(!c){c=document.createElement('div');c.id='notificationContainer';c.className='notification-container';document.body.appendChild(c)}const n=document.createElement('div');n.className=`notification ${ty}`;n.innerHTML=`<span class="notif-icon">${ty==='request'?'🔔':ty==='message'?'💬':ty==='error'?'❌':'✅'}</span><div class="notif-content"><div class="notif-title">${t}</div><div class="notif-text">${m}</div></div><button class="notif-close" onclick="dismissN(this)">✕</button>`;c.appendChild(n);setTimeout(()=>{if(n.parentNode){n.remove();notifC--;updateDot()}},3500)}
 function dismissN(b){const n=b.closest('.notification');if(n){n.style.animation='notifOut .3s ease forwards';setTimeout(()=>{n.remove();notifC--;updateDot()},300)}}
@@ -143,13 +130,11 @@ function updateDot(){const d=document.getElementById('notificationDot');if(d){d.
 function playSound(t){try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(t==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(t==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(t==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}}
 function toast(m){notif('Zaachila Moto',m,'success')}
 
-// ✅ 3 FOTOS
 function takePhoto(type){const input=document.createElement('input');input.type='file';input.accept='image/*';input.capture='environment';input.onchange=function(){const file=input.files[0];if(!file)return;compressImage(file,300,300,0.5,function(c){if(type==='chofer'){photoChofer=c;document.getElementById('photoChofer').innerHTML=`<img src="${c}">`}else if(type==='moto'){photoMoto=c;document.getElementById('photoMoto').innerHTML=`<img src="${c}">`}else{photoPlaca=c;document.getElementById('photoPlaca').innerHTML=`<img src="${c}">`}toast('📸 Foto lista')})};input.click()}
 function compressImage(file,mW,mH,q,cb){const r=new FileReader();r.onload=function(e){const img=new Image();img.onload=function(){const canvas=document.createElement('canvas');let w=img.width,h=img.height;if(w>h){if(w>mW){h=Math.round(h*mW/w);w=mW}}else{if(h>mH){w=Math.round(w*mH/h);h=mH}}canvas.width=w;canvas.height=h;const ctx=canvas.getContext('2d');ctx.drawImage(img,0,0,w,h);cb(canvas.toDataURL('image/jpeg',q))};img.src=e.target.result};r.readAsDataURL(file)}
 
 function toggleForms(){const reg=document.getElementById('registerForm'),login=document.getElementById('loginForm'),title=document.getElementById('formTitle'),toggle=document.getElementById('toggleText'),wait=document.getElementById('approvalWait');wait.style.display='none';if(login.style.display==='none'){reg.style.display='none';login.style.display='block';title.textContent='Iniciar Sesión';toggle.textContent='¿No tienes cuenta? Regístrate'}else{reg.style.display='block';login.style.display='none';title.textContent='Solicitar Registro';toggle.textContent='¿Ya estás registrado? Inicia sesión'}}
 
-// ✅ REGISTRO CON COLOR Y 3 FOTOS
 function register(){const n=document.getElementById('regName').value.trim(),e=document.getElementById('regEmail').value.trim(),ph=document.getElementById('regPhone').value.trim(),si=document.getElementById('regSitio').value.trim(),pl=document.getElementById('regPlaca').value.trim(),nu=document.getElementById('regNumero').value.trim(),co=document.getElementById('regColor').value.trim(),err=document.getElementById('loginError'),suc=document.getElementById('loginSuccess');err.style.display='none';suc.style.display='none';if(!n||!e||!ph||!pl){err.textContent='Nombre, email, teléfono y placa son obligatorios';err.style.display='block';return}db.ref('solicitudes_choferes').push({nombre:n,email:e,telefono:ph,sitio:si,placa:pl,numero:nu,color:co,foto_chofer:photoChofer,foto_moto:photoMoto,foto_placa:photoPlaca,estado:'pendiente',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>{localStorage.setItem('chofer_email',e);document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='none';document.getElementById('approvalWait').style.display='block';document.getElementById('formTitle').textContent='Estado de Solicitud';document.getElementById('toggleText').style.display='none';document.getElementById('approvalTitle').textContent='Solicitud Enviada';document.getElementById('approvalText').textContent='Tu solicitud está siendo revisada.';document.getElementById('approvalActions').innerHTML='<button class="btn btn-outline" onclick="checkApproval()">🔄 Verificar estado</button>';suc.textContent='✅ Solicitud enviada.';suc.style.display='block'}).catch(er=>{err.textContent='Error: '+er.message;err.style.display='block'})}
 
 function checkApproval(){const email=localStorage.getItem('chofer_email');if(!email){toast('No hay email guardado');return}db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{let found=false;s.forEach(snap=>{const sol=snap.val();found=true;if(sol.estado==='declinado'){document.getElementById('approvalTitle').textContent='Solicitud Rechazada';document.getElementById('approvalText').textContent='Tu solicitud ha sido declinada.';document.getElementById('approvalActions').innerHTML=`<button class="btn btn-red" onclick="retryRegister()">🔄 Volver a intentar</button>`}else if(sol.estado==='autorizado'){document.getElementById('approvalTitle').textContent='¡Aprobado!';document.getElementById('approvalText').textContent='Revisa tu correo '+email;document.getElementById('approvalActions').innerHTML=`<button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al inicio de sesión</button>`}});if(!found)toast('⏳ En revisión.')})}
@@ -163,16 +148,70 @@ window.addEventListener('DOMContentLoaded',()=>{const e=localStorage.getItem('ce
 function initMap(){const c=document.getElementById('driverMap');if(!c||c.offsetHeight===0)c.style.height='160px';map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);setTimeout(()=>map.invalidateSize(),300)}
 function getPos(){if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};if(marker)marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP})},()=>{},{enableHighAccuracy:true})}
 
-// ✅ CARGAR DATOS + FOTOS EN PERFIL
-function loadData(){if(!uid)return;db.ref(`choferes/${uid}`).on('value',s=>{const d=s.val()||{};const hoy=new Date().toISOString().split('T')[0],g=d.ganancias||{};document.getElementById('earnToday').textContent='$'+(g[hoy]||0);document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);calif=d.calificacion||0;document.getElementById('earnRating').textContent='⭐ '+calif;document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calif)?'★':'☆'}</span>`).join('');
-    // Cargar fotos en perfil
-    if(d.foto_chofer)document.getElementById('viewPhotoChofer').innerHTML=`<img src="${d.foto_chofer}">`;
-    if(d.foto_moto)document.getElementById('viewPhotoMoto').innerHTML=`<img src="${d.foto_moto}">`;
-    if(d.foto_placa)document.getElementById('viewPhotoPlaca').innerHTML=`<img src="${d.foto_placa}">`;
-})}
+// ✅ CARGAR DATOS + INDICADOR DE RADIO
+function loadData(){
+    if(!uid)return;
+    db.ref(`choferes/${uid}`).on('value',s=>{
+        const d=s.val()||{};
+        const hoy=new Date().toISOString().split('T')[0],g=d.ganancias||{};
+        document.getElementById('earnToday').textContent='$'+(g[hoy]||0);
+        document.getElementById('earnWeek').textContent='$'+Math.round((g[hoy]||0)*5);
+        calif=d.calificacion||0;
+        document.getElementById('earnRating').textContent='⭐ '+calif;
+        document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calif)?'★':'☆'}</span>`).join('');
+        
+        // Actualizar indicador de radio
+        radioIlimitado = d.radio_ilimitado === true;
+        const indicator = document.getElementById('radioIndicator');
+        if(radioIlimitado){
+            indicator.textContent = '🌐 Ilimitado';
+            indicator.className = 'radio-indicator radio-on';
+        } else {
+            indicator.textContent = '📍 500m';
+            indicator.className = 'radio-indicator radio-off';
+        }
+        
+        // Fotos en perfil
+        if(d.foto_chofer)document.getElementById('viewPhotoChofer').innerHTML=`<img src="${d.foto_chofer}">`;
+        if(d.foto_moto)document.getElementById('viewPhotoMoto').innerHTML=`<img src="${d.foto_moto}">`;
+        if(d.foto_placa)document.getElementById('viewPhotoPlaca').innerHTML=`<img src="${d.foto_placa}">`;
+    });
+}
+
 function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});notif('Disponible','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Pausado','error')}}
 
-function listenSvc(){db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{if(active&&!sid){const servicio=s.val();const origen=servicio.origen;const distancia=calcDist(pos.lat,pos.lng,origen?.lat||ZA[0],origen?.lng||ZA[1]);if(distancia<=0.5){sid=s.key;sdata=servicio;showInc()}}})}
+// ✅ ESCUCHAR SERVICIOS CON RADIO ILIMITADO
+function listenSvc(){
+    console.log('👂 Escuchando servicios...');
+    // Escuchar cambios en la preferencia de radio
+    db.ref(`choferes/${uid}/radio_ilimitado`).on('value', radioSnap => {
+        radioIlimitado = radioSnap.val() || false;
+        console.log('📡 Radio:', radioIlimitado ? 'ILIMITADO' : '500m');
+        const indicator = document.getElementById('radioIndicator');
+        if(indicator){
+            indicator.textContent = radioIlimitado ? '🌐 Ilimitado' : '📍 500m';
+            indicator.className = 'radio-indicator ' + (radioIlimitado ? 'radio-on' : 'radio-off');
+        }
+    });
+    
+    // Escuchar nuevos servicios
+    db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added', s => {
+        if(active && !sid){
+            const servicio = s.val();
+            const origen = servicio.origen;
+            const distancia = calcDist(pos.lat, pos.lng, origen?.lat || ZA[0], origen?.lng || ZA[1]);
+            
+            console.log('📏 Distancia:', distancia.toFixed(3), 'km | Radio:', radioIlimitado ? 'ILIMITADO ✅' : (distancia <= 0.5 ? '500m ✅' : 'FUERA ❌'));
+            
+            if(radioIlimitado || distancia <= 0.5){
+                sid = s.key;
+                sdata = servicio;
+                showInc();
+            }
+        }
+    });
+}
+
 function listenGlobal(){db.ref('servicios').on('child_changed',s=>{const v=s.val();if(s.key===sid&&v.estado==='aceptado'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Servicio asignado','Otro chofer fue elegido','error');resetAll()}if(s.key===sid&&v.estado==='tarifa_propuesta'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('No disponible','Otro chofer envió tarifa','error');resetAll()}})}
 function showInc(){const extraPax=sdata?.pasajeros_extra?`<div class="extra-passenger">👥 El cliente lleva ${sdata.pasajeros_extra} pasajero(s) extra</div>`:'';notif('Nueva solicitud','Cliente cerca','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${sdata?.destino?.direccion||'---'}</b></div>${extraPax}<div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`}
 function accept(){if(!sid||!sdata)return;const price=prompt('💰 Tarifa ($):','50');if(!price||isNaN(price)||parseInt(price)<=0){toast('Tarifa inválida');return}const fare=parseInt(price);if(sdata)sdata.tarifa_propuesta=fare;db.ref(`choferes/${uid}`).once('value',snap=>{const ch=snap.val()||{};db.ref(`servicios/${sid}`).update({choferId:uid,estado:'tarifa_propuesta',tarifa_propuesta:fare,choferNombre:ch.nombre||'Chofer',choferPlaca:ch.placa||'---',choferColor:ch.color||'---',choferUnidad:ch.numero||'---',choferTelefono:ch.telefono||'---',choferRating:String(calif),ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';notif('Tarifa enviada','$'+fare,'success');if(!confAct){confAct=true;listenConfirm(sid)}}).catch(()=>{toast('Error')})})}
@@ -187,9 +226,7 @@ function finishRide(){if(!sid)return;db.ref(`servicios/${sid}/tarifa_propuesta`)
 function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).update({estado:'cancelado_chofer',motivo:'Chofer canceló',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{resetAll();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje cancelado','error');loadHistory()})}else{step=3;finishRide()}}
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(c){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:c,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
-function listenChats(){
-    db.ref('chats').on('child_changed',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const keys=Object.keys(ms);if(keys.length>lastMsgCount){const last=ms[keys[keys.length-1]];if(last&&last.remitente==='cliente'){lastMsgCount=keys.length;const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',last.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}}});
-    db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const keys=Object.keys(ms);lastMsgCount=keys.length;const last=ms[keys[keys.length-1]];if(last&&last.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',last.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}})}
+function listenChats(){db.ref('chats').on('child_changed',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const keys=Object.keys(ms);if(keys.length>lastMsgCount){const last=ms[keys[keys.length-1]];if(last&&last.remitente==='cliente'){lastMsgCount=keys.length;const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',last.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}}});db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const keys=Object.keys(ms);lastMsgCount=keys.length;const last=ms[keys[keys.length-1]];if(last&&last.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',last.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}})}
 function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
 function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
