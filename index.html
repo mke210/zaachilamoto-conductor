@@ -66,7 +66,7 @@
         .radio-indicator{font-size:.55rem;padding:.15rem .5rem;border-radius:8px;display:inline-block;margin-left:.3rem}.radio-on{background:rgba(0,200,151,.15);color:var(--green);border:1px solid rgba(0,200,151,.3)}.radio-off{background:rgba(255,165,2,.15);color:var(--warn);border:1px solid rgba(255,165,2,.3)}
         .profile-photos{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:.5rem 0}.profile-photo-box{width:80px;height:80px;border-radius:10px;background:var(--card);border:1px solid var(--bd);overflow:hidden}.profile-photo-box img{width:100%;height:100%;object-fit:cover}.profile-photo-label{font-size:.5rem;color:var(--txt3);text-align:center;margin-top:.2rem}
         .neta-card{background:linear-gradient(135deg,#1a2e1a,#1b2d1b);border:2px solid var(--green);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.neta-card .neta-val{font-size:1.5rem;font-weight:800;color:var(--green)}
-        .objeto-card{background:var(--card);border:1px solid var(--warn);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.objeto-card .obj-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}.objeto-card .obj-desc{font-size:.7rem;color:var(--txt2);margin-bottom:.4rem}.objeto-card .obj-recompensa{font-size:.8rem;font-weight:700;color:var(--green)}.objeto-card .obj-btns{display:flex;gap:.3rem;margin-top:.4rem}
+        .objeto-card{background:var(--card);border:1px solid var(--warn);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.objeto-card .obj-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}.objeto-card .obj-desc{font-size:.7rem;color:var(--txt2);margin-bottom:.4rem}.objeto-card .obj-recompensa{font-size:.8rem;font-weight:700;color:var(--green)}.objeto-card .obj-btns{display:flex;gap:.3rem;margin-top:.4rem}.objeto-card .obj-viaje{background:rgba(108,92,231,.1);border-radius:6px;padding:.4rem;margin:.3rem 0;font-size:.65rem;color:var(--txt2)}
         .btn-entrega{background:var(--green);color:#000;border:0;padding:.3rem .6rem;border-radius:6px;font-size:.6rem;font-weight:700;cursor:pointer}.btn-entrega:disabled{opacity:.5}
     </style>
 </head>
@@ -171,9 +171,8 @@ function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).updat
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(c){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:c,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 
-// ✅ FUNCIÓN CORREGIDA: Escucha objetos olvidados reportados por clientes
+// ✅ Escucha objetos olvidados reportados por clientes
 function listenObjetos(){
-    // Escuchar nuevos reportes de clientes donde el choferId coincide con este chofer
     db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).on('child_added',s=>{
         const obj=s.val();
         if(obj.tipo==='cliente_reporta'&&obj.estado==='pendiente'){
@@ -183,40 +182,63 @@ function listenObjetos(){
             loadObjetos();
         }
     });
-    // Escuchar cambios en reportes
     db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).on('child_changed',s=>{
         loadObjetos();
     });
 }
 
+// ✅ CARGAR OBJETOS CON IDENTIFICACIÓN DEL VIAJE
 function loadObjetos(){
     if(!uid)return;
     const lista=document.getElementById('objetosList');
     lista.innerHTML='<div class="empty">Cargando...</div>';
     
-    // Buscar reportes donde el chofer es este usuario (tanto chofer_reporta como cliente_reporta)
-    db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).once('value',s=>{
+    db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).once('value',async s=>{
         const d=s.val();
         let h='';
         if(!d){lista.innerHTML='<div class="empty">Sin objetos reportados</div>';return}
-        Object.entries(d).reverse().forEach(([id,obj])=>{
+        const entries=Object.entries(d).reverse();
+        
+        for(const [id,obj] of entries){
             const esCliente=obj.tipo==='cliente_reporta';
             const recompensa=obj.recompensa||0;
             const entregado=obj.estado==='entregado';
             const borderColor=esCliente&&!entregado?'var(--red)':'var(--warn)';
+            
+            // Obtener datos del viaje para identificarlo
+            let viajeHTML='';
+            if(obj.servicioId){
+                try{
+                    const snap=await db.ref(`servicios/${obj.servicioId}`).once('value');
+                    const sv=snap.val()||{};
+                    const origen=(sv.origen?.direccion||'Origen desconocido').substring(0,20);
+                    const destino=(sv.destino?.direccion||'Destino desconocido').substring(0,20);
+                    const fecha=sv.fecha||'Sin fecha';
+                    const cobro=sv.cobro||sv.tarifa_propuesta||'?';
+                    viajeHTML=`<div class="obj-viaje">
+                        <div>🛺 <b>Viaje #${obj.servicioId.substring(0,5)}</b> · ${fecha}</div>
+                        <div>📍 ${origen} → 🏁 ${destino}</div>
+                        <div>💰 Cobro: $${cobro}</div>
+                    </div>`;
+                }catch(e){
+                    viajeHTML=`<div class="obj-viaje">🛺 Viaje #${(obj.servicioId||'').substring(0,5)}</div>`;
+                }
+            }
+            
             h+=`<div class="objeto-card" style="border-color:${borderColor}">
                 <div class="obj-header">
                     <b style="font-size:.75rem;color:${esCliente?'var(--red)':'var(--txt)'}">${esCliente?'⚠️ Cliente reportó':'📦 Tu reporte'} #${id.substring(0,5)}</b>
                     <span style="font-size:.6rem;color:var(--txt3)">${new Date(obj.timestamp).toLocaleDateString()}</span>
                 </div>
-                <div class="obj-desc">${obj.descripcion||'Sin descripción'}</div>
+                ${viajeHTML}
+                <div class="obj-desc">📝 ${obj.descripcion||'Sin descripción'}</div>
                 ${recompensa>0?`<div class="obj-recompensa">💰 Recompensa: $${recompensa}</div>`:''}
                 <div style="font-size:.6rem;color:var(--txt3);margin-top:.2rem">Estado: <b style="color:${entregado?'var(--green)':'var(--warn)'}">${entregado?'✅ Entregado':'⏳ Pendiente'}</b></div>
                 ${!entregado?`<div class="obj-btns">
                     <button class="btn-entrega" onclick="entregarObjeto('${id}')">✅ Marcar como entregado</button>
                 </div>`:''}
             </div>`;
-        });
+        }
         lista.innerHTML=h;
     });
 }
