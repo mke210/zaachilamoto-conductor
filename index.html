@@ -51,7 +51,7 @@
         .notif-dot{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center}.notif-dot.show{display:flex}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
         .map-wrap{flex:1 1 auto;position:relative;min-height:200px}#driverMap{width:100%;height:100%;position:absolute;top:0;left:0}
-        .tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0}.tab{flex:1;text-align:center;padding:.5rem;font-size:.7rem;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent}.tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+        .tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto}.tab{flex:1;text-align:center;padding:.5rem .3rem;font-size:.6rem;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}.tab.on{color:var(--acc);border-bottom-color:var(--acc)}
         .content{flex-shrink:0;max-height:35vh;overflow-y:auto;padding:.5rem;-webkit-overflow-scrolling:touch}
         .incoming{background:linear-gradient(135deg,#1a1a2e,#211d2a);border:2px solid var(--acc);border-radius:var(--r2);padding:.8rem;animation:pop .3s ease}@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
         .inc-header{font-size:.9rem;font-weight:700;color:var(--acc);margin-bottom:.5rem}.inc-row{display:flex;justify-content:space-between;font-size:.7rem;padding:.2rem 0;color:var(--txt2)}.inc-row b{color:var(--txt)}.inc-btns{display:flex;gap:.4rem;margin-top:.6rem}
@@ -65,8 +65,9 @@
         .extra-passenger{background:rgba(255,165,2,.1);border:1px solid var(--warn);border-radius:var(--r);padding:.5rem;margin:.4rem 0;font-size:.7rem;color:var(--warn);text-align:center}
         .radio-indicator{font-size:.55rem;padding:.15rem .5rem;border-radius:8px;display:inline-block;margin-left:.3rem}.radio-on{background:rgba(0,200,151,.15);color:var(--green);border:1px solid rgba(0,200,151,.3)}.radio-off{background:rgba(255,165,2,.15);color:var(--warn);border:1px solid rgba(255,165,2,.3)}
         .profile-photos{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:.5rem 0}.profile-photo-box{width:80px;height:80px;border-radius:10px;background:var(--card);border:1px solid var(--bd);overflow:hidden}.profile-photo-box img{width:100%;height:100%;object-fit:cover}.profile-photo-label{font-size:.5rem;color:var(--txt3);text-align:center;margin-top:.2rem}
-        .motivation-card{background:linear-gradient(135deg,#1a1a2e,#2d1b69);border:1px solid var(--warn);border-radius:var(--r);padding:.5rem .8rem;text-align:center;margin-bottom:.4rem;display:flex;align-items:center;gap:.6rem}.motivation-card .icon{font-size:1.8rem;flex-shrink:0}.motivation-card .msg{font-size:.7rem;font-weight:700;color:var(--warn)}.motivation-card .sub{font-size:.55rem;color:var(--txt2)}
         .neta-card{background:linear-gradient(135deg,#1a2e1a,#1b2d1b);border:2px solid var(--green);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.neta-card .neta-val{font-size:1.5rem;font-weight:800;color:var(--green)}
+        .objeto-card{background:var(--card);border:1px solid var(--warn);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.objeto-card .obj-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}.objeto-card .obj-desc{font-size:.7rem;color:var(--txt2);margin-bottom:.4rem}.objeto-card .obj-recompensa{font-size:.8rem;font-weight:700;color:var(--green)}.objeto-card .obj-btns{display:flex;gap:.3rem;margin-top:.4rem}
+        .btn-entrega{background:var(--green);color:#000;border:0;padding:.3rem .6rem;border-radius:6px;font-size:.6rem;font-weight:700;cursor:pointer}.btn-entrega:disabled{opacity:.5}
     </style>
 </head>
 <body>
@@ -102,7 +103,7 @@
     <div id="dashboard" class="dashboard">
         <header class="topbar"><div class="topbar-brand"><div class="topbar-logo">🛺</div><h2>Zaachila Moto<span>Chofer <span class="radio-indicator" id="radioIndicator">📍 500m</span></span></h2></div><div class="topbar-right"><span class="notif-dot" id="notificationDot">0</span><button class="toggle on" id="statusToggle" onclick="toggleStatus()">ACTIVO</button><button class="btn-sm" onclick="logout()">Salir</button></div></header>
         <div class="map-wrap"><div id="driverMap"></div></div>
-        <div class="tabs"><div class="tab on" onclick="switchTab('home',this)">🏠 Inicio</div><div class="tab" onclick="switchTab('profile',this)">📸 Perfil</div><div class="tab" onclick="switchTab('earnings',this)">💰 Ganancias</div><div class="tab" onclick="switchTab('history',this)">📋 Historial</div></div>
+        <div class="tabs"><div class="tab on" onclick="switchTab('home',this)">🏠 Inicio</div><div class="tab" onclick="switchTab('profile',this)">📸 Perfil</div><div class="tab" onclick="switchTab('earnings',this)">💰 Ganancias</div><div class="tab" onclick="switchTab('objetos',this)">📦 Objetos</div><div class="tab" onclick="switchTab('history',this)">📋 Historial</div></div>
         <div class="content" id="tabContent">
             <div id="tab-home"><div id="idleView"><div class="empty">🟢 Disponible</div></div><div id="incomingView" style="display:none"></div><div id="activeView" style="display:none"></div></div>
             <div id="tab-profile" style="display:none"><div class="card"><h3 style="font-size:.8rem;margin-bottom:.5rem">📸 Mis Documentos</h3><div class="profile-photos"><div><div class="profile-photo-box" id="viewPhotoChofer"><div class="empty">...</div></div><div class="profile-photo-label">Foto chofer</div></div><div><div class="profile-photo-box" id="viewPhotoMoto"><div class="empty">...</div></div><div class="profile-photo-label">Foto mototaxi</div></div><div><div class="profile-photo-box" id="viewPhotoPlaca"><div class="empty">...</div></div><div class="profile-photo-label">Foto placa</div></div></div><p style="font-size:.6rem;color:var(--txt3);text-align:center">No modificables. Contacta al admin.</p></div></div>
@@ -113,6 +114,7 @@
                 <div class="neta-card"><div class="card-row"><div><div class="card-lbl">💵 GANANCIA NETA</div><div class="neta-val" id="earnNeta">$0</div></div><div style="font-size:2rem">💵</div></div></div>
                 <div class="card"><div class="card-row"><div><div class="card-lbl">⭐ CALIFICACIÓN</div><div class="card-val" id="earnRating">0</div></div><div class="stars" id="starsDisplay"></div></div></div>
             </div>
+            <div id="tab-objetos" style="display:none"><div id="objetosList"><div class="empty">Cargando...</div></div></div>
             <div id="tab-history" style="display:none"><div id="historyList"><div class="empty">Cargando...</div></div></div>
         </div>
     </div>
@@ -139,7 +141,7 @@ function checkApproval(){const email=localStorage.getItem('chofer_email');if(!em
 function retryRegister(){localStorage.removeItem('chofer_email');photoChofer='';photoMoto='';photoPlaca='';document.getElementById('photoChofer').innerHTML='📷<br>Tu foto';document.getElementById('photoMoto').innerHTML='📷<br>Mototaxi';document.getElementById('photoPlaca').innerHTML='📷<br>Placa';['regName','regEmail','regPhone','regSitio','regPlaca','regNumero','regColor'].forEach(id=>document.getElementById(id).value='');document.getElementById('approvalWait').style.display='none';document.getElementById('registerForm').style.display='block';document.getElementById('formTitle').textContent='Solicitar Registro';document.getElementById('toggleText').style.display='block'}
 setInterval(()=>{const email=localStorage.getItem('chofer_email');if(email&&document.getElementById('approvalWait').style.display!=='none'){db.ref('solicitudes_choferes').orderByChild('email').equalTo(email).once('value',s=>{s.forEach(snap=>{const sol=snap.val();if(sol.estado==='declinado'){document.getElementById('approvalTitle').textContent='Rechazada';document.getElementById('approvalActions').innerHTML=`<button class="btn btn-red" onclick="retryRegister()">🔄 Reintentar</button>`}else if(sol.estado==='autorizado'){document.getElementById('approvalTitle').textContent='¡Aprobado!';document.getElementById('approvalActions').innerHTML=`<button class="btn btn-acc" onclick="toggleForms();document.getElementById('approvalWait').style.display='none';document.getElementById('formTitle').textContent='Iniciar Sesión';document.getElementById('toggleText').style.display='block'">🔐 Ir al login</button>`}})})}},10000);
 
-function login(){const e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPassword').value,err=document.getElementById('loginError'),btn=document.getElementById('btnLogin');if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}btn.disabled=true;btn.textContent='...';err.style.display='none';auth.signInWithEmailAndPassword(e,p).then(u=>{uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);return db.ref(`choferes/${uid}`).once('value')}).then(s=>{if(!s.val())return db.ref(`choferes/${uid}`).set({nombre:e.split('@')[0],email:e,estado:'activo',calificacion:0,total_servicios:0,servicios_hoy:0,ubicacion:{lat:ZA[0],lng:ZA[1]}})}).then(()=>{document.getElementById('loginScreen').style.display='none';document.getElementById('dashboard').classList.add('active');setTimeout(()=>{initMap();loadData();listenSvc();getPos();listenChats();listenGlobal()},300);notif('Bienvenido','Sesión iniciada como Chofer','success')}).catch(er=>{let m='Error';if(er.code==='auth/user-not-found')m='Chofer no registrado.';else if(er.code==='auth/wrong-password')m='Contraseña incorrecta';err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})}
+function login(){const e=document.getElementById('loginEmail').value.trim(),p=document.getElementById('loginPassword').value,err=document.getElementById('loginError'),btn=document.getElementById('btnLogin');if(!e||!p){err.textContent='Completa los campos';err.style.display='block';return}btn.disabled=true;btn.textContent='...';err.style.display='none';auth.signInWithEmailAndPassword(e,p).then(u=>{uid=u.user.uid;localStorage.setItem('ce',e);localStorage.setItem('cp',p);return db.ref(`choferes/${uid}`).once('value')}).then(s=>{if(!s.val())return db.ref(`choferes/${uid}`).set({nombre:e.split('@')[0],email:e,estado:'activo',calificacion:0,total_servicios:0,servicios_hoy:0,ubicacion:{lat:ZA[0],lng:ZA[1]}})}).then(()=>{document.getElementById('loginScreen').style.display='none';document.getElementById('dashboard').classList.add('active');setTimeout(()=>{initMap();loadData();listenSvc();getPos();listenChats();listenGlobal();listenObjetos()},300);notif('Bienvenido','Sesión iniciada como Chofer','success')}).catch(er=>{let m='Error';if(er.code==='auth/user-not-found')m='Chofer no registrado.';else if(er.code==='auth/wrong-password')m='Contraseña incorrecta';err.textContent=m;err.style.display='block';btn.disabled=false;btn.textContent='Iniciar Sesión'})}
 function logout(){if(confirm('¿Cerrar sesión?')){if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});auth.signOut();localStorage.removeItem('ce');localStorage.removeItem('cp');location.reload()}}
 window.addEventListener('DOMContentLoaded',()=>{const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login();return}const savedEmail=localStorage.getItem('chofer_email');if(savedEmail){document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='none';document.getElementById('approvalWait').style.display='block';document.getElementById('formTitle').textContent='Estado de Solicitud';document.getElementById('toggleText').style.display='none'}});
 
@@ -168,12 +170,82 @@ function finishRide(){if(!sid)return;db.ref(`servicios/${sid}/tarifa_propuesta`)
 function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).update({estado:'cancelado_chofer',motivo:'Chofer canceló',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{resetAll();limpiarRuta();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje cancelado','error');loadHistory()})}else{step=3;finishRide()}}
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(c){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:c,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
+
+// ✅ NUEVA FUNCIÓN: Escuchar objetos olvidados reportados por clientes
+function listenObjetos(){
+    db.ref('reportes/objetos_olvidados').orderByChild('tipo').equalTo('cliente_reporta').on('child_added',s=>{
+        const obj=s.val();
+        if(obj.estado==='pendiente'){
+            notif('📦 Objeto olvidado','Cliente reportó: '+(obj.descripcion||'').substring(0,30),'message');
+            if(navigator.vibrate)navigator.vibrate([300,100,300]);
+            loadObjetos();
+        }
+    });
+    db.ref('reportes/objetos_olvidados').on('child_changed',s=>{
+        loadObjetos();
+    });
+}
+
+function loadObjetos(){
+    db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).once('value',s=>{
+        const d=s.val();
+        let h='';
+        if(!d){document.getElementById('objetosList').innerHTML='<div class="empty">Sin objetos reportados</div>';return}
+        Object.entries(d).reverse().forEach(([id,obj])=>{
+            const recompensa=obj.recompensa||0;
+            const entregado=obj.estado==='entregado';
+            h+=`<div class="objeto-card">
+                <div class="obj-header"><b style="font-size:.75rem">📦 Objeto #${id.substring(0,5)}</b><span style="font-size:.6rem;color:var(--txt3)">${new Date(obj.timestamp).toLocaleDateString()}</span></div>
+                <div class="obj-desc">${obj.descripcion||'Sin descripción'}</div>
+                ${recompensa>0?`<div class="obj-recompensa">💰 Recompensa: $${recompensa}</div>`:''}
+                <div style="font-size:.6rem;color:var(--txt3);margin-top:.2rem">Estado: <b style="color:${entregado?'var(--green)':'var(--warn)'}">${entregado?'✅ Entregado':'⏳ Pendiente'}</b></div>
+                ${!entregado?`<div class="obj-btns">
+                    <button class="btn-entrega" onclick="entregarObjeto('${id}')">✅ Marcar como entregado</button>
+                </div>`:''}
+            </div>`;
+        });
+        document.getElementById('objetosList').innerHTML=h;
+
+        // También buscar reportes de clientes asociados a servicios de este chofer
+        db.ref('reportes/objetos_olvidados').orderByChild('tipo').equalTo('cliente_reporta').once('value',s2=>{
+            const d2=s2.val();
+            if(!d2)return;
+            Object.entries(d2).forEach(([id,obj])=>{
+                if(obj.choferId===uid&&obj.estado==='pendiente'){
+                    const yaExiste=document.getElementById('obj-'+id);
+                    if(!yaExiste){
+                        const recompensa=obj.recompensa||0;
+                        const extra=document.createElement('div');
+                        extra.id='obj-'+id;
+                        extra.className='objeto-card';
+                        extra.style.borderColor='var(--red)';
+                        extra.innerHTML=`<div class="obj-header"><b style="font-size:.75rem;color:var(--red)">⚠️ Cliente reportó</b><span style="font-size:.6rem;color:var(--txt3)">${new Date(obj.timestamp).toLocaleDateString()}</span></div>
+                        <div class="obj-desc">${obj.descripcion||'Sin descripción'}</div>
+                        ${recompensa>0?`<div class="obj-recompensa">💰 Recompensa ofrecida: $${recompensa}</div>`:''}
+                        <div class="obj-btns"><button class="btn-entrega" onclick="entregarObjeto('${id}')">✅ Entregar al cliente</button></div>`;
+                        document.getElementById('objetosList').appendChild(extra);
+                    }
+                }
+            });
+        });
+    });
+}
+
+window.entregarObjeto=function(id){
+    if(confirm('¿Confirmas que el objeto fue entregado al cliente?')){
+        db.ref(`reportes/objetos_olvidados/${id}`).update({estado:'entregado',fecha_entrega:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
+            notif('✅ Entregado','Objeto marcado como entregado','success');
+            loadObjetos();
+        });
+    }
+};
+
 function listenChats(){db.ref('chats').on('child_changed',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const keys=Object.keys(ms);if(keys.length>lastMsgCount){const last=ms[keys[keys.length-1]];if(last&&last.remitente==='cliente'){lastMsgCount=keys.length;const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',last.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}}});db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const keys=Object.keys(ms);lastMsgCount=keys.length;const last=ms[keys[keys.length-1]];if(last&&last.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',last.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}})}
 function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat con el cliente</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
 function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 function loadHistory(){if(!uid)return;db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value',s=>{const d=s.val();let h='';if(!d){document.getElementById('historyList').innerHTML='<div class="empty">Sin servicios</div>';return}Object.entries(d).reverse().forEach(([id,v])=>{h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`});document.getElementById('historyList').innerHTML=h})}
-function switchTab(n,el){document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');document.getElementById('tab-'+n).style.display='block';document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');if(n==='profile')loadData();if(n==='earnings')loadData();if(n==='history')loadHistory()}
+function switchTab(n,el){document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');document.getElementById('tab-'+n).style.display='block';document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');if(n==='profile')loadData();if(n==='earnings')loadData();if(n==='objetos')loadObjetos();if(n==='history')loadHistory()}
 function calcDist(l1,l2,lo1,lo2){const R=6371,dLa=(l2-l1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180;return R*2*Math.atan2(Math.sqrt(Math.sin(dLa/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2),Math.sqrt(1-Math.sin(dLa/2)**2-Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2))}
 document.addEventListener('keypress',e=>{if(e.key=='Enter'&&document.getElementById('loginScreen').style.display!=='none')login()});
 window.addEventListener('resize',()=>{if(map)setTimeout(()=>map.invalidateSize(),200)});
