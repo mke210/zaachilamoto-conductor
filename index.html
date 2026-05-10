@@ -43,8 +43,8 @@
         .toggle{padding:.3rem .6rem;border-radius:15px;font-size:.65rem;font-weight:700;cursor:pointer;border:0}.toggle.on{background:var(--green);color:#000}.toggle.off{background:var(--red);color:#fff}
         .btn-sm{padding:.3rem .6rem;border-radius:8px;font-size:.65rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);color:#fff;cursor:pointer}
         .notification-container{position:fixed;top:10px;left:50%;transform:translateX(-50%);z-index:9999;width:90%;max-width:400px;display:flex;flex-direction:column;gap:6px;pointer-events:none}
-        .notification{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem 1rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:notifIn .4s ease,notifOut .4s ease 4s forwards;pointer-events:auto}
-        .notification.request{border-left:3px solid var(--acc)}.notification.message{border-left:3px solid var(--green)}.notification.success{border-left:3px solid var(--green)}.notification.error{border-left:3px solid var(--red)}
+        .notification{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.7rem 1rem;display:flex;align-items:center;gap:.6rem;box-shadow:0 8px 30px rgba(0,0,0,.5);animation:notifIn .4s ease,notifOut .4s ease 5s forwards;pointer-events:auto}
+        .notification.request{border-left:3px solid var(--acc)}.notification.message{border-left:3px solid var(--green)}.notification.success{border-left:3px solid var(--green)}.notification.error{border-left:3px solid var(--red)}.notification.objeto{border-left:3px solid var(--warn)}
         .notif-icon{font-size:1.3rem;flex-shrink:0}.notif-content{flex:1}.notif-title{font-size:.75rem;font-weight:700}.notif-text{font-size:.65rem;color:var(--txt2)}
         .notif-close{background:none;border:none;color:var(--txt3);cursor:pointer;font-size:.8rem}
         @keyframes notifIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes notifOut{from{transform:translateY(0);opacity:1}to{transform:translateY(-100%);opacity:0}}
@@ -126,7 +126,7 @@ let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},c
 let photoChofer='',photoMoto='',photoPlaca='';const ZA=[16.9516,-96.7491];let lastMsgCount=0;let radioIlimitado=false;
 let clienteMarker=null,destinoMarker=null,rutaLinea=null;
 
-function notif(t,m,ty='message'){notifC++;updateDot();playSound(ty==='request'?'incoming':ty==='message'?'msg':'accept');let c=document.getElementById('notificationContainer');if(!c){c=document.createElement('div');c.id='notificationContainer';c.className='notification-container';document.body.appendChild(c)}const n=document.createElement('div');n.className=`notification ${ty}`;n.innerHTML=`<span class="notif-icon">${ty==='request'?'🔔':ty==='message'?'💬':ty==='error'?'❌':'✅'}</span><div class="notif-content"><div class="notif-title">${t}</div><div class="notif-text">${m}</div></div><button class="notif-close" onclick="dismissN(this)">✕</button>`;c.appendChild(n);setTimeout(()=>{if(n.parentNode){n.remove();notifC--;updateDot()}},3500)}
+function notif(t,m,ty='message'){notifC++;updateDot();playSound(ty==='request'?'incoming':ty==='message'?'msg':'accept');let c=document.getElementById('notificationContainer');if(!c){c=document.createElement('div');c.id='notificationContainer';c.className='notification-container';document.body.appendChild(c)}const n=document.createElement('div');n.className=`notification ${ty}`;n.innerHTML=`<span class="notif-icon">${ty==='request'?'🔔':ty==='message'?'💬':ty==='objeto'?'📦':ty==='error'?'❌':'✅'}</span><div class="notif-content"><div class="notif-title">${t}</div><div class="notif-text">${m}</div></div><button class="notif-close" onclick="dismissN(this)">✕</button>`;c.appendChild(n);setTimeout(()=>{if(n.parentNode){n.remove();notifC--;updateDot()}},5000)}
 function dismissN(b){const n=b.closest('.notification');if(n){n.style.animation='notifOut .3s ease forwards';setTimeout(()=>{n.remove();notifC--;updateDot()},300)}}
 function updateDot(){const d=document.getElementById('notificationDot');if(d){d.textContent=notifC;if(notifC>0)d.classList.add('show');else d.classList.remove('show')}}
 function playSound(t){try{const c=new(window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);if(t==='incoming'){o.frequency.value=800;g.gain.value=.3;o.start();o.stop(c.currentTime+.3)}else if(t==='accept'){o.frequency.value=600;g.gain.value=.2;o.start();o.stop(c.currentTime+.2)}else if(t==='msg'){o.frequency.value=1000;g.gain.value=.15;o.start();o.stop(c.currentTime+.1)}}catch(e){}}
@@ -171,31 +171,44 @@ function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).updat
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(c){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:c,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 
-// ✅ NUEVA FUNCIÓN: Escuchar objetos olvidados reportados por clientes
+// ✅ FUNCIÓN CORREGIDA: Escucha objetos olvidados reportados por clientes
 function listenObjetos(){
-    db.ref('reportes/objetos_olvidados').orderByChild('tipo').equalTo('cliente_reporta').on('child_added',s=>{
+    // Escuchar nuevos reportes de clientes donde el choferId coincide con este chofer
+    db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).on('child_added',s=>{
         const obj=s.val();
-        if(obj.estado==='pendiente'){
-            notif('📦 Objeto olvidado','Cliente reportó: '+(obj.descripcion||'').substring(0,30),'message');
-            if(navigator.vibrate)navigator.vibrate([300,100,300]);
+        if(obj.tipo==='cliente_reporta'&&obj.estado==='pendiente'){
+            const recText=obj.recompensa>0?` 💰 Recompensa: $${obj.recompensa}`:'';
+            notif('📦 Cliente reportó objeto olvidado',(obj.descripcion||'Sin descripción').substring(0,40)+recText,'objeto');
+            if(navigator.vibrate)navigator.vibrate([300,100,300,100,300]);
             loadObjetos();
         }
     });
-    db.ref('reportes/objetos_olvidados').on('child_changed',s=>{
+    // Escuchar cambios en reportes
+    db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).on('child_changed',s=>{
         loadObjetos();
     });
 }
 
 function loadObjetos(){
+    if(!uid)return;
+    const lista=document.getElementById('objetosList');
+    lista.innerHTML='<div class="empty">Cargando...</div>';
+    
+    // Buscar reportes donde el chofer es este usuario (tanto chofer_reporta como cliente_reporta)
     db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).once('value',s=>{
         const d=s.val();
         let h='';
-        if(!d){document.getElementById('objetosList').innerHTML='<div class="empty">Sin objetos reportados</div>';return}
+        if(!d){lista.innerHTML='<div class="empty">Sin objetos reportados</div>';return}
         Object.entries(d).reverse().forEach(([id,obj])=>{
+            const esCliente=obj.tipo==='cliente_reporta';
             const recompensa=obj.recompensa||0;
             const entregado=obj.estado==='entregado';
-            h+=`<div class="objeto-card">
-                <div class="obj-header"><b style="font-size:.75rem">📦 Objeto #${id.substring(0,5)}</b><span style="font-size:.6rem;color:var(--txt3)">${new Date(obj.timestamp).toLocaleDateString()}</span></div>
+            const borderColor=esCliente&&!entregado?'var(--red)':'var(--warn)';
+            h+=`<div class="objeto-card" style="border-color:${borderColor}">
+                <div class="obj-header">
+                    <b style="font-size:.75rem;color:${esCliente?'var(--red)':'var(--txt)'}">${esCliente?'⚠️ Cliente reportó':'📦 Tu reporte'} #${id.substring(0,5)}</b>
+                    <span style="font-size:.6rem;color:var(--txt3)">${new Date(obj.timestamp).toLocaleDateString()}</span>
+                </div>
                 <div class="obj-desc">${obj.descripcion||'Sin descripción'}</div>
                 ${recompensa>0?`<div class="obj-recompensa">💰 Recompensa: $${recompensa}</div>`:''}
                 <div style="font-size:.6rem;color:var(--txt3);margin-top:.2rem">Estado: <b style="color:${entregado?'var(--green)':'var(--warn)'}">${entregado?'✅ Entregado':'⏳ Pendiente'}</b></div>
@@ -204,30 +217,7 @@ function loadObjetos(){
                 </div>`:''}
             </div>`;
         });
-        document.getElementById('objetosList').innerHTML=h;
-
-        // También buscar reportes de clientes asociados a servicios de este chofer
-        db.ref('reportes/objetos_olvidados').orderByChild('tipo').equalTo('cliente_reporta').once('value',s2=>{
-            const d2=s2.val();
-            if(!d2)return;
-            Object.entries(d2).forEach(([id,obj])=>{
-                if(obj.choferId===uid&&obj.estado==='pendiente'){
-                    const yaExiste=document.getElementById('obj-'+id);
-                    if(!yaExiste){
-                        const recompensa=obj.recompensa||0;
-                        const extra=document.createElement('div');
-                        extra.id='obj-'+id;
-                        extra.className='objeto-card';
-                        extra.style.borderColor='var(--red)';
-                        extra.innerHTML=`<div class="obj-header"><b style="font-size:.75rem;color:var(--red)">⚠️ Cliente reportó</b><span style="font-size:.6rem;color:var(--txt3)">${new Date(obj.timestamp).toLocaleDateString()}</span></div>
-                        <div class="obj-desc">${obj.descripcion||'Sin descripción'}</div>
-                        ${recompensa>0?`<div class="obj-recompensa">💰 Recompensa ofrecida: $${recompensa}</div>`:''}
-                        <div class="obj-btns"><button class="btn-entrega" onclick="entregarObjeto('${id}')">✅ Entregar al cliente</button></div>`;
-                        document.getElementById('objetosList').appendChild(extra);
-                    }
-                }
-            });
-        });
+        lista.innerHTML=h;
     });
 }
 
