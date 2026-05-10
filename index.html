@@ -171,13 +171,13 @@ function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).updat
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(c){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:c,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 
-// ✅ Escucha objetos olvidados reportados por clientes
 function listenObjetos(){
     db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).on('child_added',s=>{
         const obj=s.val();
         if(obj.tipo==='cliente_reporta'&&obj.estado==='pendiente'){
+            const nom=obj.nombrePasajero?` de ${obj.nombrePasajero}`:'';
             const recText=obj.recompensa>0?` 💰 Recompensa: $${obj.recompensa}`:'';
-            notif('📦 Cliente reportó objeto olvidado',(obj.descripcion||'Sin descripción').substring(0,40)+recText,'objeto');
+            notif('📦 Cliente'+nom+' reportó objeto',(obj.descripcion||'Sin descripción').substring(0,40)+recText,'objeto');
             if(navigator.vibrate)navigator.vibrate([300,100,300,100,300]);
             loadObjetos();
         }
@@ -187,7 +187,7 @@ function listenObjetos(){
     });
 }
 
-// ✅ CARGAR OBJETOS CON IDENTIFICACIÓN DEL VIAJE
+// ✅ CARGAR OBJETOS CON NOMBRE DEL PASAJERO E INFO DEL VIAJE
 function loadObjetos(){
     if(!uid)return;
     const lista=document.getElementById('objetosList');
@@ -204,8 +204,8 @@ function loadObjetos(){
             const recompensa=obj.recompensa||0;
             const entregado=obj.estado==='entregado';
             const borderColor=esCliente&&!entregado?'var(--red)':'var(--warn)';
+            const nombrePasajero=obj.nombrePasajero||'';
             
-            // Obtener datos del viaje para identificarlo
             let viajeHTML='';
             if(obj.servicioId){
                 try{
@@ -219,10 +219,13 @@ function loadObjetos(){
                         <div>🛺 <b>Viaje #${obj.servicioId.substring(0,5)}</b> · ${fecha}</div>
                         <div>📍 ${origen} → 🏁 ${destino}</div>
                         <div>💰 Cobro: $${cobro}</div>
+                        ${nombrePasajero?`<div>👤 <b>Pasajero:</b> ${nombrePasajero}</div>`:''}
                     </div>`;
                 }catch(e){
-                    viajeHTML=`<div class="obj-viaje">🛺 Viaje #${(obj.servicioId||'').substring(0,5)}</div>`;
+                    viajeHTML=`<div class="obj-viaje">🛺 Viaje #${(obj.servicioId||'').substring(0,5)}${nombrePasajero?' · 👤 '+nombrePasajero:''}</div>`;
                 }
+            }else if(nombrePasajero){
+                viajeHTML=`<div class="obj-viaje">👤 <b>Pasajero:</b> ${nombrePasajero}</div>`;
             }
             
             h+=`<div class="objeto-card" style="border-color:${borderColor}">
