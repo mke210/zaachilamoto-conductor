@@ -65,9 +65,14 @@
         .extra-passenger{background:rgba(255,165,2,.1);border:1px solid var(--warn);border-radius:var(--r);padding:.5rem;margin:.4rem 0;font-size:.7rem;color:var(--warn);text-align:center}
         .radio-indicator{font-size:.55rem;padding:.15rem .5rem;border-radius:8px;display:inline-block;margin-left:.3rem}.radio-on{background:rgba(0,200,151,.15);color:var(--green);border:1px solid rgba(0,200,151,.3)}.radio-off{background:rgba(255,165,2,.15);color:var(--warn);border:1px solid rgba(255,165,2,.3)}
         .profile-photos{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin:.5rem 0}.profile-photo-box{width:80px;height:80px;border-radius:10px;background:var(--card);border:1px solid var(--bd);overflow:hidden}.profile-photo-box img{width:100%;height:100%;object-fit:cover}.profile-photo-label{font-size:.5rem;color:var(--txt3);text-align:center;margin-top:.2rem}
-        .neta-card{background:linear-gradient(135deg,#1a2e1a,#1b2d1b);border:2px solid var(--green);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.neta-card .neta-val{font-size:1.5rem;font-weight:800;color:var(--green)}
         .objeto-card{background:var(--card);border:1px solid var(--warn);border-radius:var(--r);padding:.7rem;margin-bottom:.4rem}.objeto-card .obj-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem}.objeto-card .obj-desc{font-size:.7rem;color:var(--txt2);margin-bottom:.4rem}.objeto-card .obj-recompensa{font-size:.8rem;font-weight:700;color:var(--green)}.objeto-card .obj-btns{display:flex;gap:.3rem;margin-top:.4rem}.objeto-card .obj-viaje{background:rgba(108,92,231,.1);border-radius:6px;padding:.4rem;margin:.3rem 0;font-size:.65rem;color:var(--txt2)}
         .btn-entrega{background:var(--green);color:#000;border:0;padding:.3rem .6rem;border-radius:6px;font-size:.6rem;font-weight:700;cursor:pointer}.btn-entrega:disabled{opacity:.5}
+        /* SUB-TABS GANANCIAS */
+        .sub-tabs{display:flex;background:var(--card);border-radius:var(--r);overflow:hidden;margin-bottom:.6rem}.sub-tab{flex:1;text-align:center;padding:.5rem;font-size:.65rem;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;transition:.2s}.sub-tab.on{color:var(--acc);background:rgba(108,92,231,.1);border-bottom-color:var(--acc)}
+        .ganancia-card{background:var(--card);border:1px solid var(--bd);border-radius:var(--r);padding:.8rem;margin-bottom:.5rem}.ganancia-card .g-row{display:flex;justify-content:space-between;align-items:center;padding:.3rem 0;border-bottom:1px solid rgba(255,255,255,.03)}.ganancia-card .g-row:last-child{border-bottom:0}.ganancia-card .g-lbl{font-size:.7rem;color:var(--txt2)}.ganancia-card .g-val{font-size:.8rem;font-weight:700}.ganancia-card .g-val.green{color:var(--green)}.ganancia-card .g-val.neto{font-size:1.1rem;color:var(--green)}
+        .gasto-inp{width:100%;padding:.5rem;background:var(--bg);border:1px solid var(--bd);border-radius:6px;color:var(--txt);font-size:.7rem;outline:0;margin-top:.3rem}
+        .gasto-inp:focus{border-color:var(--acc)}
+        .btn-clear{width:100%;padding:.4rem;background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.3);border-radius:6px;font-size:.6rem;font-weight:700;cursor:pointer;margin-top:.4rem}
     </style>
 </head>
 <body>
@@ -108,11 +113,12 @@
             <div id="tab-home"><div id="idleView"><div class="empty">🟢 Disponible</div></div><div id="incomingView" style="display:none"></div><div id="activeView" style="display:none"></div></div>
             <div id="tab-profile" style="display:none"><div class="card"><h3 style="font-size:.8rem;margin-bottom:.5rem">📸 Mis Documentos</h3><div class="profile-photos"><div><div class="profile-photo-box" id="viewPhotoChofer"><div class="empty">...</div></div><div class="profile-photo-label">Foto chofer</div></div><div><div class="profile-photo-box" id="viewPhotoMoto"><div class="empty">...</div></div><div class="profile-photo-label">Foto mototaxi</div></div><div><div class="profile-photo-box" id="viewPhotoPlaca"><div class="empty">...</div></div><div class="profile-photo-label">Foto placa</div></div></div><p style="font-size:.6rem;color:var(--txt3);text-align:center">No modificables. Contacta al admin.</p></div></div>
             <div id="tab-earnings" style="display:none">
-                <div class="card"><div class="card-lbl">💰 HOY</div><div class="card-val" id="earnToday">$0</div></div>
-                <div class="card"><div class="card-lbl">📅 SEMANA (Bruto)</div><div class="card-val" id="earnWeek">$0</div></div>
-                <div class="card"><div class="card-lbl">🧾 GASTOS (Gasolina, refacciones, etc.)</div><input type="number" id="gastosSemana" class="inp" placeholder="Ingresa tus gastos de la semana" style="width:100%;margin-top:.3rem" onchange="calcularGananciaNeta()" value="0"></div>
-                <div class="neta-card"><div class="card-row"><div><div class="card-lbl">💵 GANANCIA NETA</div><div class="neta-val" id="earnNeta">$0</div></div><div style="font-size:2rem">💵</div></div></div>
-                <div class="card"><div class="card-row"><div><div class="card-lbl">⭐ CALIFICACIÓN</div><div class="card-val" id="earnRating">0</div></div><div class="stars" id="starsDisplay"></div></div></div>
+                <div class="sub-tabs">
+                    <div class="sub-tab on" onclick="switchSubTab('hoy',this)">📅 Hoy</div>
+                    <div class="sub-tab" onclick="switchSubTab('semana',this)">📆 Semana</div>
+                </div>
+                <div id="sub-hoy"></div>
+                <div id="sub-semana" style="display:none"></div>
             </div>
             <div id="tab-objetos" style="display:none"><div id="objetosList"><div class="empty">Cargando...</div></div></div>
             <div id="tab-history" style="display:none"><div id="historyList"><div class="empty">Cargando...</div></div></div>
@@ -125,6 +131,7 @@ firebase.initializeApp(fb);const auth=firebase.auth(),db=firebase.database();
 let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calif=0,notifC=0,confAct=false;
 let photoChofer='',photoMoto='',photoPlaca='';const ZA=[16.9516,-96.7491];let lastMsgCount=0;let radioIlimitado=false;
 let clienteMarker=null,destinoMarker=null,rutaLinea=null;
+let currentSubTab='hoy';
 
 function notif(t,m,ty='message'){notifC++;updateDot();playSound(ty==='request'?'incoming':ty==='message'?'msg':'accept');let c=document.getElementById('notificationContainer');if(!c){c=document.createElement('div');c.id='notificationContainer';c.className='notification-container';document.body.appendChild(c)}const n=document.createElement('div');n.className=`notification ${ty}`;n.innerHTML=`<span class="notif-icon">${ty==='request'?'🔔':ty==='message'?'💬':ty==='objeto'?'📦':ty==='error'?'❌':'✅'}</span><div class="notif-content"><div class="notif-title">${t}</div><div class="notif-text">${m}</div></div><button class="notif-close" onclick="dismissN(this)">✕</button>`;c.appendChild(n);setTimeout(()=>{if(n.parentNode){n.remove();notifC--;updateDot()}},5000)}
 function dismissN(b){const n=b.closest('.notification');if(n){n.style.animation='notifOut .3s ease forwards';setTimeout(()=>{n.remove();notifC--;updateDot()},300)}}
@@ -151,10 +158,119 @@ function getPos(){if(navigator.geolocation)navigator.geolocation.watchPosition(p
 function actualizarRuta(){if(rutaLinea){map.removeLayer(rutaLinea);rutaLinea=null}if(clienteMarker){map.removeLayer(clienteMarker);clienteMarker=null}if(destinoMarker){map.removeLayer(destinoMarker);destinoMarker=null}if(!sdata)return;const puntos=[[pos.lat,pos.lng]];if(sdata.origen?.lat){clienteMarker=L.marker([sdata.origen.lat,sdata.origen.lng],{icon:L.divIcon({html:'<div style="background:#00C897;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(0,200,151,.8)">📍</div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);clienteMarker.bindPopup('👤 Cliente');puntos.push([sdata.origen.lat,sdata.origen.lng])}if(sdata.destino?.lat){destinoMarker=L.marker([sdata.destino.lat,sdata.destino.lng],{icon:L.divIcon({html:'<div style="background:#FF4757;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(255,71,87,.8)">🏁</div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);destinoMarker.bindPopup('🏁 Destino');puntos.push([sdata.destino.lat,sdata.destino.lng])}if(puntos.length>=2){rutaLinea=L.polyline(puntos,{color:'#6C5CE7',weight:3,dashArray:'8,8',opacity:.8}).addTo(map)}if(puntos.length>=2){map.fitBounds(L.latLngBounds(puntos),{padding:[40,40]})}}
 function limpiarRuta(){if(rutaLinea){map.removeLayer(rutaLinea);rutaLinea=null}if(clienteMarker){map.removeLayer(clienteMarker);clienteMarker=null}if(destinoMarker){map.removeLayer(destinoMarker);destinoMarker=null}}
 
-function loadData(){if(!uid)return;db.ref(`choferes/${uid}`).on('value',s=>{const d=s.val()||{};const hoy=new Date().toISOString().split('T')[0],g=d.ganancias||{};const gananciasHoy=g[hoy]||0;const gananciasSemana=Math.round(gananciasHoy*5);document.getElementById('earnToday').textContent='$'+gananciasHoy;document.getElementById('earnWeek').textContent='$'+gananciasSemana;calif=d.calificacion||0;document.getElementById('earnRating').textContent='⭐ '+calif;document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calif)?'★':'☆'}</span>`).join('');radioIlimitado=d.radio_ilimitado===true;const indicator=document.getElementById('radioIndicator');if(radioIlimitado){indicator.textContent='🌐 Ilimitado';indicator.className='radio-indicator radio-on'}else{indicator.textContent='📍 500m';indicator.className='radio-indicator radio-off'}if(d.foto_chofer)document.getElementById('viewPhotoChofer').innerHTML=`<img src="${d.foto_chofer}">`;if(d.foto_moto)document.getElementById('viewPhotoMoto').innerHTML=`<img src="${d.foto_moto}">`;if(d.foto_placa)document.getElementById('viewPhotoPlaca').innerHTML=`<img src="${d.foto_placa}">`;const gastosGuardados=parseFloat(localStorage.getItem('gastos_'+uid)||'0');const gastosInput=document.getElementById('gastosSemana');if(gastosInput&&gastosGuardados>0)gastosInput.value=gastosGuardados;calcularGananciaNeta()})}
-function calcularGananciaNeta(){const gananciaBruta=parseFloat((document.getElementById('earnWeek')?.textContent||'$0').replace('$',''))||0;const gastos=parseFloat(document.getElementById('gastosSemana')?.value)||0;const neta=Math.max(0,gananciaBruta-gastos);const netaEl=document.getElementById('earnNeta');if(netaEl)netaEl.textContent='$'+neta;if(uid)localStorage.setItem('gastos_'+uid,gastos.toString())}
+function loadData(){if(!uid)return;db.ref(`choferes/${uid}`).on('value',s=>{const d=s.val()||{};calif=d.calificacion||0;document.getElementById('earnRating').textContent='⭐ '+calif;document.getElementById('starsDisplay').innerHTML=Array.from({length:5},(_,i)=>`<span>${i<Math.round(calif)?'★':'☆'}</span>`).join('');radioIlimitado=d.radio_ilimitado===true;const indicator=document.getElementById('radioIndicator');if(radioIlimitado){indicator.textContent='🌐 Ilimitado';indicator.className='radio-indicator radio-on'}else{indicator.textContent='📍 500m';indicator.className='radio-indicator radio-off'}if(d.foto_chofer)document.getElementById('viewPhotoChofer').innerHTML=`<img src="${d.foto_chofer}">`;if(d.foto_moto)document.getElementById('viewPhotoMoto').innerHTML=`<img src="${d.foto_moto}">`;if(d.foto_placa)document.getElementById('viewPhotoPlaca').innerHTML=`<img src="${d.foto_placa}">`;loadGanancias()})}
 
-function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});notif('Disponible','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';limpiarRuta();notif('Pausado','error')}}
+// ✅ SUB-TABS DE GANANCIAS
+function switchSubTab(t,el){
+    currentSubTab=t;
+    document.getElementById('sub-hoy').style.display=t==='hoy'?'block':'none';
+    document.getElementById('sub-semana').style.display=t==='semana'?'block':'none';
+    document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('on'));
+    el.classList.add('on');
+    loadGanancias();
+}
+
+function loadGanancias(){
+    if(!uid)return;
+    const hoy=new Date().toISOString().split('T')[0];
+    db.ref(`choferes/${uid}/ganancias`).once('value',s=>{
+        const g=s.val()||{};
+        if(currentSubTab==='hoy'){
+            const gananciaHoy=g[hoy]||0;
+            const gastosHoy=parseFloat(localStorage.getItem('gastos_hoy_'+uid)||'0');
+            const netaHoy=Math.max(0,gananciaHoy-gastosHoy);
+            document.getElementById('sub-hoy').innerHTML=`
+                <div class="ganancia-card">
+                    <div class="g-row"><span class="g-lbl">📅 Fecha</span><span class="g-val">${hoy.split('-').reverse().join('/')}</span></div>
+                    <div class="g-row"><span class="g-lbl">🛺 Ingresos del día</span><span class="g-val green">$${gananciaHoy}</span></div>
+                    <div class="g-row"><span class="g-lbl">🧾 Gastos del día</span></div>
+                    <input type="number" class="gasto-inp" id="gastosHoyInp" placeholder="Gasolina, refacciones, etc." value="${gastosHoy}" onchange="guardarGastosHoy()">
+                    <div class="g-row" style="margin-top:.4rem"><span class="g-lbl">💵 <b>Ganancia Neta HOY</b></span><span class="g-val neto">$${netaHoy}</span></div>
+                    <button class="btn-clear" onclick="limpiarGanancias('hoy')">🗑️ Limpiar datos de HOY</button>
+                </div>`;
+        } else {
+            // Calcular semana (últimos 7 días)
+            let totalSemana=0;
+            const fechas=[];
+            for(let i=6;i>=0;i--){
+                const d=new Date();
+                d.setDate(d.getDate()-i);
+                const key=d.toISOString().split('T')[0];
+                fechas.push(key);
+                totalSemana+=(g[key]||0);
+            }
+            const gastosSemana=parseFloat(localStorage.getItem('gastos_semana_'+uid)||'0');
+            const netaSemana=Math.max(0,totalSemana-gastosSemana);
+            document.getElementById('sub-semana').innerHTML=`
+                <div class="ganancia-card">
+                    <div class="g-row"><span class="g-lbl">📆 Periodo</span><span class="g-val">${fechas[6].split('-').reverse().join('/')} → ${fechas[0].split('-').reverse().join('/')}</span></div>
+                    <div class="g-row"><span class="g-lbl">🛺 Ingresos de la semana</span><span class="g-val green">$${totalSemana}</span></div>
+                    <div class="g-row"><span class="g-lbl">🧾 Gastos de la semana</span></div>
+                    <input type="number" class="gasto-inp" id="gastosSemanaInp" placeholder="Gasolina, refacciones, etc." value="${gastosSemana}" onchange="guardarGastosSemana()">
+                    <div class="g-row" style="margin-top:.4rem"><span class="g-lbl">💵 <b>Ganancia Neta SEMANA</b></span><span class="g-val neto">$${netaSemana}</span></div>
+                    <button class="btn-clear" onclick="limpiarGanancias('semana')">🗑️ Limpiar datos de SEMANA</button>
+                </div>`;
+        }
+    });
+}
+
+window.guardarGastosHoy=function(){
+    const v=parseFloat(document.getElementById('gastosHoyInp')?.value)||0;
+    localStorage.setItem('gastos_hoy_'+uid,v.toString());
+    loadGanancias();
+};
+
+window.guardarGastosSemana=function(){
+    const v=parseFloat(document.getElementById('gastosSemanaInp')?.value)||0;
+    localStorage.setItem('gastos_semana_'+uid,v.toString());
+    loadGanancias();
+};
+
+window.limpiarGanancias=function(tipo){
+    if(!confirm(`¿Eliminar ganancias y gastos de ${tipo==='hoy'?'HOY':'la SEMANA'}?`))return;
+    if(tipo==='hoy'){
+        const hoy=new Date().toISOString().split('T')[0];
+        db.ref(`choferes/${uid}/ganancias/${hoy}`).remove();
+        localStorage.removeItem('gastos_hoy_'+uid);
+    }else{
+        const fechas=[];
+        for(let i=6;i>=0;i--){
+            const d=new Date();d.setDate(d.getDate()-i);
+            fechas.push(d.toISOString().split('T')[0]);
+        }
+        const updates={};
+        fechas.forEach(f=>updates[f]=null);
+        db.ref(`choferes/${uid}/ganancias`).update(updates);
+        localStorage.removeItem('gastos_semana_'+uid);
+    }
+    toast('🗑️ Datos limpiados');
+    loadGanancias();
+};
+
+// ✅ TOGGLE STATUS CORREGIDO
+function toggleStatus(){
+    active=!active;
+    const b=document.getElementById('statusToggle');
+    if(active){
+        b.className='toggle on';b.textContent='ACTIVO';
+        if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});
+        document.getElementById('incomingView').style.display='none';
+        document.getElementById('activeView').style.display='none';
+        document.getElementById('idleView').style.display='block';
+        document.getElementById('idleView').innerHTML='<div class="empty">🟢 Disponible</div>';
+        notif('✅ Activado','Estás recibiendo solicitudes','success');
+    } else {
+        b.className='toggle off';b.textContent='INACTIVO';
+        if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});
+        document.getElementById('incomingView').style.display='none';
+        document.getElementById('activeView').style.display='none';
+        document.getElementById('idleView').style.display='block';
+        document.getElementById('idleView').innerHTML='<div class="empty">🔴 Inactivo</div>';
+        limpiarRuta();
+        notif('🔴 Pausado','No estás recibiendo solicitudes','message');
+    }
+}
+
 function listenSvc(){db.ref(`choferes/${uid}/radio_ilimitado`).on('value',radioSnap=>{radioIlimitado=radioSnap.val()||false;const i=document.getElementById('radioIndicator');if(i){i.textContent=radioIlimitado?'🌐 Ilimitado':'📍 500m';i.className='radio-indicator '+(radioIlimitado?'radio-on':'radio-off')}});db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{if(active&&!sid){const sv=s.val();const o=sv.origen;const d=calcDist(pos.lat,pos.lng,o?.lat||ZA[0],o?.lng||ZA[1]);if(radioIlimitado||d<=0.5){sid=s.key;sdata=sv;showInc();actualizarRuta()}}})}
 function listenGlobal(){db.ref('servicios').on('child_changed',s=>{const v=s.val();if(s.key===sid&&v.estado==='aceptado'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';limpiarRuta();notif('Servicio asignado','Otro chofer fue elegido','error');resetAll()}if(s.key===sid&&v.estado==='tarifa_propuesta'&&v.choferId!==uid){document.getElementById('incomingView').style.display='none';document.getElementById('idleView').style.display='block';limpiarRuta();notif('No disponible','Otro chofer envió tarifa','error');resetAll()}})}
 function showInc(){const destDireccion=sdata?.destino?.direccion||'---';const ep=sdata?.pasajeros_extra?`<div class="extra-passenger">👥 El cliente lleva ${sdata.pasajeros_extra} pasajero(s) extra</div>`:'';notif('Nueva solicitud','Cliente cerca','request');if(navigator.vibrate)navigator.vibrate([200,100,200]);document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='block';document.getElementById('incomingView').innerHTML=`<div class="incoming"><div class="inc-header">🔔 Nueva solicitud</div><div class="inc-row"><span>Origen</span><b>${sdata?.origen?.direccion||'Cliente'}</b></div><div class="inc-row"><span>Destino</span><b>${destDireccion}</b></div>${ep}<div class="inc-btns"><button class="btn-accept" onclick="accept()">Aceptar</button><button class="btn-deny" onclick="deny()">Rechazar</button></div></div>`}
@@ -166,8 +282,8 @@ function resetAll(){if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`serv
 function showAct(){document.getElementById('idleView').style.display='none';document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='block';step=1;updateUI()}
 function updateUI(){document.getElementById('activeView').innerHTML=`<div class="ride-step"><div class="num ${step===1?'now':step>1?'done':''}">1</div><div class="info"><div>Recoger cliente</div><div class="addr">${sdata?.origen?.direccion||'Cliente'}</div></div></div><div class="ride-step"><div class="num ${step===2?'now':step>2?'done':''}">2</div><div class="info"><div>Llevar a destino</div><div class="addr">${sdata?.destino?.direccion||'Destino'}</div></div></div><button class="btn-full btn-purple" onclick="nextStep()">${step===1?'Iniciar Recogida':step===2?'Llegué al Cliente':'Finalizar Viaje'}</button><button class="btn-full btn-outline" onclick="openChat()" style="position:relative">💬 Chat <span class="badge-new" id="chatBadge">0</span></button><button class="btn-full btn-outline" onclick="reportFound()">📦 Reportar objeto</button><button class="btn-full btn-red" onclick="finishNow()">🏁 Finalizar ahora</button>`}
 function nextStep(){if(step===1){db.ref(`servicios/${sid}`).update({estado:'en_camino'});step=2;updateUI();notif('En camino','success');actualizarRuta()}else if(step===2){db.ref(`servicios/${sid}`).update({estado:'en_servicio'});step=3;updateUI();notif('Viaje iniciado','success');actualizarRuta()}else finishRide()}
-function finishRide(){if(!sid)return;db.ref(`servicios/${sid}/tarifa_propuesta`).once('value',snap=>{const fare=snap.val()||sdata?.tarifa_propuesta||50;const hoy=new Date().toISOString().split('T')[0];if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});resetAll();limpiarRuta();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje completado','$'+fare,'success');loadData();loadHistory()})}
-function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).update({estado:'cancelado_chofer',motivo:'Chofer canceló',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{resetAll();limpiarRuta();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';notif('Viaje cancelado','error');loadHistory()})}else{step=3;finishRide()}}
+function finishRide(){if(!sid)return;db.ref(`servicios/${sid}/tarifa_propuesta`).once('value',snap=>{const fare=snap.val()||sdata?.tarifa_propuesta||50;const hoy=new Date().toISOString().split('T')[0];if(sid){db.ref(`servicios/${sid}/estado`).off();db.ref(`servicios/${sid}`).off()}db.ref(`servicios/${sid}`).update({estado:'completado',cobro:fare,fecha:hoy});db.ref(`choferes/${uid}/ganancias/${hoy}`).transaction(g=>(g||0)+fare);db.ref(`choferes/${uid}/servicios_hoy`).transaction(c=>(c||0)+1);db.ref(`choferes/${uid}/total_servicios`).transaction(c=>(c||0)+1);db.ref('admin/comisiones').push({servicioId:sid,choferId:uid,monto_servicio:fare,comision:Math.round(fare*.1),fecha:hoy});resetAll();limpiarRuta();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';document.getElementById('idleView').innerHTML='<div class="empty">🟢 Disponible</div>';notif('Viaje completado','$'+fare,'success');loadGanancias();loadHistory()})}
+function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).update({estado:'cancelado_chofer',motivo:'Chofer canceló',ts:firebase.database.ServerValue.TIMESTAMP}).then(()=>{resetAll();limpiarRuta();step=1;document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';document.getElementById('idleView').innerHTML='<div class="empty">🟢 Disponible</div>';notif('Viaje cancelado','error');loadHistory()})}else{step=3;finishRide()}}
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(c){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:c,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 
@@ -246,7 +362,7 @@ function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById
 function closeChat(b){b.closest('.chat-modal').remove();chatOpen=false}
 window.sendMsg=function(){const i=document.getElementById('chatInput');const m=i?.value.trim();if(m&&sid){db.ref(`chats/${sid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 function loadHistory(){if(!uid)return;db.ref('servicios').orderByChild('choferId').equalTo(uid).limitToLast(20).once('value',s=>{const d=s.val();let h='';if(!d){document.getElementById('historyList').innerHTML='<div class="empty">Sin servicios</div>';return}Object.entries(d).reverse().forEach(([id,v])=>{h+=`<div class="card"><div class="card-row"><div><div style="font-weight:700;font-size:.75rem">${(v.origen?.direccion||'').substring(0,15)} → ${(v.destino?.direccion||'').substring(0,15)}</div><div style="font-size:.6rem;color:var(--txt3)">${v.fecha||'-'} · ${v.estado}</div></div><div style="font-weight:700;color:var(--green)">$${v.cobro||v.tarifa_estimada||0}</div></div></div>`});document.getElementById('historyList').innerHTML=h})}
-function switchTab(n,el){document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');document.getElementById('tab-'+n).style.display='block';document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');if(n==='profile')loadData();if(n==='earnings')loadData();if(n==='objetos')loadObjetos();if(n==='history')loadHistory()}
+function switchTab(n,el){document.querySelectorAll('#tabContent > div').forEach(d=>d.style.display='none');document.getElementById('tab-'+n).style.display='block';document.querySelectorAll('.tab').forEach(t=>t.classList.remove('on'));el.classList.add('on');if(n==='profile')loadData();if(n==='earnings'){loadGanancias();}if(n==='objetos')loadObjetos();if(n==='history')loadHistory()}
 function calcDist(l1,l2,lo1,lo2){const R=6371,dLa=(l2-l1)*Math.PI/180,dLo=(lo2-lo1)*Math.PI/180;return R*2*Math.atan2(Math.sqrt(Math.sin(dLa/2)**2+Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2),Math.sqrt(1-Math.sin(dLa/2)**2-Math.cos(l1*Math.PI/180)*Math.cos(l2*Math.PI/180)*Math.sin(dLo/2)**2))}
 document.addEventListener('keypress',e=>{if(e.key=='Enter'&&document.getElementById('loginScreen').style.display!=='none')login()});
 window.addEventListener('resize',()=>{if(map)setTimeout(()=>map.invalidateSize(),200)});
