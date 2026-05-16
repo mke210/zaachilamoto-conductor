@@ -50,10 +50,12 @@
         @keyframes notifIn{from{transform:translateY(-100%);opacity:0}to{transform:translateY(0);opacity:1}}@keyframes notifOut{from{transform:translateY(0);opacity:1}to{transform:translateY(-100%);opacity:0}}
         .notif-dot{width:18px;height:18px;border-radius:50%;background:var(--red);color:#fff;font-size:.55rem;font-weight:700;display:none;align-items:center;justify-content:center}.notif-dot.show{display:flex}
         @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-        .map-wrap{flex:1 1 auto;position:relative;min-height:200px}#driverMap{width:100%;height:100%;position:absolute;top:0;left:0}
-        .tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto}.tab{flex:1;text-align:center;padding:.5rem .3rem;font-size:.6rem;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;position:relative}.tab.on{color:var(--acc);border-bottom-color:var(--acc)}
+        /* MAPA REDUCIDO 30% */
+        .map-wrap{flex:0 0 140px;position:relative;min-height:140px}#driverMap{width:100%;height:100%;position:absolute;top:0;left:0}
+        /* TABS MÁS GRANDES */
+        .tabs{display:flex;background:var(--bg2);border-bottom:1px solid var(--bd);flex-shrink:0;overflow-x:auto}.tab{flex:1;text-align:center;padding:.7rem .3rem;font-size:.7rem;font-weight:600;color:var(--txt3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;position:relative}.tab.on{color:var(--acc);border-bottom-color:var(--acc)}
         .badge-obj{position:absolute;top:3px;right:3px;width:10px;height:10px;border-radius:50%;background:var(--red);display:none;animation:pulse 1.5s infinite}.badge-obj.show{display:block}
-        .content{flex-shrink:0;max-height:35vh;overflow-y:auto;padding:.5rem;-webkit-overflow-scrolling:touch}
+        .content{flex:1;overflow-y:auto;padding:.5rem;-webkit-overflow-scrolling:touch}
         .incoming{background:linear-gradient(135deg,#1a1a2e,#211d2a);border:2px solid var(--acc);border-radius:var(--r2);padding:.8rem;animation:pop .3s ease}@keyframes pop{from{transform:scale(.95);opacity:0}to{transform:scale(1);opacity:1}}
         .inc-header{font-size:.9rem;font-weight:700;color:var(--acc);margin-bottom:.5rem}.inc-row{display:flex;justify-content:space-between;font-size:.7rem;padding:.2rem 0;color:var(--txt2)}.inc-row b{color:var(--txt)}.inc-btns{display:flex;gap:.4rem;margin-top:.6rem}
         .btn-accept{flex:1;padding:.6rem;background:var(--green);color:#000;border:0;border-radius:var(--r);font-weight:700;cursor:pointer;font-size:.75rem}.btn-deny{flex:1;padding:.6rem;background:transparent;border:1px solid var(--red);color:var(--red);border-radius:var(--r);font-weight:700;cursor:pointer;font-size:.75rem}
@@ -130,8 +132,7 @@ const fb={apiKey:"AIzaSyCBXBPMz2OZ3U2KfTaU-uHCBhwmbnR7O40",authDomain:"zaachilam
 firebase.initializeApp(fb);const auth=firebase.auth(),db=firebase.database();
 let map,marker,uid,sid,sdata,step=1,active=true,pos={lat:16.9516,lng:-96.7491},chatOpen=false,calif=0,notifC=0,confAct=false;
 let photoChofer='',photoMoto='',photoPlaca='';const ZA=[16.9516,-96.7491];let lastMsgCount=0;let radioIlimitado=false;
-let clienteMarker=null,destinoMarker=null,rutaLinea=null;
-let currentSubTab='hoy';
+let clienteMarker=null,destinoMarker=null,rutaLinea=null;let currentSubTab='hoy';
 
 function notif(t,m,ty='message'){notifC++;updateDot();playSound(ty==='request'?'incoming':ty==='message'?'msg':'accept');let c=document.getElementById('notificationContainer');if(!c){c=document.createElement('div');c.id='notificationContainer';c.className='notification-container';document.body.appendChild(c)}const n=document.createElement('div');n.className=`notification ${ty}`;n.innerHTML=`<span class="notif-icon">${ty==='request'?'🔔':ty==='message'?'💬':ty==='objeto'?'📦':ty==='error'?'❌':'✅'}</span><div class="notif-content"><div class="notif-title">${t}</div><div class="notif-text">${m}</div></div><button class="notif-close" onclick="dismissN(this)">✕</button>`;c.appendChild(n);setTimeout(()=>{if(n.parentNode){n.remove();notifC--;updateDot()}},5000)}
 function dismissN(b){const n=b.closest('.notification');if(n){n.style.animation='notifOut .3s ease forwards';setTimeout(()=>{n.remove();notifC--;updateDot()},300)}}
@@ -152,7 +153,7 @@ function login(){const e=document.getElementById('loginEmail').value.trim(),p=do
 function logout(){if(confirm('¿Cerrar sesión?')){if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});auth.signOut();localStorage.removeItem('ce');localStorage.removeItem('cp');location.reload()}}
 window.addEventListener('DOMContentLoaded',()=>{const e=localStorage.getItem('ce'),p=localStorage.getItem('cp');if(e&&p){document.getElementById('loginEmail').value=e;document.getElementById('loginPassword').value=p;login();return}const savedEmail=localStorage.getItem('chofer_email');if(savedEmail){document.getElementById('registerForm').style.display='none';document.getElementById('loginForm').style.display='none';document.getElementById('approvalWait').style.display='block';document.getElementById('formTitle').textContent='Estado de Solicitud';document.getElementById('toggleText').style.display='none'}});
 
-function initMap(){const c=document.getElementById('driverMap');if(!c||c.offsetHeight===0)c.style.height='200px';map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(108,92,231,.8);"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);setTimeout(()=>map.invalidateSize(),300)}
+function initMap(){const c=document.getElementById('driverMap');if(!c||c.offsetHeight===0)c.style.height='140px';map=L.map('driverMap',{zoomControl:false,attributionControl:false}).setView(ZA,15);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OSM'}).addTo(map);marker=L.marker(ZA,{icon:L.divIcon({html:'<div style="background:#6C5CE7;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(108,92,231,.8);"></div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);setTimeout(()=>map.invalidateSize(),300)}
 function getPos(){if(navigator.geolocation)navigator.geolocation.watchPosition(p=>{pos={lat:p.coords.latitude,lng:p.coords.longitude};if(marker)marker.setLatLng([pos.lat,pos.lng]);if(uid&&active)db.ref(`choferes/${uid}/ubicacion`).set({lat:pos.lat,lng:pos.lng,ts:firebase.database.ServerValue.TIMESTAMP});if(sid&&sdata)actualizarRuta()},()=>{},{enableHighAccuracy:true})}
 
 function actualizarRuta(){if(rutaLinea){map.removeLayer(rutaLinea);rutaLinea=null}if(clienteMarker){map.removeLayer(clienteMarker);clienteMarker=null}if(destinoMarker){map.removeLayer(destinoMarker);destinoMarker=null}if(!sdata)return;const puntos=[[pos.lat,pos.lng]];if(sdata.origen?.lat){clienteMarker=L.marker([sdata.origen.lat,sdata.origen.lng],{icon:L.divIcon({html:'<div style="background:#00C897;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(0,200,151,.8)">📍</div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);clienteMarker.bindPopup('👤 Cliente');puntos.push([sdata.origen.lat,sdata.origen.lng])}if(sdata.destino?.lat){destinoMarker=L.marker([sdata.destino.lat,sdata.destino.lng],{icon:L.divIcon({html:'<div style="background:#FF4757;width:14px;height:14px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 15px rgba(255,71,87,.8)">🏁</div>',iconSize:[20,20],iconAnchor:[10,10]})}).addTo(map);destinoMarker.bindPopup('🏁 Destino');puntos.push([sdata.destino.lat,sdata.destino.lng])}if(puntos.length>=2){rutaLinea=L.polyline(puntos,{color:'#6C5CE7',weight:3,dashArray:'8,8',opacity:.8}).addTo(map)}if(puntos.length>=2){map.fitBounds(L.latLngBounds(puntos),{padding:[40,40]})}}
@@ -161,13 +162,12 @@ function limpiarRuta(){if(rutaLinea){map.removeLayer(rutaLinea);rutaLinea=null}i
 function loadData(){if(!uid)return;db.ref(`choferes/${uid}`).on('value',s=>{const d=s.val()||{};calif=d.calificacion||0;radioIlimitado=d.radio_ilimitado===true;const indicator=document.getElementById('radioIndicator');if(radioIlimitado){indicator.textContent='🌐 Ilimitado';indicator.className='radio-indicator radio-on'}else{indicator.textContent='📍 500m';indicator.className='radio-indicator radio-off'}if(d.foto_chofer)document.getElementById('viewPhotoChofer').innerHTML=`<img src="${d.foto_chofer}">`;if(d.foto_moto)document.getElementById('viewPhotoMoto').innerHTML=`<img src="${d.foto_moto}">`;if(d.foto_placa)document.getElementById('viewPhotoPlaca').innerHTML=`<img src="${d.foto_placa}">`;loadGanancias()})}
 
 function switchSubTab(t,el){currentSubTab=t;document.getElementById('sub-hoy').style.display=t==='hoy'?'block':'none';document.getElementById('sub-semana').style.display=t==='semana'?'block':'none';document.querySelectorAll('.sub-tab').forEach(b=>b.classList.remove('on'));el.classList.add('on');loadGanancias()}
-
-function loadGanancias(){if(!uid)return;const hoy=new Date().toISOString().split('T')[0];db.ref(`choferes/${uid}/ganancias`).once('value',s=>{const g=s.val()||{};if(currentSubTab==='hoy'){const gananciaHoy=g[hoy]||0;const gastosHoy=parseFloat(localStorage.getItem('gastos_hoy_'+uid)||'0');const netaHoy=Math.max(0,gananciaHoy-gastosHoy);document.getElementById('sub-hoy').innerHTML=`<div class="ganancia-card"><div class="g-row"><span class="g-lbl">📅 Fecha</span><span class="g-val">${hoy.split('-').reverse().join('/')}</span></div><div class="g-row"><span class="g-lbl">🛺 Ingresos del día</span><span class="g-val green">$${gananciaHoy}</span></div><div class="g-row"><span class="g-lbl">🧾 Gastos del día</span></div><input type="number" class="gasto-inp" id="gastosHoyInp" placeholder="Gasolina, refacciones, etc." value="${gastosHoy}" onchange="guardarGastosHoy()"><div class="g-row" style="margin-top:.4rem"><span class="g-lbl">💵 <b>Ganancia Neta HOY</b></span><span class="g-val neto">$${netaHoy}</span></div><button class="btn-clear" onclick="limpiarGanancias('hoy')">🗑️ Limpiar datos de HOY</button></div>`}else{let totalSemana=0;const fechas=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const key=d.toISOString().split('T')[0];fechas.push(key);totalSemana+=(g[key]||0)}const gastosSemana=parseFloat(localStorage.getItem('gastos_semana_'+uid)||'0');const netaSemana=Math.max(0,totalSemana-gastosSemana);document.getElementById('sub-semana').innerHTML=`<div class="ganancia-card"><div class="g-row"><span class="g-lbl">📆 Periodo</span><span class="g-val">${fechas[6].split('-').reverse().join('/')} → ${fechas[0].split('-').reverse().join('/')}</span></div><div class="g-row"><span class="g-lbl">🛺 Ingresos de la semana</span><span class="g-val green">$${totalSemana}</span></div><div class="g-row"><span class="g-lbl">🧾 Gastos de la semana</span></div><input type="number" class="gasto-inp" id="gastosSemanaInp" placeholder="Gasolina, refacciones, etc." value="${gastosSemana}" onchange="guardarGastosSemana()"><div class="g-row" style="margin-top:.4rem"><span class="g-lbl">💵 <b>Ganancia Neta SEMANA</b></span><span class="g-val neto">$${netaSemana}</span></div><button class="btn-clear" onclick="limpiarGanancias('semana')">🗑️ Limpiar datos de SEMANA</button></div>`}})}
+function loadGanancias(){if(!uid)return;const hoy=new Date().toISOString().split('T')[0];db.ref(`choferes/${uid}/ganancias`).once('value',s=>{const g=s.val()||{};if(currentSubTab==='hoy'){const gh=g[hoy]||0;const gh2=parseFloat(localStorage.getItem('gastos_hoy_'+uid)||'0');const neta=Math.max(0,gh-gh2);document.getElementById('sub-hoy').innerHTML=`<div class="ganancia-card"><div class="g-row"><span class="g-lbl">📅 Fecha</span><span class="g-val">${hoy.split('-').reverse().join('/')}</span></div><div class="g-row"><span class="g-lbl">🛺 Ingresos del día</span><span class="g-val green">$${gh}</span></div><div class="g-row"><span class="g-lbl">🧾 Gastos del día</span></div><input type="number" class="gasto-inp" id="gastosHoyInp" placeholder="Gasolina, refacciones, etc." value="${gh2}" onchange="guardarGastosHoy()"><div class="g-row" style="margin-top:.4rem"><span class="g-lbl">💵 <b>Ganancia Neta HOY</b></span><span class="g-val neto">$${neta}</span></div><button class="btn-clear" onclick="limpiarGanancias('hoy')">🗑️ Limpiar datos de HOY</button></div>`}else{let total=0;const fechas=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=d.toISOString().split('T')[0];fechas.push(k);total+=(g[k]||0)}const gs=parseFloat(localStorage.getItem('gastos_semana_'+uid)||'0');const neta2=Math.max(0,total-gs);document.getElementById('sub-semana').innerHTML=`<div class="ganancia-card"><div class="g-row"><span class="g-lbl">📆 Periodo</span><span class="g-val">${fechas[6].split('-').reverse().join('/')} → ${fechas[0].split('-').reverse().join('/')}</span></div><div class="g-row"><span class="g-lbl">🛺 Ingresos de la semana</span><span class="g-val green">$${total}</span></div><div class="g-row"><span class="g-lbl">🧾 Gastos de la semana</span></div><input type="number" class="gasto-inp" id="gastosSemanaInp" placeholder="Gasolina, refacciones, etc." value="${gs}" onchange="guardarGastosSemana()"><div class="g-row" style="margin-top:.4rem"><span class="g-lbl">💵 <b>Ganancia Neta SEMANA</b></span><span class="g-val neto">$${neta2}</span></div><button class="btn-clear" onclick="limpiarGanancias('semana')">🗑️ Limpiar datos de SEMANA</button></div>`}})}
 window.guardarGastosHoy=function(){const v=parseFloat(document.getElementById('gastosHoyInp')?.value)||0;localStorage.setItem('gastos_hoy_'+uid,v.toString());loadGanancias()}
 window.guardarGastosSemana=function(){const v=parseFloat(document.getElementById('gastosSemanaInp')?.value)||0;localStorage.setItem('gastos_semana_'+uid,v.toString());loadGanancias()}
-window.limpiarGanancias=function(tipo){if(!confirm(`¿Eliminar ganancias y gastos de ${tipo==='hoy'?'HOY':'la SEMANA'}?`))return;if(tipo==='hoy'){const hoy=new Date().toISOString().split('T')[0];db.ref(`choferes/${uid}/ganancias/${hoy}`).remove();localStorage.removeItem('gastos_hoy_'+uid)}else{const fechas=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);fechas.push(d.toISOString().split('T')[0])}const updates={};fechas.forEach(f=>updates[f]=null);db.ref(`choferes/${uid}/ganancias`).update(updates);localStorage.removeItem('gastos_semana_'+uid)}toast('🗑️ Datos limpiados');loadGanancias()}
+window.limpiarGanancias=function(tipo){if(!confirm(`¿Eliminar ganancias y gastos de ${tipo==='hoy'?'HOY':'la SEMANA'}?`))return;if(tipo==='hoy'){const hoy=new Date().toISOString().split('T')[0];db.ref(`choferes/${uid}/ganancias/${hoy}`).remove();localStorage.removeItem('gastos_hoy_'+uid)}else{const fechas=[];for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);fechas.push(d.toISOString().split('T')[0])}const u={};fechas.forEach(f=>u[f]=null);db.ref(`choferes/${uid}/ganancias`).update(u);localStorage.removeItem('gastos_semana_'+uid)}toast('🗑️ Datos limpiados');loadGanancias()}
 
-// ✅ TOGGLE STATUS CORREGIDO
+// TOGGLE STATUS CORREGIDO
 function toggleStatus(){active=!active;const b=document.getElementById('statusToggle');if(active){b.className='toggle on';b.textContent='ACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'activo'});document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';document.getElementById('idleView').innerHTML='<div class="empty">🟢 Disponible</div>';notif('✅ Activado','Estás recibiendo solicitudes','success')}else{b.className='toggle off';b.textContent='INACTIVO';if(uid)db.ref(`choferes/${uid}`).update({estado:'inactivo'});document.getElementById('incomingView').style.display='none';document.getElementById('activeView').style.display='none';document.getElementById('idleView').style.display='block';document.getElementById('idleView').innerHTML='<div class="empty">🔴 Inactivo</div>';limpiarRuta();notif('🔴 Pausado','No estás recibiendo solicitudes','message')}}
 
 function listenSvc(){db.ref(`choferes/${uid}/radio_ilimitado`).on('value',radioSnap=>{radioIlimitado=radioSnap.val()||false;const i=document.getElementById('radioIndicator');if(i){i.textContent=radioIlimitado?'🌐 Ilimitado':'📍 500m';i.className='radio-indicator '+(radioIlimitado?'radio-on':'radio-off')}});db.ref('servicios').orderByChild('estado').equalTo('buscando').on('child_added',s=>{if(active&&!sid){const sv=s.val();const o=sv.origen;const d=calcDist(pos.lat,pos.lng,o?.lat||ZA[0],o?.lng||ZA[1]);if(radioIlimitado||d<=0.5){sid=s.key;sdata=sv;showInc();actualizarRuta()}}})}
@@ -186,7 +186,7 @@ function finishNow(){if(!sid)return;if(step<=2){db.ref(`servicios/${sid}`).updat
 function reportFound(){if(!sid)return;const d=prompt('Describe el objeto:');if(!d)return;if(confirm('¿Subir foto?')){const i=document.createElement('input');i.type='file';i.accept='image/*';i.capture='environment';i.onchange=function(){const f=i.files[0];if(f){compressImage(f,300,300,0.5,function(c){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,foto:c,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))})}};i.click()}else saveR(d)}
 function saveR(d){db.ref('reportes/objetos_olvidados').push({servicioId:sid,choferId:uid,descripcion:d,estado:'pendiente',tipo:'chofer_reporta',timestamp:firebase.database.ServerValue.TIMESTAMP}).then(()=>notif('Reporte','Enviado','success'))}
 
-// ✅ OBJETOS CON RESPUESTAS
+// OBJETOS CON RESPUESTAS
 function listenObjetos(){
     db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).on('child_added',s=>{
         const obj=s.val();
@@ -195,119 +195,37 @@ function listenObjetos(){
             const recText=obj.recompensa>0?` 💰 Recompensa: $${obj.recompensa}`:'';
             notif('📦 Cliente'+nom+' reportó objeto',(obj.descripcion||'Sin descripción').substring(0,40)+recText,'objeto');
             if(navigator.vibrate)navigator.vibrate([300,100,300,100,300]);
-            agregarPendiente(s.key);
-            loadObjetos();
+            agregarPendiente(s.key);loadObjetos();
         }
     });
-    db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).on('child_changed',s=>{
-        quitarPendiente(s.key);
-        loadObjetos();
-    });
+    db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).on('child_changed',s=>{quitarPendiente(s.key);loadObjetos();});
 }
-
-function agregarPendiente(id){
-    const pendientes=JSON.parse(localStorage.getItem('obj_pendientes_'+uid)||'[]');
-    if(!pendientes.includes(id)){pendientes.push(id);localStorage.setItem('obj_pendientes_'+uid,JSON.stringify(pendientes))}
-    actualizarBadgeObjetos();
-}
-function quitarPendiente(id){
-    let pendientes=JSON.parse(localStorage.getItem('obj_pendientes_'+uid)||'[]');
-    pendientes=pendientes.filter(p=>p!==id);
-    localStorage.setItem('obj_pendientes_'+uid,JSON.stringify(pendientes));
-    actualizarBadgeObjetos();
-}
-function actualizarBadgeObjetos(){
-    const pendientes=JSON.parse(localStorage.getItem('obj_pendientes_'+uid)||'[]');
-    const badge=document.getElementById('badgeObjetos');
-    if(badge){if(pendientes.length>0){badge.classList.add('show')}else{badge.classList.remove('show')}}
-}
+function agregarPendiente(id){const p=JSON.parse(localStorage.getItem('obj_pendientes_'+uid)||'[]');if(!p.includes(id)){p.push(id);localStorage.setItem('obj_pendientes_'+uid,JSON.stringify(p))}actualizarBadgeObjetos()}
+function quitarPendiente(id){let p=JSON.parse(localStorage.getItem('obj_pendientes_'+uid)||'[]');p=p.filter(x=>x!==id);localStorage.setItem('obj_pendientes_'+uid,JSON.stringify(p));actualizarBadgeObjetos()}
+function actualizarBadgeObjetos(){const p=JSON.parse(localStorage.getItem('obj_pendientes_'+uid)||'[]');const b=document.getElementById('badgeObjetos');if(b){if(p.length>0)b.classList.add('show');else b.classList.remove('show')}}
 
 async function loadObjetos(){
-    if(!uid)return;
-    const lista=document.getElementById('objetosList');
-    lista.innerHTML='<div class="empty">Cargando...</div>';
-    const snap=await db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).once('value');
-    const d=snap.val();
-    let h='';
+    if(!uid)return;const lista=document.getElementById('objetosList');lista.innerHTML='<div class="empty">Cargando...</div>';
+    const snap=await db.ref('reportes/objetos_olvidados').orderByChild('choferId').equalTo(uid).once('value');const d=snap.val();let h='';
     if(!d){lista.innerHTML='<div class="empty">Sin objetos reportados</div>';return}
     const entries=Object.entries(d).reverse();
     for(const [id,obj] of entries){
-        const esCliente=obj.tipo==='cliente_reporta';
-        const recompensa=obj.recompensa||0;
-        const borderColor=esCliente&&obj.estado==='pendiente'?'var(--red)':'var(--warn)';
-        const nombrePasajero=obj.nombrePasajero||'';
+        const esCliente=obj.tipo==='cliente_reporta';const recompensa=obj.recompensa||0;const borderColor=esCliente&&obj.estado==='pendiente'?'var(--red)':'var(--warn)';const nombrePasajero=obj.nombrePasajero||'';
         let viajeHTML='';
-        if(obj.servicioId){
-            try{
-                const snapSv=await db.ref(`servicios/${obj.servicioId}`).once('value');
-                const sv=snapSv.val()||{};
-                const origen=(sv.origen?.direccion||'Origen desconocido').substring(0,20);
-                const destino=(sv.destino?.direccion||'Destino desconocido').substring(0,20);
-                const fecha=sv.fecha||'Sin fecha';
-                const cobro=sv.cobro||sv.tarifa_propuesta||'?';
-                viajeHTML=`<div class="obj-viaje"><div>🛺 <b>Viaje #${obj.servicioId.substring(0,5)}</b> · ${fecha}</div><div>📍 ${origen} → 🏁 ${destino}</div><div>💰 Cobro: $${cobro}</div>${nombrePasajero?`<div>👤 <b>Pasajero:</b> ${nombrePasajero}</div>`:''}</div>`;
-            }catch(e){}
-        }
-        let estadoHTML='';
-        if(obj.estado==='pendiente')estadoHTML='⏳ Pendiente';
-        else if(obj.estado==='encontrado')estadoHTML='✅ Encontrado';
-        else if(obj.estado==='buscando')estadoHTML='🔍 Buscando...';
-        else if(obj.estado==='no_encontrado')estadoHTML='❌ No encontrado';
-        else if(obj.estado==='entregado')estadoHTML='🎉 Entregado';
-        let botonesHTML='';
-        if(obj.estado==='pendiente'&&esCliente){
-            botonesHTML=`<div class="obj-btns">
-                <button class="btn-respuesta btn-si" onclick="responderObjeto('${id}','encontrado')">✅ Lo tengo</button>
-                <button class="btn-respuesta btn-buscando" onclick="responderObjeto('${id}','buscando')">🔍 Buscando...</button>
-                <button class="btn-respuesta btn-no" onclick="responderObjeto('${id}','no_encontrado')">❌ No está</button>
-            </div>`;
-        }else if(obj.estado==='encontrado'){
-            botonesHTML=`<div class="obj-btns"><button class="btn-entrega" onclick="entregarObjeto('${id}')">✅ Marcar como entregado</button><button class="btn-respuesta btn-si" onclick="abrirChatObjeto('${id}')" style="flex:0;padding:.3rem .6rem;font-size:.6rem">💬 Chat</button></div>`;
-        }else if(!esCliente&&obj.estado!=='entregado'){
-            botonesHTML=`<div class="obj-btns"><button class="btn-entrega" onclick="entregarObjeto('${id}')">✅ Marcar como entregado</button></div>`;
-        }
-        h+=`<div class="objeto-card" style="border-color:${borderColor}">
-            <div class="obj-header"><b style="font-size:.75rem;color:${esCliente&&obj.estado==='pendiente'?'var(--red)':'var(--txt)'}">${esCliente?'⚠️ Cliente reportó':'📦 Tu reporte'} #${id.substring(0,5)}</b><span style="font-size:.6rem;color:var(--txt3)">${new Date(obj.timestamp).toLocaleDateString()}</span></div>
-            ${viajeHTML}
-            <div class="obj-desc">📝 ${obj.descripcion||'Sin descripción'}</div>
-            ${recompensa>0?`<div class="obj-recompensa">💰 Recompensa: $${recompensa}</div>`:''}
-            <div style="font-size:.6rem;color:var(--txt3);margin-top:.2rem">Estado: <b style="color:${obj.estado==='entregado'||obj.estado==='encontrado'?'var(--green)':obj.estado==='no_encontrado'?'var(--red)':'var(--warn)'}">${estadoHTML}</b></div>
-            ${botonesHTML}
-        </div>`;
+        if(obj.servicioId){try{const ss=await db.ref(`servicios/${obj.servicioId}`).once('value');const sv=ss.val()||{};const origen=(sv.origen?.direccion||'?').substring(0,20);const destino=(sv.destino?.direccion||'?').substring(0,20);viajeHTML=`<div class="obj-viaje"><div>🛺 <b>Viaje #${obj.servicioId.substring(0,5)}</b> · ${sv.fecha||'?'}</div><div>📍 ${origen} → 🏁 ${destino}</div><div>💰 Cobro: $${sv.cobro||sv.tarifa_propuesta||'?'}</div>${nombrePasajero?`<div>👤 <b>Pasajero:</b> ${nombrePasajero}</div>`:''}</div>`}catch(e){}}
+        let estHTML='';if(obj.estado==='pendiente')estHTML='⏳ Pendiente';else if(obj.estado==='encontrado')estHTML='✅ Encontrado';else if(obj.estado==='buscando')estHTML='🔍 Buscando...';else if(obj.estado==='no_encontrado')estHTML='❌ No encontrado';else if(obj.estado==='entregado')estHTML='🎉 Entregado';
+        let btnHTML='';
+        if(obj.estado==='pendiente'&&esCliente){btnHTML=`<div class="obj-btns"><button class="btn-respuesta btn-si" onclick="responderObjeto('${id}','encontrado')">✅ Lo tengo</button><button class="btn-respuesta btn-buscando" onclick="responderObjeto('${id}','buscando')">🔍 Buscando...</button><button class="btn-respuesta btn-no" onclick="responderObjeto('${id}','no_encontrado')">❌ No está</button></div>`}
+        else if(obj.estado==='encontrado'){btnHTML=`<div class="obj-btns"><button class="btn-entrega" onclick="entregarObjeto('${id}')">✅ Marcar como entregado</button><button class="btn-respuesta btn-si" onclick="abrirChatObjeto('${id}')" style="flex:0;padding:.3rem .6rem;font-size:.6rem">💬 Chat</button></div>`}
+        else if(!esCliente&&obj.estado!=='entregado'){btnHTML=`<div class="obj-btns"><button class="btn-entrega" onclick="entregarObjeto('${id}')">✅ Marcar como entregado</button></div>`}
+        h+=`<div class="objeto-card" style="border-color:${borderColor}"><div class="obj-header"><b style="font-size:.75rem;color:${esCliente&&obj.estado==='pendiente'?'var(--red)':'var(--txt)'}">${esCliente?'⚠️ Cliente reportó':'📦 Tu reporte'} #${id.substring(0,5)}</b><span style="font-size:.6rem;color:var(--txt3)">${new Date(obj.timestamp).toLocaleDateString()}</span></div>${viajeHTML}<div class="obj-desc">📝 ${obj.descripcion||'Sin descripción'}</div>${recompensa>0?`<div class="obj-recompensa">💰 Recompensa: $${recompensa}</div>`:''}<div style="font-size:.6rem;color:var(--txt3);margin-top:.2rem">Estado: <b style="color:${obj.estado==='entregado'||obj.estado==='encontrado'?'var(--green)':obj.estado==='no_encontrado'?'var(--red)':'var(--warn)'}">${estHTML}</b></div>${btnHTML}</div>`;
     }
     lista.innerHTML=h;
 }
-
-window.responderObjeto=function(id,respuesta){
-    const estados={encontrado:{estado:'encontrado',msg:'✅ El chofer confirmó que TIENE tu objeto'},buscando:{estado:'buscando',msg:'🔍 El chofer está revisando su mototaxi...'},no_encontrado:{estado:'no_encontrado',msg:'❌ El chofer revisó y NO encontró tu objeto'}};
-    const data=estados[respuesta];
-    if(!confirm(`¿Confirmas: "${data.msg.split('✅ ')[1]||data.msg.split('🔍 ')[1]||data.msg.split('❌ ')[1]}"?`))return;
-    db.ref(`reportes/objetos_olvidados/${id}`).update({estado:data.estado,fecha_respuesta:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
-        if(respuesta==='encontrado')abrirChatObjeto(id);
-        quitarPendiente(id);actualizarBadgeObjetos();loadObjetos();notif('✅ Respuesta enviada',data.msg,'success');
-    });
-};
-
-window.entregarObjeto=function(id){
-    if(confirm('¿Confirmas que el objeto fue entregado al cliente?')){
-        db.ref(`reportes/objetos_olvidados/${id}`).update({estado:'entregado',fecha_entrega:firebase.database.ServerValue.TIMESTAMP}).then(()=>{
-            notif('✅ Entregado','Objeto marcado como entregado','success');quitarPendiente(id);actualizarBadgeObjetos();loadObjetos();
-        });
-    }
-};
-
-window.abrirChatObjeto=function(reporteId){
-    db.ref(`reportes/objetos_olvidados/${reporteId}`).once('value',snap=>{
-        const obj=snap.val();
-        const chatId='chat_objeto_'+reporteId;
-        const d=document.createElement('div');d.className='chat-modal';
-        d.innerHTML=`<div class="chat-header"><span>📦 Chat: ${(obj.descripcion||'').substring(0,25)}</span><button onclick="this.closest('.chat-modal').remove()" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgsObj"></div><div class="chat-input-wrap"><input type="text" id="chatInputObj" placeholder="Coordina la entrega..." onkeypress="if(event.key==='Enter')enviarMsgObjeto('${chatId}')"><button onclick="enviarMsgObjeto('${chatId}')">Enviar</button></div>`;
-        document.body.appendChild(d);
-        db.ref(`chats_objetos/${chatId}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgsObj');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}});
-    });
-};
-
-window.enviarMsgObjeto=function(chatId){const i=document.getElementById('chatInputObj');const m=i?.value.trim();if(m&&uid){db.ref(`chats_objetos/${chatId}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}};
+window.responderObjeto=function(id,r){const es={encontrado:{estado:'encontrado',msg:'✅ El chofer confirmó que TIENE tu objeto'},buscando:{estado:'buscando',msg:'🔍 El chofer está revisando su mototaxi...'},no_encontrado:{estado:'no_encontrado',msg:'❌ El chofer revisó y NO encontró tu objeto'}};const d=es[r];if(!confirm(`¿Confirmas: "${d.msg.split('✅ ')[1]||d.msg.split('🔍 ')[1]||d.msg.split('❌ ')[1]}"?`))return;db.ref(`reportes/objetos_olvidados/${id}`).update({estado:d.estado,fecha_respuesta:firebase.database.ServerValue.TIMESTAMP}).then(()=>{if(r==='encontrado')abrirChatObjeto(id);quitarPendiente(id);actualizarBadgeObjetos();loadObjetos();notif('✅ Respuesta enviada',d.msg,'success')})}
+window.entregarObjeto=function(id){if(confirm('¿Confirmas que el objeto fue entregado al cliente?')){db.ref(`reportes/objetos_olvidados/${id}`).update({estado:'entregado',fecha_entrega:firebase.database.ServerValue.TIMESTAMP}).then(()=>{notif('✅ Entregado','Objeto marcado como entregado','success');quitarPendiente(id);actualizarBadgeObjetos();loadObjetos()})}}
+window.abrirChatObjeto=function(rid){db.ref(`reportes/objetos_olvidados/${rid}`).once('value',snap=>{const obj=snap.val();const cid='chat_objeto_'+rid;const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>📦 Chat: ${(obj.descripcion||'').substring(0,25)}</span><button onclick="this.closest('.chat-modal').remove()" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgsObj"></div><div class="chat-input-wrap"><input type="text" id="chatInputObj" placeholder="Coordina la entrega..." onkeypress="if(event.key==='Enter')enviarMsgObjeto('${cid}')"><button onclick="enviarMsgObjeto('${cid}')">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats_objetos/${cid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgsObj');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})})}
+window.enviarMsgObjeto=function(cid){const i=document.getElementById('chatInputObj');const m=i?.value.trim();if(m&&uid){db.ref(`chats_objetos/${cid}`).push({remitente:'chofer',userId:uid,mensaje:m,ts:firebase.database.ServerValue.TIMESTAMP});i.value=''}}
 
 function listenChats(){db.ref('chats').on('child_changed',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const keys=Object.keys(ms);if(keys.length>lastMsgCount){const last=ms[keys[keys.length-1]];if(last&&last.remitente==='cliente'){lastMsgCount=keys.length;const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',last.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}}});db.ref('chats').on('child_added',s=>{if(s.key===sid&&!chatOpen){const ms=s.val();if(!ms)return;const keys=Object.keys(ms);lastMsgCount=keys.length;const last=ms[keys[keys.length-1]];if(last&&last.remitente==='cliente'){const b=document.getElementById('chatBadge');if(b){let c=parseInt(b.textContent)||0;c++;b.textContent=c;b.classList.add('show')}notif('💬 Nuevo mensaje',last.mensaje.substring(0,35),'message');playSound('msg');if(navigator.vibrate)navigator.vibrate([200,100,200,100,200])}}})}
 function openChat(){if(!sid)return;chatOpen=true;const b=document.getElementById('chatBadge');if(b){b.classList.remove('show');b.textContent='0'}const d=document.createElement('div');d.className='chat-modal';d.innerHTML=`<div class="chat-header"><span>💬 Chat con el cliente</span><button onclick="closeChat(this)" style="background:none;border:none;color:var(--txt);font-size:1.2rem;cursor:pointer">✕</button></div><div class="chat-body" id="chatMsgs"></div><div class="chat-input-wrap"><input type="text" id="chatInput" placeholder="Escribe..." onkeypress="if(event.key==='Enter')sendMsg()"><button onclick="sendMsg()">Enviar</button></div>`;document.body.appendChild(d);db.ref(`chats/${sid}`).on('child_added',s=>{const m=s.val();const el=document.getElementById('chatMsgs');if(el){el.innerHTML+=`<div class="msg ${m.remitente==='chofer'?'sent':'recv'}">${m.mensaje}</div>`;el.scrollTop=el.scrollHeight}})}
